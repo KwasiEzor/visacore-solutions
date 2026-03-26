@@ -60,10 +60,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async authorized({ auth, request }) {
       const isLoggedIn = !!auth?.user
-      const isOnAdmin = request.nextUrl.pathname.startsWith("/admin")
+      const role = auth?.user?.role as string | undefined
+      const { pathname } = request.nextUrl
+      
+      const isOnAdmin = pathname.startsWith("/admin")
+      const isOnUserMgmt = pathname.startsWith("/admin/users")
+      const isOnSettings = pathname.startsWith("/admin/settings")
 
       if (isOnAdmin) {
-        return isLoggedIn
+        if (!isLoggedIn) return false
+        
+        // Restriction : Seul SUPER_ADMIN peut gérer les utilisateurs et les paramètres globaux
+        if ((isOnUserMgmt || isOnSettings) && role !== "SUPER_ADMIN") {
+          return Response.redirect(new URL("/admin", request.nextUrl))
+        }
+        
+        return true
       }
       return true
     },

@@ -1,6 +1,7 @@
 "use client"
 
 import { useTransition } from "react"
+import { toast } from "sonner"
 import { deleteDestination } from "@/actions/destinations"
 import { Trash2, Pencil } from "lucide-react"
 import Link from "next/link"
@@ -15,7 +16,16 @@ export function DestinationRowActions({ destinationId }: DestinationRowActionsPr
   function handleDelete() {
     if (!confirm("Etes-vous sur de vouloir supprimer cette destination ?")) return
     startTransition(async () => {
-      await deleteDestination(destinationId)
+      try {
+        const result = await deleteDestination(destinationId)
+        if (result.success) {
+          toast.success("Destination supprimée")
+        } else {
+          toast.error(result.error || "Erreur lors de la suppression")
+        }
+      } catch {
+        toast.error("Une erreur est survenue")
+      }
     })
   }
 

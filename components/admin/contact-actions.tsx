@@ -1,6 +1,7 @@
 "use client"
 
 import { useTransition } from "react"
+import { toast } from "sonner"
 import { markContactAsRead, updateContactStatus, deleteContactRequest } from "@/actions/contacts"
 
 interface MarkReadButtonProps {
@@ -15,7 +16,16 @@ export function MarkReadButton({ contactId, isRead }: MarkReadButtonProps) {
 
   function handleClick() {
     startTransition(async () => {
-      await markContactAsRead(contactId)
+      try {
+        const result = await markContactAsRead(contactId)
+        if (result.success) {
+          toast.success("Marqué comme lu")
+        } else {
+          toast.error(result.error || "Erreur")
+        }
+      } catch {
+        toast.error("Une erreur est survenue")
+      }
     })
   }
 
@@ -45,7 +55,16 @@ export function ContactStatusSelect({
     const newStatus = e.target.value
     if (newStatus === currentStatus) return
     startTransition(async () => {
-      await updateContactStatus(contactId, newStatus)
+      try {
+        const result = await updateContactStatus(contactId, newStatus)
+        if (result.success) {
+          toast.success("Statut mis à jour")
+        } else {
+          toast.error(result.error || "Erreur")
+        }
+      } catch {
+        toast.error("Une erreur est survenue")
+      }
     })
   }
 
@@ -73,7 +92,16 @@ export function DeleteContactButton({ contactId }: DeleteContactButtonProps) {
   function handleDelete() {
     if (!confirm("Etes-vous sur de vouloir supprimer ce contact ?")) return
     startTransition(async () => {
-      await deleteContactRequest(contactId)
+      try {
+        const result = await deleteContactRequest(contactId)
+        if (result.success) {
+          toast.success("Contact supprimé")
+        } else {
+          toast.error(result.error || "Erreur")
+        }
+      } catch {
+        toast.error("Une erreur est survenue")
+      }
     })
   }
 

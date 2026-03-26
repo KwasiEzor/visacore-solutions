@@ -1,7 +1,8 @@
 "use client"
 
 import { useTransition } from "react"
-import { updateLeadStatus } from "@/actions/leads"
+import { toast } from "sonner"
+import { updateLeadStatus, updateLeadNotes, deleteLead } from "@/actions/leads"
 import { StatusBadge } from "@/components/admin/status-badge"
 
 const LEAD_STATUSES = [
@@ -28,7 +29,16 @@ export function LeadStatusSelect({
     const newStatus = e.target.value
     if (newStatus === currentStatus) return
     startTransition(async () => {
-      await updateLeadStatus(leadId, newStatus)
+      try {
+        const result = await updateLeadStatus(leadId, newStatus)
+        if (result.success) {
+          toast.success("Statut mis à jour")
+        } else {
+          toast.error(result.error || "Erreur lors de la mise à jour")
+        }
+      } catch {
+        toast.error("Une erreur est survenue")
+      }
     })
   }
 
@@ -65,8 +75,16 @@ export function LeadNotesForm({ leadId, currentNotes }: LeadNotesFormProps) {
   function handleSubmit(formData: FormData) {
     const notes = formData.get("notes") as string
     startTransition(async () => {
-      const { updateLeadNotes } = await import("@/actions/leads")
-      await updateLeadNotes(leadId, notes)
+      try {
+        const result = await updateLeadNotes(leadId, notes)
+        if (result.success) {
+          toast.success("Notes enregistrées")
+        } else {
+          toast.error(result.error || "Erreur lors de la sauvegarde")
+        }
+      } catch {
+        toast.error("Une erreur est survenue")
+      }
     })
   }
 
@@ -100,8 +118,17 @@ export function DeleteLeadButton({ leadId }: DeleteLeadButtonProps) {
   function handleDelete() {
     if (!confirm("Etes-vous sur de vouloir supprimer ce lead ?")) return
     startTransition(async () => {
-      const { deleteLead } = await import("@/actions/leads")
-      await deleteLead(leadId)
+      try {
+        const result = await deleteLead(leadId)
+        if (result.success) {
+          toast.success("Lead supprimé")
+          // Redirection possible ici si nécessaire
+        } else {
+          toast.error(result.error || "Erreur lors de la suppression")
+        }
+      } catch {
+        toast.error("Une erreur est survenue")
+      }
     })
   }
 

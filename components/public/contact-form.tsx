@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Loader2, CheckCircle } from "lucide-react"
+import { toast } from "sonner"
 
 export function ContactForm() {
   const [submitted, setSubmitted] = useState(false)
@@ -22,8 +23,18 @@ export function ContactForm() {
   })
 
   async function onSubmit(data: ContactFormData) {
-    const result = await createContactRequest(data)
-    if (result.success) setSubmitted(true)
+    try {
+      const result = await createContactRequest(data)
+      if (result.success) {
+        setSubmitted(true)
+        toast.success("Message envoyé !")
+      } else {
+        toast.error(result.error || "Une erreur est survenue")
+      }
+    } catch {
+      toast.error("Impossible d'envoyer votre message")
+    }
+
   }
 
   if (submitted) {

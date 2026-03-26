@@ -1,6 +1,7 @@
 "use client"
 
 import { useTransition } from "react"
+import { toast } from "sonner"
 import {
   updateAppointmentStatus,
   deleteAppointment,
@@ -21,7 +22,16 @@ export function AppointmentStatusSelect({
     const newStatus = e.target.value
     if (newStatus === currentStatus) return
     startTransition(async () => {
-      await updateAppointmentStatus(appointmentId, newStatus)
+      try {
+        const result = await updateAppointmentStatus(appointmentId, newStatus)
+        if (result.success) {
+          toast.success("Statut mis à jour")
+        } else {
+          toast.error(result.error || "Erreur lors de la mise à jour")
+        }
+      } catch {
+        toast.error("Une erreur est survenue")
+      }
     })
   }
 
@@ -53,20 +63,47 @@ export function AppointmentActionButtons({
 
   function handleApprove() {
     startTransition(async () => {
-      await updateAppointmentStatus(appointmentId, "APPROVED")
+      try {
+        const result = await updateAppointmentStatus(appointmentId, "APPROVED")
+        if (result.success) {
+          toast.success("Rendez-vous approuvé")
+        } else {
+          toast.error(result.error || "Erreur lors de l'approbation")
+        }
+      } catch {
+        toast.error("Une erreur est survenue")
+      }
     })
   }
 
   function handleCancel() {
     startTransition(async () => {
-      await updateAppointmentStatus(appointmentId, "CANCELLED")
+      try {
+        const result = await updateAppointmentStatus(appointmentId, "CANCELLED")
+        if (result.success) {
+          toast.success("Rendez-vous annulé")
+        } else {
+          toast.error(result.error || "Erreur lors de l'annulation")
+        }
+      } catch {
+        toast.error("Une erreur est survenue")
+      }
     })
   }
 
   function handleDelete() {
     if (!confirm("Etes-vous sur de vouloir supprimer ce rendez-vous ?")) return
     startTransition(async () => {
-      await deleteAppointment(appointmentId)
+      try {
+        const result = await deleteAppointment(appointmentId)
+        if (result.success) {
+          toast.success("Rendez-vous supprimé")
+        } else {
+          toast.error(result.error || "Erreur lors de la suppression")
+        }
+      } catch {
+        toast.error("Une erreur est survenue")
+      }
     })
   }
 
