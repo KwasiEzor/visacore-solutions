@@ -65,7 +65,7 @@ export function Header() {
             height={315}
             className={cn(
               "w-auto transition-all duration-500",
-              useSolidHeader ? "h-16 lg:h-20" : "h-20 lg:h-24"
+              useSolidHeader ? "h-16 lg:h-20" : "h-20 lg:h-24 brightness-0 invert"
             )}
             priority
           />
