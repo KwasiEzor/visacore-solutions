@@ -5,6 +5,8 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { HelpCircle, ArrowRight, MessageCircle } from "lucide-react"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 
+export const revalidate = 3600
+
 export const metadata: Metadata = {
   title: "FAQ",
   description: "Retrouvez les réponses aux questions les plus fréquentes sur l'immigration et nos services.",

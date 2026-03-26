@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma"
 import { Star, Quote, ArrowRight, MessageCircle } from "lucide-react"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 
+export const revalidate = 3600
+
 export const metadata: Metadata = {
   title: "Témoignages",
   description: "Découvrez les témoignages de nos clients satisfaits qui ont réalisé leur projet d'immigration avec VisaCore Solutions.",

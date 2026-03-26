@@ -69,3 +69,49 @@ export async function deleteTestimonial(id: string) {
     return { success: false, error: "Impossible de supprimer le témoignage" }
   }
 }
+
+export async function toggleTestimonialPublished(id: string) {
+  try {
+    const session = await auth()
+    if (!session) return { success: false, error: "Non autorisé" }
+    const t = await prisma.testimonial.findUnique({ where: { id } })
+    if (!t) return { success: false, error: "Témoignage introuvable" }
+    await prisma.testimonial.update({ where: { id }, data: { published: !t.published } })
+    revalidatePath("/admin/testimonials")
+    revalidatePath("/temoignages")
+    return { success: true }
+  } catch (error) {
+    console.error("[TOGGLE_TESTIMONIAL_ERROR]", error)
+    return { success: false, error: "Erreur" }
+  }
+}
+
+export async function toggleTestimonialFeatured(id: string) {
+  try {
+    const session = await auth()
+    if (!session) return { success: false, error: "Non autorisé" }
+    const t = await prisma.testimonial.findUnique({ where: { id } })
+    if (!t) return { success: false, error: "Témoignage introuvable" }
+    await prisma.testimonial.update({ where: { id }, data: { featured: !t.featured } })
+    revalidatePath("/admin/testimonials")
+    revalidatePath("/temoignages")
+    return { success: true }
+  } catch (error) {
+    console.error("[TOGGLE_TESTIMONIAL_FEATURED_ERROR]", error)
+    return { success: false, error: "Erreur" }
+  }
+}
+
+export async function bulkDeleteTestimonials(ids: string[]) {
+  try {
+    const session = await auth()
+    if (!session || session.user.role === "EDITOR") return { success: false, error: "Non autorisé" }
+    await prisma.testimonial.deleteMany({ where: { id: { in: ids } } })
+    revalidatePath("/admin/testimonials")
+    revalidatePath("/temoignages")
+    return { success: true }
+  } catch (error) {
+    console.error("[BULK_DELETE_TESTIMONIALS_ERROR]", error)
+    return { success: false, error: "Erreur" }
+  }
+}

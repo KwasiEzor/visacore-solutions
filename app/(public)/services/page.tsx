@@ -13,6 +13,8 @@ import {
 import { prisma } from "@/lib/prisma";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Nos Services",
   description:

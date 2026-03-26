@@ -11,6 +11,16 @@ import {
 import { prisma } from "@/lib/prisma";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
 
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const destinations = await prisma.destination.findMany({
+    where: { published: true },
+    select: { slug: true },
+  });
+  return destinations.map((d) => ({ slug: d.slug }));
+}
+
 /* ────────────────────────────────────────────────
    Types for JSON fields
    ──────────────────────────────────────────────── */

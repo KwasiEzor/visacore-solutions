@@ -3,20 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
-import { z } from "zod"
-
-const storySchema = z.object({
-  title: z.string().min(3, "Le titre est requis"),
-  slug: z.string().min(2, "Le slug est requis"),
-  clientName: z.string().min(2, "Le nom est requis"),
-  destination: z.string().min(1, "La destination est requise"),
-  summary: z.string().optional(),
-  content: z.string().optional(),
-  images: z.any().optional(),
-  published: z.boolean().default(false),
-  seoTitle: z.string().optional(),
-  seoDescription: z.string().optional(),
-})
+import { storySchema } from "@/lib/validations/story"
 
 export async function createStory(data: unknown) {
   try {

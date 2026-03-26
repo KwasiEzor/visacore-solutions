@@ -1,64 +1,50 @@
+import Link from "next/link"
 import { prisma } from "@/lib/prisma"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { StatusBadge } from "@/components/admin/status-badge"
-import { Star } from "lucide-react"
+import { Plus } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { TestimonialsClient } from "@/components/admin/testimonials-client"
 
 export default async function TestimonialsAdminPage() {
   const testimonials = await prisma.testimonial.findMany({
     orderBy: { createdAt: "desc" },
   })
 
+  const data = testimonials.map((t) => ({
+    id: t.id,
+    clientName: t.clientName,
+    destination: t.destination ?? "",
+    rating: t.rating,
+    featured: t.featured,
+    published: t.published,
+    updatedAt: t.updatedAt.toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }),
+  }))
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Témoignages</h1>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">
+            Témoignages
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Gérez les témoignages clients.{" "}
+            {testimonials.length} témoignage
+            {testimonials.length !== 1 ? "s" : ""}.
+          </p>
+        </div>
+        <Link href="/admin/testimonials/new">
+          <Button>
+            <Plus className="size-4" data-icon="inline-start" />
+            Nouveau témoignage
+          </Button>
+        </Link>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Tous les témoignages ({testimonials.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-left">
-                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Client</th>
-                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Destination</th>
-                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Note</th>
-                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Vedette</th>
-                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Statut</th>
-                  <th className="pb-3 font-medium text-muted-foreground">Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {testimonials.map((t) => (
-                  <tr key={t.id} className="border-b last:border-0">
-                    <td className="py-3 pr-4 font-medium">{t.clientName}</td>
-                    <td className="py-3 pr-4">{t.destination ?? "—"}</td>
-                    <td className="py-3 pr-4">
-                      <div className="flex gap-0.5">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star key={i} className={`size-3.5 ${i < t.rating ? "fill-[#C9A227] text-[#C9A227]" : "text-gray-200"}`} />
-                        ))}
-                      </div>
-                    </td>
-                    <td className="py-3 pr-4">
-                      {t.featured && <StatusBadge status="Vedette" variant="gold" />}
-                    </td>
-                    <td className="py-3 pr-4">
-                      <StatusBadge status={t.published ? "Publié" : "Brouillon"} variant={t.published ? "green" : "gray"} />
-                    </td>
-                    <td className="py-3 text-muted-foreground">
-                      {t.createdAt.toLocaleDateString("fr-FR")}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      <TestimonialsClient data={data} />
     </div>
   )
 }

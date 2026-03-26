@@ -10,10 +10,45 @@ import {
   ArrowRight,
   Plus,
   Eye,
+  TrendingUp,
+  BarChart3,
 } from "lucide-react"
 import { StatsCard } from "@/components/admin/stats-card"
 import { StatusBadge } from "@/components/admin/status-badge"
 import { Button } from "@/components/ui/button"
+
+const STATUS_LABELS: Record<string, string> = {
+  NEW: "Nouveau",
+  CONTACTED: "Contacte",
+  QUALIFIED: "Qualifie",
+  IN_PROGRESS: "En cours",
+  CONVERTED: "Converti",
+  CLOSED: "Ferme",
+}
+
+const STATUS_COLORS: Record<string, string> = {
+  NEW: "bg-blue-500",
+  CONTACTED: "bg-yellow-500",
+  QUALIFIED: "bg-purple-500",
+  IN_PROGRESS: "bg-orange-500",
+  CONVERTED: "bg-emerald-500",
+  CLOSED: "bg-gray-400",
+}
+
+const MONTH_LABELS = [
+  "Jan",
+  "Fev",
+  "Mar",
+  "Avr",
+  "Mai",
+  "Juin",
+  "Juil",
+  "Aout",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+]
 
 export default async function AdminDashboardPage() {
   const [
@@ -24,6 +59,8 @@ export default async function AdminDashboardPage() {
     publishedServices,
     publishedFaqs,
     recentLeads,
+    statusCounts,
+    recentLeadsForTrend,
   ] = await Promise.all([
     prisma.lead.count(),
     prisma.contactRequest.count({ where: { isRead: false } }),
@@ -43,7 +80,53 @@ export default async function AdminDashboardPage() {
         createdAt: true,
       },
     }),
+    prisma.lead.groupBy({
+      by: ["status"],
+      _count: { id: true },
+    }),
+    (() => {
+      const sixMonthsAgo = new Date()
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+      return prisma.lead.findMany({
+        where: { createdAt: { gte: sixMonthsAgo } },
+        select: { createdAt: true },
+      })
+    })(),
   ])
+
+  // Process status distribution data
+  const statusData = statusCounts.map((item) => ({
+    status: item.status,
+    label: STATUS_LABELS[item.status] || item.status,
+    count: item._count.id,
+    color: STATUS_COLORS[item.status] || "bg-gray-400",
+  }))
+  const maxStatusCount = Math.max(...statusData.map((d) => d.count), 1)
+
+  // Process monthly trend data
+  const monthlyMap = new Map<string, number>()
+  const now = new Date()
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
+    monthlyMap.set(key, 0)
+  }
+  for (const lead of recentLeadsForTrend) {
+    const d = lead.createdAt
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
+    if (monthlyMap.has(key)) {
+      monthlyMap.set(key, (monthlyMap.get(key) ?? 0) + 1)
+    }
+  }
+  const monthlyData = Array.from(monthlyMap.entries()).map(([key, count]) => {
+    const [, month] = key.split("-")
+    return {
+      key,
+      label: MONTH_LABELS[parseInt(month, 10) - 1],
+      count,
+    }
+  })
+  const maxMonthlyCount = Math.max(...monthlyData.map((d) => d.count), 1)
 
   return (
     <div className="space-y-8">
@@ -101,6 +184,79 @@ export default async function AdminDashboardPage() {
           iconClassName="bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400"
           description="Questions repondues"
         />
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Lead Status Distribution */}
+        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+          <div className="mb-6 flex items-center gap-2">
+            <BarChart3 className="size-5 text-primary" />
+            <h3 className="text-lg font-semibold text-foreground">
+              Leads par statut
+            </h3>
+          </div>
+          {statusData.length > 0 ? (
+            <div className="space-y-3">
+              {statusData.map((item) => (
+                <div key={item.status} className="flex items-center gap-3">
+                  <span className="w-24 shrink-0 text-sm text-muted-foreground">
+                    {item.label}
+                  </span>
+                  <div className="flex-1 h-8 bg-muted rounded-lg overflow-hidden">
+                    <div
+                      className={`h-full rounded-lg transition-all ${item.color}`}
+                      style={{
+                        width: `${(item.count / maxStatusCount) * 100}%`,
+                        minWidth: item.count > 0 ? "8px" : "0px",
+                      }}
+                    />
+                  </div>
+                  <span className="w-8 text-sm font-medium text-foreground text-right">
+                    {item.count}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              Aucun lead enregistre
+            </p>
+          )}
+        </div>
+
+        {/* Monthly Lead Trends */}
+        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+          <div className="mb-6 flex items-center gap-2">
+            <TrendingUp className="size-5 text-primary" />
+            <h3 className="text-lg font-semibold text-foreground">
+              Leads mensuels
+            </h3>
+          </div>
+          <div className="flex items-end gap-3 h-52">
+            {monthlyData.map((item) => (
+              <div
+                key={item.key}
+                className="flex flex-1 flex-col items-center gap-1"
+              >
+                <span className="text-xs font-medium text-foreground">
+                  {item.count}
+                </span>
+                <div className="flex w-full justify-center items-end h-40">
+                  <div
+                    className="w-full max-w-12 bg-primary rounded-t-lg transition-all"
+                    style={{
+                      height: `${maxMonthlyCount > 0 ? Math.max((item.count / maxMonthlyCount) * 100, item.count > 0 ? 3 : 1) : 1}%`,
+                    }}
+                  />
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {item.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Recent leads & Quick actions */}

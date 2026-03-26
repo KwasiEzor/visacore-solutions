@@ -73,22 +73,33 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-1 lg:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "relative whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold transition-all duration-300",
-                useSolidHeader ? "text-visacore-navy" : "text-white",
-                "hover:text-visacore-gold group"
-              )}
-            >
-              <span className="relative z-10">{link.label}</span>
-              <span
-                className="absolute inset-0 z-0 rounded-full bg-visacore-gold/10 opacity-0 transition-opacity group-hover:opacity-100"
-              />
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "relative whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold transition-all duration-300",
+                  isActive
+                    ? "text-visacore-gold"
+                    : useSolidHeader ? "text-visacore-navy" : "text-white",
+                  "hover:text-visacore-gold group"
+                )}
+              >
+                <span className="relative z-10">{link.label}</span>
+                <span
+                  className={cn(
+                    "absolute inset-0 z-0 rounded-full bg-visacore-gold/10 transition-opacity",
+                    isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                  )}
+                />
+                {isActive && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-visacore-gold" />
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Desktop CTA */}
@@ -142,25 +153,32 @@ export function Header() {
 
                 <nav className="flex-1 overflow-y-auto px-6 py-10">
                   <div className="flex flex-col gap-6">
-                    {navLinks.map((link, idx) => (
-                      <motion.div
-                        key={link.href}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.1 }}
-                      >
-                        <SheetClose
-                          render={
-                            <Link
-                              href={link.href}
-                              className="text-2xl font-bold text-white transition-colors hover:text-visacore-gold"
-                            />
-                          }
+                    {navLinks.map((link, idx) => {
+                      const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+                      return (
+                        <motion.div
+                          key={link.href}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.1 }}
                         >
-                          {link.label}
-                        </SheetClose>
-                      </motion.div>
-                    ))}
+                          <SheetClose
+                            render={
+                              <Link
+                                href={link.href}
+                                className={cn(
+                                  "text-2xl font-bold transition-colors hover:text-visacore-gold",
+                                  isActive ? "text-visacore-gold" : "text-white"
+                                )}
+                              />
+                            }
+                          >
+                            {isActive && <span className="mr-2 inline-block h-2 w-2 rounded-full bg-visacore-gold" />}
+                            {link.label}
+                          </SheetClose>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 </nav>
 

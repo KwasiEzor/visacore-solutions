@@ -6,9 +6,9 @@ export const testimonialSchema = z.object({
   destination: z.string().optional(),
   destinationId: z.string().optional().nullable(),
   content: z.string().min(10, "Le contenu est requis"),
-  rating: z.number().int().min(1).max(5).default(5),
-  featured: z.boolean().default(false),
-  published: z.boolean().default(false),
+  rating: z.number().int().min(1).max(5),
+  featured: z.boolean(),
+  published: z.boolean(),
 })
 
 export type TestimonialFormData = z.infer<typeof testimonialSchema>

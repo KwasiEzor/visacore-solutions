@@ -10,8 +10,8 @@ export const destinationSchema = z.object({
   visaCategories: z.any().optional(),
   whyChoose: z.any().optional(),
   ctaText: z.string().optional(),
-  published: z.boolean().default(false),
-  order: z.number().int().default(0),
+  published: z.boolean(),
+  order: z.number().int(),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
 })
