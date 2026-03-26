@@ -6,41 +6,66 @@ import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
 
 export async function createFAQ(data: unknown) {
-  const session = await auth()
-  if (!session) return { error: "Non autorisé" }
+  try {
+    const session = await auth()
+    if (!session) return { success: false, error: "Non autorisé" }
 
-  const parsed = faqSchema.safeParse(data)
-  if (!parsed.success) {
-    return { error: "Données invalides", details: parsed.error.flatten() }
+    const parsed = faqSchema.safeParse(data)
+    if (!parsed.success) {
+      return { 
+        success: false, 
+        error: "Données invalides", 
+        details: parsed.error.flatten().fieldErrors 
+      }
+    }
+
+    await prisma.fAQ.create({ data: parsed.data })
+    revalidatePath("/admin/faqs")
+    revalidatePath("/faq")
+    return { success: true }
+  } catch (error) {
+    console.error("[CREATE_FAQ_ERROR]", error)
+    return { success: false, error: "Impossible de créer la FAQ" }
   }
-
-  await prisma.fAQ.create({ data: parsed.data })
-  revalidatePath("/admin/faqs")
-  revalidatePath("/faq")
-  return { success: true }
 }
 
 export async function updateFAQ(id: string, data: unknown) {
-  const session = await auth()
-  if (!session) return { error: "Non autorisé" }
+  try {
+    const session = await auth()
+    if (!session) return { success: false, error: "Non autorisé" }
 
-  const parsed = faqSchema.safeParse(data)
-  if (!parsed.success) {
-    return { error: "Données invalides", details: parsed.error.flatten() }
+    const parsed = faqSchema.safeParse(data)
+    if (!parsed.success) {
+      return { 
+        success: false, 
+        error: "Données invalides", 
+        details: parsed.error.flatten().fieldErrors 
+      }
+    }
+
+    await prisma.fAQ.update({ where: { id }, data: parsed.data })
+    revalidatePath("/admin/faqs")
+    revalidatePath("/faq")
+    return { success: true }
+  } catch (error) {
+    console.error("[UPDATE_FAQ_ERROR]", error)
+    return { success: false, error: "Impossible de mettre à jour la FAQ" }
   }
-
-  await prisma.fAQ.update({ where: { id }, data: parsed.data })
-  revalidatePath("/admin/faqs")
-  revalidatePath("/faq")
-  return { success: true }
 }
 
 export async function deleteFAQ(id: string) {
-  const session = await auth()
-  if (!session || session.user.role === "EDITOR") return { error: "Non autorisé" }
+  try {
+    const session = await auth()
+    if (!session || session.user.role === "EDITOR") {
+      return { success: false, error: "Non autorisé" }
+    }
 
-  await prisma.fAQ.delete({ where: { id } })
-  revalidatePath("/admin/faqs")
-  revalidatePath("/faq")
-  return { success: true }
+    await prisma.fAQ.delete({ where: { id } })
+    revalidatePath("/admin/faqs")
+    revalidatePath("/faq")
+    return { success: true }
+  } catch (error) {
+    console.error("[DELETE_FAQ_ERROR]", error)
+    return { success: false, error: "Impossible de supprimer la FAQ" }
+  }
 }
