@@ -65,7 +65,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
           alt="VisaCore Solutions"
           width={640}
           height={525}
-          className="size-8 rounded"
+          className="size-8 rounded brightness-0 invert"
         />
         <span className="text-lg font-semibold tracking-tight text-white">
           VisaCore Solutions
