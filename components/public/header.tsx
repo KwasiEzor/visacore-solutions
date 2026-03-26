@@ -51,8 +51,8 @@ export function Header() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         useSolidHeader
-          ? "bg-white/90 backdrop-blur-xl border-b border-visacore-navy/5 py-3 shadow-sm"
-          : "bg-transparent py-5"
+          ? "bg-white/90 backdrop-blur-xl border-b border-visacore-navy/5 py-2 shadow-sm sm:py-3"
+          : "bg-transparent py-3 sm:py-5"
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -65,7 +65,9 @@ export function Header() {
             height={315}
             className={cn(
               "w-auto transition-all duration-500",
-              useSolidHeader ? "h-16 lg:h-20" : "h-20 lg:h-24 brightness-0 invert"
+              useSolidHeader
+                ? "h-10 sm:h-12 lg:h-16"
+                : "h-12 sm:h-14 lg:h-20 brightness-0 invert"
             )}
             priority
           />
@@ -146,7 +148,7 @@ export function Header() {
                       alt="VisaCore Solutions"
                       width={1094}
                       height={315}
-                      className="h-16 w-auto brightness-0 invert"
+                      className="h-10 w-auto brightness-0 invert sm:h-12"
                     />
                   </SheetTitle>
                 </SheetHeader>
