@@ -1,0 +1,278 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth.js Models ──────────────────────────────────────────────
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  email          String    @unique
+  hashedPassword String?
+  role           Role      @default(EDITOR)
+  image          String?
+  emailVerified  DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  accounts             Account[]
+  sessions             Session[]
+  assignedLeads        Lead[]              @relation("AssignedLeads")
+  assignedAppointments AppointmentRequest[] @relation("AssignedAppointments")
+  uploadedMedia        MediaAsset[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Application Models ──────────────────────────────────────────
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  IN_PROGRESS
+  CONVERTED
+  CLOSED
+}
+
+model Lead {
+  id            String     @id @default(cuid())
+  fullName      String
+  email         String
+  phone         String
+  country       String
+  destination   String
+  situation     String?
+  serviceNeeded String?
+  message       String?    @db.Text
+  consent       Boolean    @default(false)
+  status        LeadStatus @default(NEW)
+  source        String?
+  notes         String?    @db.Text
+  tags          String[]
+  assignedToId  String?
+  assignedTo    User?      @relation("AssignedLeads", fields: [assignedToId], references: [id])
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model ContactRequest {
+  id        String   @id @default(cuid())
+  fullName  String
+  email     String
+  phone     String?
+  subject   String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  status    String   @default("NEW")
+  notes     String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum AppointmentStatus {
+  PENDING
+  APPROVED
+  CANCELLED
+  COMPLETED
+}
+
+model AppointmentRequest {
+  id              String            @id @default(cuid())
+  fullName        String
+  email           String
+  phone           String
+  preferredDate   DateTime?
+  preferredTime   String?
+  serviceType     String?
+  destinationType String?
+  message         String?           @db.Text
+  status          AppointmentStatus @default(PENDING)
+  notes           String?           @db.Text
+  assignedToId    String?
+  assignedTo      User?             @relation("AssignedAppointments", fields: [assignedToId], references: [id])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model Destination {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  heroTitle       String
+  heroDescription String?  @db.Text
+  heroImage       String?
+  opportunities   Json?
+  visaCategories  Json?
+  whyChoose       Json?
+  ctaText         String?
+  published       Boolean  @default(false)
+  order           Int      @default(0)
+  seoTitle        String?
+  seoDescription  String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  faqs         FAQ[]
+  testimonials Testimonial[]
+}
+
+model Service {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  icon            String?
+  description     String?  @db.Text
+  whoIsItFor      String?  @db.Text
+  requiredSupport String?  @db.Text
+  benefits        Json?
+  ctaText         String?
+  published       Boolean  @default(false)
+  order           Int      @default(0)
+  seoTitle        String?
+  seoDescription  String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum FAQCategory {
+  GENERAL
+  CANADA
+  USA
+  EUROPE
+  DOCUMENTATION
+  PROCESS
+}
+
+model FAQ {
+  id            String       @id @default(cuid())
+  question      String
+  answer        String       @db.Text
+  category      FAQCategory  @default(GENERAL)
+  destinationId String?
+  destination   Destination? @relation(fields: [destinationId], references: [id])
+  published     Boolean      @default(false)
+  order         Int          @default(0)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Testimonial {
+  id             String       @id @default(cuid())
+  clientName     String
+  clientImage    String?
+  destination    String?
+  destinationId  String?
+  destinationRef Destination? @relation(fields: [destinationId], references: [id])
+  content        String       @db.Text
+  rating         Int          @default(5)
+  featured       Boolean      @default(false)
+  published      Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model SuccessStory {
+  id             String   @id @default(cuid())
+  title          String
+  slug           String   @unique
+  clientName     String
+  destination    String
+  summary        String?  @db.Text
+  content        String?  @db.Text
+  images         Json?
+  published      Boolean  @default(false)
+  seoTitle       String?
+  seoDescription String?  @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model PageContent {
+  id         String   @id @default(cuid())
+  pageKey    String
+  sectionKey String
+  title      String?
+  subtitle   String?
+  content    Json?
+  published  Boolean  @default(true)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([pageKey, sectionKey])
+}
+
+enum SettingType {
+  TEXT
+  IMAGE
+  JSON
+  BOOLEAN
+}
+
+model SiteSetting {
+  id        String      @id @default(cuid())
+  key       String      @unique
+  value     String      @db.Text
+  type      SettingType @default(TEXT)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model MediaAsset {
+  id           String   @id @default(cuid())
+  filename     String
+  url          String
+  mimeType     String
+  size         Int
+  alt          String?
+  uploadedById String?
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
