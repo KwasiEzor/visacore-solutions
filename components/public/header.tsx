@@ -61,8 +61,8 @@ export function Header() {
           <Image
             src="/images/visacore_solution_logo.png"
             alt="VisaCore Solutions"
-            width={360}
-            height={100}
+            width={1094}
+            height={315}
             className={cn(
               "w-auto transition-all duration-500",
               useSolidHeader ? "h-16 lg:h-20" : "h-20 lg:h-24"
@@ -133,8 +133,8 @@ export function Header() {
                     <Image
                       src="/images/visacore_solution_logo.png"
                       alt="VisaCore Solutions"
-                      width={280}
-                      height={78}
+                      width={1094}
+                      height={315}
                       className="h-16 w-auto brightness-0 invert"
                     />
                   </SheetTitle>

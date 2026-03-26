@@ -63,8 +63,8 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         <Image
           src="/images/visacore_solutions_globe_logo.png"
           alt="VisaCore Solutions"
-          width={120}
-          height={120}
+          width={640}
+          height={525}
           className="size-8 rounded"
         />
         <span className="text-lg font-semibold tracking-tight text-white">

@@ -12,8 +12,8 @@ export default function AuthLayout({
           <Image
             src="/images/visacore_solutions_globe_logo.png"
             alt="VisaCore Solutions"
-            width={240}
-            height={240}
+            width={640}
+            height={525}
             className="mx-auto"
           />
           <h1 className="text-3xl font-bold text-white">

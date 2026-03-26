@@ -39,8 +39,8 @@ export function Footer() {
               <Image
                 src="/images/visacore_solution_logo.png"
                 alt="VisaCore Solutions"
-                width={320}
-                height={240}
+                width={1094}
+                height={315}
                 className="h-20 w-auto brightness-0 invert"
               />
             </Link>
