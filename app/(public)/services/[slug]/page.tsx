@@ -15,6 +15,7 @@ import {
   Handshake,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { ScrollReveal } from "@/components/public/scroll-reveal";
 
 /* ────────────────────────────────────────────────
    Types
@@ -94,78 +95,87 @@ export default async function ServicePage({
   const benefits = (service.benefits as Benefit[] | null) || [];
 
   return (
-    <>
+    <div className="pt-20">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-[#0A2540] py-20 sm:py-28">
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#0A2540] via-[#0F3460] to-[#0A2540]" />
-        <div className="pointer-events-none absolute -top-40 right-0 size-[500px] rounded-full bg-[#C9A227]/5 blur-3xl" />
+      <section className="relative overflow-hidden bg-visacore-navy py-24 sm:py-32">
+        <div className="absolute inset-0 bg-noise opacity-5" />
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-visacore-gold/10 blur-[120px]" />
+        <div className="absolute -bottom-48 -left-24 w-96 h-96 bg-visacore-gold/20 rounded-full blur-[120px] opacity-40" />
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <Link
-              href="/services"
-              className="mb-6 inline-flex items-center gap-1 text-sm text-white/60 transition-colors hover:text-[#C9A227]"
-            >
-              <ChevronRight className="size-4 rotate-180" />
-              Tous les services
-            </Link>
-
-            <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-2xl border border-[#C9A227]/30 bg-[#C9A227]/10">
-              <Icon className="size-8 text-[#C9A227]" />
-            </div>
-
-            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-              {service.name}
-            </h1>
-            {service.description && (
-              <p className="mt-6 text-lg leading-relaxed text-white/70">
-                {service.description}
-              </p>
-            )}
-            <div className="mt-8">
+        <div className="container-custom relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <ScrollReveal>
               <Link
-                href="/evaluation"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-[#C9A227] px-8 text-base font-semibold text-white shadow-lg shadow-[#C9A227]/25 transition-all hover:bg-[#A88620]"
+                href="/services"
+                className="mb-8 inline-flex items-center gap-2 text-sm font-bold text-white/50 transition-colors hover:text-visacore-gold"
               >
-                Demander ce service
-                <ArrowRight className="size-5" />
+                <ChevronRight className="size-4 rotate-180" />
+                Tous les services
               </Link>
-            </div>
+
+              <div className="mx-auto mb-8 size-20 rounded-3xl border border-visacore-gold/30 bg-visacore-gold/10 flex items-center justify-center">
+                <Icon className="size-10 text-visacore-gold" />
+              </div>
+
+              <h1 className="text-5xl md:text-7xl font-black text-white leading-none mb-8">
+                {service.name}
+              </h1>
+              {service.description && (
+                <p className="text-xl text-white/60 leading-relaxed font-medium max-w-2xl mx-auto">
+                  {service.description}
+                </p>
+              )}
+              <div className="mt-10">
+                <Link href="/evaluation">
+                  <button className="h-16 px-10 rounded-full bg-visacore-gold text-white font-black text-lg shadow-2xl shadow-visacore-gold/30 hover:scale-105 transition-all inline-flex items-center gap-3">
+                    Demander Ce Service
+                    <ArrowRight className="size-5" />
+                  </button>
+                </Link>
+              </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
 
       {/* Who Is It For & Required Support */}
       {(service.whoIsItFor || service.requiredSupport) && (
-        <section className="py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+        <section className="section-padding bg-background">
+          <div className="container-custom">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {service.whoIsItFor && (
-                <div className="rounded-2xl border border-border/50 bg-white p-8 shadow-sm">
-                  <div className="flex size-12 items-center justify-center rounded-lg bg-[#0A2540]">
-                    <Users className="size-6 text-[#C9A227]" />
+                <ScrollReveal>
+                  <div className="bg-white border border-border rounded-[40px] p-12 shadow-sm hover:shadow-2xl transition-shadow duration-500 h-full">
+                    <div className="size-16 rounded-2xl bg-visacore-navy flex items-center justify-center mb-8">
+                      <Users className="size-8 text-visacore-gold" />
+                    </div>
+                    <h2 className="text-3xl font-black text-visacore-navy mb-6">
+                      À Qui s&apos;Adresse Ce Service ?
+                    </h2>
+                    <div className="whitespace-pre-line text-muted-foreground leading-relaxed font-medium">
+                      {service.whoIsItFor}
+                    </div>
                   </div>
-                  <h2 className="mt-5 text-2xl font-bold text-[#0A2540]">
-                    À qui s&apos;adresse ce service ?
-                  </h2>
-                  <div className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-                    {service.whoIsItFor}
-                  </div>
-                </div>
+                </ScrollReveal>
               )}
 
               {service.requiredSupport && (
-                <div className="rounded-2xl border border-border/50 bg-white p-8 shadow-sm">
-                  <div className="flex size-12 items-center justify-center rounded-lg bg-[#C9A227]/10">
-                    <Handshake className="size-6 text-[#C9A227]" />
+                <ScrollReveal delay={0.15}>
+                  <div className="bg-visacore-navy rounded-[40px] p-12 h-full relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 size-48 bg-visacore-gold/10 rounded-full -mr-24 -mt-24 blur-3xl group-hover:scale-150 transition-transform duration-700" />
+                    <div className="relative z-10">
+                      <div className="size-16 rounded-2xl bg-visacore-gold/10 border border-visacore-gold/20 flex items-center justify-center mb-8">
+                        <Handshake className="size-8 text-visacore-gold" />
+                      </div>
+                      <h2 className="text-3xl font-black text-white mb-6">
+                        Notre Accompagnement
+                      </h2>
+                      <div className="whitespace-pre-line text-white/60 leading-relaxed font-medium">
+                        {service.requiredSupport}
+                      </div>
+                    </div>
                   </div>
-                  <h2 className="mt-5 text-2xl font-bold text-[#0A2540]">
-                    Notre accompagnement
-                  </h2>
-                  <div className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-                    {service.requiredSupport}
-                  </div>
-                </div>
+                </ScrollReveal>
               )}
             </div>
           </div>
@@ -174,65 +184,76 @@ export default async function ServicePage({
 
       {/* Benefits */}
       {benefits.length > 0 && (
-        <section className="bg-gray-50/80 py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl text-center">
-              <p className="text-sm font-semibold uppercase tracking-wider text-[#C9A227]">
-                Avantages
-              </p>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#0A2540] sm:text-4xl">
-                Les avantages de notre service
-              </h2>
-            </div>
-
-            <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {benefits.map((benefit, i) => (
-                <div key={i} className="flex gap-4">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#C9A227]/10">
-                    <CheckCircle2 className="size-5 text-[#C9A227]" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-[#0A2540]">
-                      {benefit.title}
-                    </h3>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                      {benefit.description}
-                    </p>
-                  </div>
+        <section className="section-padding bg-gray-50 border-y border-border">
+          <div className="container-custom">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+              <ScrollReveal>
+                <div className="inline-flex items-center gap-2 rounded-full bg-visacore-gold/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-visacore-gold mb-6">
+                  Avantages
                 </div>
-              ))}
+                <h2 className="text-4xl md:text-6xl font-black text-visacore-navy leading-tight">
+                  Les Avantages de Notre <span className="text-visacore-gold serif italic">Service</span>
+                </h2>
+              </ScrollReveal>
+
+              <div className="space-y-8">
+                {benefits.map((benefit, i) => (
+                  <ScrollReveal key={i} delay={i * 0.1}>
+                    <div className="flex gap-6 group">
+                      <div className="size-12 shrink-0 rounded-2xl bg-visacore-gold/10 text-visacore-gold flex items-center justify-center group-hover:bg-visacore-gold group-hover:text-white transition-colors duration-500">
+                        <CheckCircle2 className="size-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-black text-visacore-navy mb-2">
+                          {benefit.title}
+                        </h3>
+                        <p className="text-muted-foreground leading-relaxed">
+                          {benefit.description}
+                        </p>
+                      </div>
+                    </div>
+                  </ScrollReveal>
+                ))}
+              </div>
             </div>
           </div>
         </section>
       )}
 
       {/* CTA */}
-      <section className="bg-[#0A2540] py-20 sm:py-28">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white sm:text-4xl">
-            {service.ctaText || `Prêt à bénéficier de notre service ${service.name} ?`}
-          </h2>
-          <p className="mt-4 text-lg text-white/60">
-            Contactez nos experts pour une évaluation gratuite de votre profil
-            et un accompagnement personnalisé.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              href="/evaluation"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-[#C9A227] px-8 text-base font-semibold text-white shadow-lg shadow-[#C9A227]/25 transition-all hover:bg-[#A88620]"
-            >
-              Évaluation gratuite
-              <ArrowRight className="size-5" />
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border-2 border-white/30 px-8 text-base font-semibold text-white transition-all hover:border-white hover:bg-white/5"
-            >
-              Nous contacter
-            </Link>
-          </div>
+      <section className="section-padding px-4">
+        <div className="max-w-6xl mx-auto">
+          <ScrollReveal>
+            <div className="bg-visacore-navy rounded-[60px] p-12 md:p-24 text-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-noise opacity-5" />
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-visacore-gold/20 to-transparent blur-[120px]" />
+
+              <div className="relative z-10">
+                <h2 className="text-4xl md:text-6xl font-black text-white mb-8 leading-tight">
+                  {service.ctaText || `Prêt pour ${service.name} ?`}
+                </h2>
+                <p className="text-xl text-white/50 mb-12 max-w-2xl mx-auto">
+                  Contactez nos experts pour une évaluation gratuite de votre profil
+                  et un accompagnement personnalisé.
+                </p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                  <Link href="/evaluation">
+                    <button className="h-16 px-10 rounded-full bg-visacore-gold text-white font-black hover:scale-105 transition-all shadow-2xl shadow-visacore-gold/30 inline-flex items-center gap-3">
+                      Évaluation Gratuite
+                      <ArrowRight className="size-5" />
+                    </button>
+                  </Link>
+                  <Link href="/contact">
+                    <button className="h-16 px-10 rounded-full border-2 border-white/20 text-white font-bold hover:bg-white/10 transition-all">
+                      Nous Contacter
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
-    </>
+    </div>
   );
 }

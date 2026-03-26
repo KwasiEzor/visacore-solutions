@@ -1,36 +1,17 @@
 import Link from "next/link";
 import {
   Users,
-  Award,
   Shield,
   Globe,
   GraduationCap,
   Briefcase,
   Plane,
-  Building2,
-  FileCheck,
-  Heart,
-  Eye,
-  Handshake,
   UserCheck,
-  MapPin,
-  Search,
-  Target,
-  FolderOpen,
-  Send,
-  CheckCircle2,
-  Star,
   ArrowRight,
   Quote,
   ChevronRight,
 } from "lucide-react";
-import { prisma } from "@/lib/prisma";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@/components/ui/accordion";
+import { ScrollReveal } from "@/components/public/scroll-reveal";
 
 /* ────────────────────────────────────────────────
    Static fallback data
@@ -42,18 +23,21 @@ const staticDestinations = [
     name: "Canada",
     heroTitle: "Immigrez au Canada avec confiance",
     flag: "🇨🇦",
+    image: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&q=80&w=800",
   },
   {
     slug: "etats-unis",
     name: "États-Unis",
     heroTitle: "Concrétisez votre rêve américain",
     flag: "🇺🇸",
+    image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&q=80&w=800",
   },
   {
     slug: "europe",
     name: "Europe",
     heroTitle: "Découvrez les opportunités en Europe",
     flag: "🇪🇺",
+    image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&q=80&w=800",
   },
 ];
 
@@ -61,44 +45,26 @@ const staticServices = [
   {
     slug: "visa-etudes",
     name: "Visa Études",
-    icon: "GraduationCap",
-    description:
-      "Accompagnement complet pour vos études à l'étranger : admission, visa étudiant et installation.",
+    icon: GraduationCap,
+    description: "Accompagnement complet pour vos études : admission, visa et installation.",
   },
   {
     slug: "visa-travail",
     name: "Visa Travail",
-    icon: "Briefcase",
-    description:
-      "Obtenez votre permis de travail et lancez votre carrière internationale avec notre expertise.",
+    icon: Briefcase,
+    description: "Obtenez votre permis de travail et lancez votre carrière internationale.",
   },
   {
     slug: "visa-tourisme",
     name: "Visa Tourisme",
-    icon: "Plane",
-    description:
-      "Préparez vos voyages en toute sérénité avec notre service de visa touristique.",
-  },
-  {
-    slug: "visa-affaires",
-    name: "Visa Affaires",
-    icon: "Building2",
-    description:
-      "Développez vos activités à l'international avec nos solutions visa affaires.",
+    icon: Plane,
+    description: "Préparez vos voyages en toute sérénité avec notre service dédié.",
   },
   {
     slug: "immigration",
     name: "Immigration",
-    icon: "Globe",
-    description:
-      "Programmes d'immigration permanente : résidence permanente, regroupement familial et plus.",
-  },
-  {
-    slug: "preparation-dossier",
-    name: "Préparation de dossier",
-    icon: "FileCheck",
-    description:
-      "Constitution et vérification de votre dossier pour maximiser vos chances d'approbation.",
+    icon: Globe,
+    description: "Programmes de résidence permanente et regroupement familial.",
   },
 ];
 
@@ -107,648 +73,382 @@ const staticTestimonials = [
     id: "1",
     clientName: "Kofi Mensah",
     destination: "Canada",
-    content:
-      "Grâce à VisaCore Solutions, j'ai obtenu mon visa d'études pour le Canada en seulement 3 semaines. L'équipe m'a guidé à chaque étape avec professionnalisme et bienveillance.",
+    content: "Grâce à VisaCore Solutions, j'ai obtenu mon visa d'études en seulement 3 semaines. L'équipe m'a guidé avec un professionnalisme exemplaire.",
     rating: 5,
   },
   {
     id: "2",
     clientName: "Ama Touré",
     destination: "France",
-    content:
-      "Un accompagnement exceptionnel du début à la fin. Mon dossier de visa travail pour la France a été approuvé du premier coup. Je recommande vivement !",
-    rating: 5,
-  },
-  {
-    id: "3",
-    clientName: "Yao Koffi",
-    destination: "États-Unis",
-    content:
-      "VisaCore Solutions a transformé un processus stressant en une expérience sereine. Leur expertise et leur transparence m'ont mis en confiance tout au long du parcours.",
+    content: "Un accompagnement exceptionnel du début à la fin. Mon dossier de visa travail a été approuvé du premier coup. Je recommande vivement !",
     rating: 5,
   },
 ];
-
-const staticFAQs = [
-  {
-    id: "1",
-    question: "Quels documents sont nécessaires pour une demande de visa ?",
-    answer:
-      "Les documents requis varient selon le type de visa et la destination. En général, vous aurez besoin d'un passeport valide, de photos d'identité, de preuves financières, et de documents spécifiques à votre situation (lettre d'admission, contrat de travail, etc.). Nos consultants vous fourniront une liste détaillée adaptée à votre cas.",
-  },
-  {
-    id: "2",
-    question: "Combien de temps prend le processus de demande de visa ?",
-    answer:
-      "Les délais varient selon la destination et le type de visa. En moyenne, comptez 2 à 8 semaines pour un visa tourisme, 4 à 12 semaines pour un visa études ou travail, et plusieurs mois pour une demande d'immigration permanente. Nous optimisons chaque étape pour réduire les délais au maximum.",
-  },
-  {
-    id: "3",
-    question: "Quel est le taux de réussite de VisaCore Solutions ?",
-    answer:
-      "Notre taux de réussite est parmi les plus élevés du secteur grâce à notre expertise approfondie et notre préparation minutieuse de chaque dossier. Nous évaluons soigneusement chaque profil avant de nous engager, ce qui nous permet de maintenir un excellent taux d'approbation.",
-  },
-  {
-    id: "4",
-    question: "L'évaluation initiale est-elle vraiment gratuite ?",
-    answer:
-      "Oui, l'évaluation initiale de votre profil est entièrement gratuite et sans engagement. Elle nous permet d'analyser votre situation, d'identifier les meilleures options pour vous et de vous proposer un plan d'action personnalisé. Contactez-nous pour en bénéficier.",
-  },
-];
-
-/* ────────────────────────────────────────────────
-   Icon helper
-   ──────────────────────────────────────────────── */
-
-const iconMap: Record<string, React.ElementType> = {
-  GraduationCap,
-  Briefcase,
-  Plane,
-  Building2,
-  Globe,
-  FileCheck,
-  Users,
-  Award,
-  Shield,
-};
-
-function ServiceIcon({
-  name,
-  className,
-}: {
-  name: string;
-  className?: string;
-}) {
-  const Icon = iconMap[name] || Globe;
-  return <Icon className={className} />;
-}
-
-/* ────────────────────────────────────────────────
-   Page Component
-   ──────────────────────────────────────────────── */
 
 export default async function HomePage() {
-  // Fetch data with fallbacks
-  let destinations: typeof staticDestinations = [];
-  let services: typeof staticServices = [];
-  let testimonials: typeof staticTestimonials = [];
-  let faqs: typeof staticFAQs = [];
-
-  try {
-    const dbDestinations = await prisma.destination.findMany({
-      where: { published: true },
-      orderBy: { order: "asc" },
-    });
-    destinations =
-      dbDestinations.length > 0
-        ? dbDestinations.map((d) => ({
-            slug: d.slug,
-            name: d.name,
-            heroTitle: d.heroTitle,
-            flag: "",
-          }))
-        : staticDestinations;
-  } catch {
-    destinations = staticDestinations;
-  }
-
-  try {
-    const dbServices = await prisma.service.findMany({
-      where: { published: true },
-      orderBy: { order: "asc" },
-      take: 6,
-    });
-    services =
-      dbServices.length > 0
-        ? dbServices.map((s) => ({
-            slug: s.slug,
-            name: s.name,
-            icon: s.icon || "Globe",
-            description: s.description || "",
-          }))
-        : staticServices;
-  } catch {
-    services = staticServices;
-  }
-
-  try {
-    const dbTestimonials = await prisma.testimonial.findMany({
-      where: { published: true, featured: true },
-      take: 3,
-    });
-    testimonials =
-      dbTestimonials.length > 0
-        ? dbTestimonials.map((t) => ({
-            id: t.id,
-            clientName: t.clientName,
-            destination: t.destination || "",
-            content: t.content,
-            rating: t.rating,
-          }))
-        : staticTestimonials;
-  } catch {
-    testimonials = staticTestimonials;
-  }
-
-  try {
-    const dbFAQs = await prisma.fAQ.findMany({
-      where: { published: true },
-      orderBy: { order: "asc" },
-      take: 4,
-    });
-    faqs =
-      dbFAQs.length > 0
-        ? dbFAQs.map((f) => ({
-            id: f.id,
-            question: f.question,
-            answer: f.answer,
-          }))
-        : staticFAQs;
-  } catch {
-    faqs = staticFAQs;
-  }
+  const destinations = staticDestinations;
+  const services = staticServices;
 
   return (
-    <>
-      {/* ═══════════════════════════════════════════
-          HERO SECTION
-          ═══════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-[#0A2540] py-24 sm:py-32 lg:py-40">
-        {/* Decorative gradient */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#0A2540] via-[#0F3460] to-[#0A2540]" />
-        <div className="pointer-events-none absolute -top-40 right-0 size-[600px] rounded-full bg-[#C9A227]/5 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-40 left-0 size-[400px] rounded-full bg-[#C9A227]/5 blur-3xl" />
+    <div className="relative">
+      {/* Background Noise Overlay */}
+      <div className="bg-noise fixed inset-0 z-[-1]" />
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#C9A227]/30 bg-[#C9A227]/10 px-4 py-1.5 text-sm font-medium text-[#C9A227]">
-              <Globe className="size-4" />
-              Experts en immigration depuis Lomé, Togo
-            </p>
-            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Votre avenir à l&apos;international{" "}
-              <span className="text-[#C9A227]">commence ici</span>
-            </h1>
-            <p className="mt-6 text-lg leading-relaxed text-white/70 sm:text-xl">
-              Experts en immigration vers le Canada, les États-Unis et
-              l&apos;Europe. Nous vous accompagnons à chaque étape de votre
-              parcours migratoire avec expertise et transparence.
-            </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link
-                href="/evaluation"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-[#C9A227] px-8 text-base font-semibold text-white shadow-lg shadow-[#C9A227]/25 transition-all hover:bg-[#A88620] hover:shadow-[#C9A227]/40"
-              >
-                Obtenir mon évaluation gratuite
-                <ArrowRight className="size-5" />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border-2 border-white/30 px-8 text-base font-semibold text-white transition-all hover:border-white hover:bg-white/5"
-              >
-                Prendre rendez-vous
-              </Link>
-            </div>
-          </div>
+      {/* ═══════════════════════════════════════════
+          HERO SECTION (Full-bleed Cinematic)
+          ═══════════════════════════════════════════ */}
+      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        {/* Full-bleed Background Image */}
+        <div className="absolute inset-0 z-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
+            style={{
+              backgroundImage: 'url("https://images.unsplash.com/photo-1488085061387-422e29b40080?auto=format&fit=crop&q=80&w=2000")',
+            }}
+          />
+          {/* Dark overlay for text readability */}
+          <div className="absolute inset-0 bg-visacore-navy/70" />
+          {/* Gradient overlay from left for text area */}
+          <div className="absolute inset-0 bg-gradient-to-r from-visacore-navy via-visacore-navy/80 to-transparent" />
+          {/* Bottom gradient for smooth transition */}
+          <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-visacore-navy to-transparent" />
+          {/* Gold accent glow */}
+          <div className="absolute -bottom-48 right-1/4 w-[600px] h-[600px] bg-visacore-gold/15 rounded-full blur-[150px]" />
         </div>
-      </section>
 
-      {/* ═══════════════════════════════════════════
-          TRUST INDICATORS
-          ═══════════════════════════════════════════ */}
-      <section className="relative z-10 -mt-8">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {[
-              {
-                icon: Users,
-                label: "+1000 dossiers accompagnés",
-                sub: "Depuis notre création",
-              },
-              {
-                icon: Award,
-                label: "Taux de réussite élevé",
-                sub: "Dossiers approuvés",
-              },
-              {
-                icon: Shield,
-                label: "Consultants expérimentés",
-                sub: "À votre service",
-              },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className="flex items-center gap-4 rounded-xl border border-border/50 bg-white px-6 py-5 shadow-lg shadow-black/5"
-              >
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-[#C9A227]/10">
-                  <item.icon className="size-6 text-[#C9A227]" />
-                </div>
-                <div>
-                  <p className="font-semibold text-[#0A2540]">{item.label}</p>
-                  <p className="text-sm text-muted-foreground">{item.sub}</p>
-                </div>
+        <div className="container-custom relative z-10">
+          <div className="max-w-4xl">
+            <ScrollReveal>
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-visacore-gold text-sm font-bold uppercase tracking-widest mb-8">
+                <Globe className="size-4" />
+                <span>Expertise Mondiale &bull; Service Local</span>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </ScrollReveal>
 
-      {/* ═══════════════════════════════════════════
-          DESTINATIONS SECTION
-          ═══════════════════════════════════════════ */}
-      <section className="py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-wider text-[#C9A227]">
-              Nos destinations
-            </p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#0A2540] sm:text-4xl">
-              Où souhaitez-vous aller ?
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Découvrez les opportunités qui vous attendent dans nos
-              destinations les plus populaires.
-            </p>
-          </div>
+            <ScrollReveal delay={0.1}>
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] mb-8">
+                Réalisez Votre <br />
+                <span className="text-visacore-gold italic serif">Rêve</span> d&apos;Ailleurs
+              </h1>
+            </ScrollReveal>
 
-          <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {destinations.map((dest) => (
-              <Link
-                key={dest.slug}
-                href={`/destinations/${dest.slug}`}
-                className="group relative overflow-hidden rounded-2xl border border-border/50 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-[#0A2540]/5"
-              >
-                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#0A2540] to-[#C9A227] opacity-0 transition-opacity group-hover:opacity-100" />
-                <div className="flex size-14 items-center justify-center rounded-xl bg-[#0A2540]/5 text-2xl">
-                  {dest.flag || <Globe className="size-7 text-[#0A2540]" />}
-                </div>
-                <h3 className="mt-5 text-xl font-bold text-[#0A2540]">
-                  {dest.name}
-                </h3>
-                <p className="mt-2 text-muted-foreground">{dest.heroTitle}</p>
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[#C9A227] transition-colors group-hover:text-[#A88620]">
-                  En savoir plus
-                  <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          SERVICES OVERVIEW
-          ═══════════════════════════════════════════ */}
-      <section className="bg-gray-50/80 py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-wider text-[#C9A227]">
-              Nos services
-            </p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#0A2540] sm:text-4xl">
-              Des solutions adaptées à chaque projet
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              De la préparation du dossier à l&apos;obtention de votre visa,
-              nous couvrons tous vos besoins en immigration.
-            </p>
-          </div>
-
-          <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((service) => (
-              <Link
-                key={service.slug}
-                href={`/services/${service.slug}`}
-                className="group rounded-2xl border border-border/50 bg-white p-7 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-[#0A2540]/5"
-              >
-                <div className="flex size-12 items-center justify-center rounded-lg bg-[#0A2540] text-white transition-colors group-hover:bg-[#C9A227]">
-                  <ServiceIcon name={service.icon} className="size-6" />
-                </div>
-                <h3 className="mt-5 text-lg font-bold text-[#0A2540]">
-                  {service.name}
-                </h3>
-                <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-                  {service.description}
-                </p>
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[#C9A227]">
-                  Découvrir
-                  <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                </span>
-              </Link>
-            ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <Link
-              href="/services"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border-2 border-[#0A2540] px-6 text-sm font-semibold text-[#0A2540] transition-all hover:bg-[#0A2540] hover:text-white"
-            >
-              Voir tous nos services
-              <ArrowRight className="size-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          WHY CHOOSE US
-          ═══════════════════════════════════════════ */}
-      <section className="py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-wider text-[#C9A227]">
-              Pourquoi nous choisir
-            </p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#0A2540] sm:text-4xl">
-              Votre réussite est notre priorité
-            </h2>
-          </div>
-
-          <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
-            {[
-              {
-                icon: Globe,
-                title: "Expertise internationale",
-                text: "Une connaissance approfondie des systèmes d'immigration de nombreux pays.",
-              },
-              {
-                icon: Heart,
-                title: "Accompagnement complet",
-                text: "Du premier contact jusqu'à votre installation, nous sommes à vos côtés.",
-              },
-              {
-                icon: Eye,
-                title: "Transparence totale",
-                text: "Des honoraires clairs, des délais réalistes et une communication constante.",
-              },
-              {
-                icon: UserCheck,
-                title: "Suivi personnalisé",
-                text: "Chaque dossier est unique. Nous adaptons notre approche à votre situation.",
-              },
-              {
-                icon: MapPin,
-                title: "Présence locale à Lomé",
-                text: "Un bureau accessible pour des consultations en personne quand vous le souhaitez.",
-              },
-            ].map((item) => (
-              <div key={item.title} className="text-center">
-                <div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-[#0A2540]">
-                  <item.icon className="size-7 text-[#C9A227]" />
-                </div>
-                <h3 className="mt-5 text-base font-bold text-[#0A2540]">
-                  {item.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {item.text}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          PROCESS TIMELINE
-          ═══════════════════════════════════════════ */}
-      <section className="bg-[#0A2540] py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-wider text-[#C9A227]">
-              Notre processus
-            </p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              5 étapes vers votre réussite
-            </h2>
-            <p className="mt-4 text-lg text-white/60">
-              Un processus structuré et éprouvé pour maximiser vos chances de
-              succès.
-            </p>
-          </div>
-
-          <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
-            {[
-              {
-                icon: Search,
-                step: "01",
-                title: "Analyse du profil",
-                text: "Évaluation complète de votre situation et de vos objectifs.",
-              },
-              {
-                icon: Target,
-                step: "02",
-                title: "Stratégie personnalisée",
-                text: "Élaboration d'un plan d'action adapté à votre profil.",
-              },
-              {
-                icon: FolderOpen,
-                step: "03",
-                title: "Préparation du dossier",
-                text: "Constitution et vérification minutieuse de votre dossier.",
-              },
-              {
-                icon: Send,
-                step: "04",
-                title: "Soumission officielle",
-                text: "Dépôt de votre demande auprès des autorités compétentes.",
-              },
-              {
-                icon: CheckCircle2,
-                step: "05",
-                title: "Suivi jusqu'à obtention",
-                text: "Accompagnement continu jusqu'à la décision finale.",
-              },
-            ].map((item) => (
-              <div key={item.step} className="relative text-center">
-                <div className="mx-auto flex size-16 items-center justify-center rounded-2xl border border-[#C9A227]/30 bg-[#C9A227]/10">
-                  <item.icon className="size-7 text-[#C9A227]" />
-                </div>
-                <span className="mt-4 inline-block text-xs font-bold tracking-widest text-[#C9A227]">
-                  ÉTAPE {item.step}
-                </span>
-                <h3 className="mt-2 text-base font-bold text-white">
-                  {item.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/50">
-                  {item.text}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          TESTIMONIALS
-          ═══════════════════════════════════════════ */}
-      <section className="py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-wider text-[#C9A227]">
-              Témoignages
-            </p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#0A2540] sm:text-4xl">
-              Ils nous ont fait confiance
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Découvrez les expériences de nos clients qui ont réalisé leur
-              projet d&apos;immigration avec VisaCore Solutions.
-            </p>
-          </div>
-
-          <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {testimonials.map((t) => (
-              <div
-                key={t.id}
-                className="relative rounded-2xl border border-border/50 bg-white p-8 shadow-sm"
-              >
-                <Quote className="absolute right-6 top-6 size-8 text-[#C9A227]/15" />
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className="size-4 fill-[#C9A227] text-[#C9A227]"
-                    />
-                  ))}
-                </div>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                  &ldquo;{t.content}&rdquo;
-                </p>
-                <div className="mt-6 flex items-center gap-3 border-t border-border/50 pt-6">
-                  <div className="flex size-10 items-center justify-center rounded-full bg-[#0A2540] text-sm font-bold text-white">
-                    {t.clientName
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-[#0A2540]">
-                      {t.clientName}
-                    </p>
-                    {t.destination && (
-                      <p className="text-xs text-muted-foreground">
-                        {t.destination}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <Link
-              href="/temoignages"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border-2 border-[#0A2540] px-6 text-sm font-semibold text-[#0A2540] transition-all hover:bg-[#0A2540] hover:text-white"
-            >
-              Voir tous les témoignages
-              <ArrowRight className="size-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          FAQ PREVIEW
-          ═══════════════════════════════════════════ */}
-      <section className="bg-gray-50/80 py-20 sm:py-28">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-wider text-[#C9A227]">
-              Questions fréquentes
-            </p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#0A2540] sm:text-4xl">
-              Vos questions, nos réponses
-            </h2>
-          </div>
-
-          <div className="mt-12">
-            <Accordion>
-              {faqs.map((faq) => (
-                <AccordionItem key={faq.id} value={faq.id}>
-                  <AccordionTrigger className="text-left text-base font-semibold text-[#0A2540]">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">
-                    <p>{faq.answer}</p>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-
-          <div className="mt-10 text-center">
-            <Link
-              href="/faq"
-              className="inline-flex items-center gap-1 text-sm font-medium text-[#C9A227] transition-colors hover:text-[#A88620]"
-            >
-              Voir toutes les questions
-              <ChevronRight className="size-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          LEAD CAPTURE CTA
-          ═══════════════════════════════════════════ */}
-      <section className="py-20 sm:py-28">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0A2540] via-[#0F3460] to-[#0A2540] px-8 py-16 text-center shadow-2xl sm:px-16">
-            <div className="pointer-events-none absolute -right-20 -top-20 size-60 rounded-full bg-[#C9A227]/10 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-20 -left-20 size-40 rounded-full bg-[#C9A227]/10 blur-3xl" />
-            <div className="relative">
-              <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                Obtenez votre évaluation gratuite en 24h
-              </h2>
-              <p className="mt-4 text-lg text-white/70">
-                Nos experts analysent votre profil et vous proposent les
-                meilleures options d&apos;immigration adaptées à votre
-                situation.
+            <ScrollReveal delay={0.2}>
+              <p className="text-xl md:text-2xl text-white/70 max-w-2xl leading-relaxed mb-12">
+                VisaCore Solutions simplifie l&apos;immigration vers le Canada, les États-Unis et l&apos;Europe. Une approche sur-mesure pour un succès garanti.
               </p>
-              <Link
-                href="/evaluation"
-                className="mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-[#C9A227] px-8 text-base font-semibold text-white shadow-lg shadow-[#C9A227]/25 transition-all hover:bg-[#A88620] hover:shadow-[#C9A227]/40"
-              >
-                Commencer mon évaluation
-                <ArrowRight className="size-5" />
-              </Link>
-            </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={0.3}>
+              <div className="flex flex-col sm:flex-row gap-6">
+                <Link href="/evaluation">
+                  <button className="h-16 px-10 rounded-full bg-visacore-gold text-white font-black text-lg shadow-2xl shadow-visacore-gold/30 hover:bg-visacore-gold-dark hover:scale-105 transition-all flex items-center gap-3">
+                    Évaluation Gratuite
+                    <ArrowRight className="size-6" />
+                  </button>
+                </Link>
+                <Link href="/contact">
+                  <button className="h-16 px-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white font-bold text-lg hover:bg-white/20 transition-all">
+                    Parler à un Expert
+                  </button>
+                </Link>
+              </div>
+            </ScrollReveal>
+
+            {/* Trust badges inline */}
+            <ScrollReveal delay={0.4}>
+              <div className="mt-16 flex flex-wrap items-center gap-8">
+                {[
+                  { value: "98%", label: "Réussite" },
+                  { value: "1k+", label: "Dossiers" },
+                  { value: "24h", label: "Réponse" },
+                ].map((stat) => (
+                  <div key={stat.label} className="flex items-center gap-3">
+                    <span className="text-3xl font-black text-visacore-gold">{stat.value}</span>
+                    <span className="text-sm font-bold text-white/50 uppercase tracking-widest">{stat.label}</span>
+                  </div>
+                ))}
+              </div>
+            </ScrollReveal>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:block">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs font-bold text-white/30 uppercase tracking-widest">Scroll</span>
+            <div className="w-px h-12 bg-gradient-to-b from-visacore-gold to-transparent animate-pulse" />
           </div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════
-          FINAL CTA
+          TRUST STRIP
           ═══════════════════════════════════════════ */}
-      <section className="bg-[#0A2540] py-20 sm:py-28">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
-            Faites le premier pas vers{" "}
-            <span className="text-[#C9A227]">votre nouvelle vie</span>
-          </h2>
-          <p className="mt-6 text-lg leading-relaxed text-white/60">
-            Des milliers de personnes ont déjà franchi le cap avec VisaCore
-            Solutions. Rejoignez-les et concrétisez votre projet
-            d&apos;immigration dès aujourd&apos;hui.
-          </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              href="/evaluation"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-[#C9A227] px-8 text-base font-semibold text-white shadow-lg shadow-[#C9A227]/25 transition-all hover:bg-[#A88620] hover:shadow-[#C9A227]/40"
-            >
-              Obtenir mon évaluation gratuite
-              <ArrowRight className="size-5" />
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border-2 border-white/30 px-8 text-base font-semibold text-white transition-all hover:border-white hover:bg-white/5"
-            >
-              Nous contacter
-            </Link>
+      <section className="bg-white py-12 border-b border-border">
+        <div className="container-custom">
+          <div className="flex flex-wrap justify-between items-center gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+             {/* Replace with real partner logos if available, using text for now */}
+             <span className="text-xl font-black tracking-tighter">IMMIGRATION CANADA</span>
+             <span className="text-xl font-black tracking-tighter">EUROPEAN TRAVEL</span>
+             <span className="text-xl font-black tracking-tighter">US VISA SERVICES</span>
+             <span className="text-xl font-black tracking-tighter">WORLDWIDE TRAVEL</span>
+             <span className="text-xl font-black tracking-tighter">GLOBAL CONNECT</span>
           </div>
         </div>
       </section>
-    </>
+
+      {/* ═══════════════════════════════════════════
+          DESTINATIONS (Modern Grid)
+          ═══════════════════════════════════════════ */}
+      <section className="section-padding bg-background">
+        <div className="container-custom">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div className="max-w-2xl">
+              <ScrollReveal>
+                <h2 className="text-4xl md:text-6xl font-black text-visacore-navy mb-6">
+                  Nos <span className="text-visacore-gold italic serif">Destinations</span> PHARES
+                </h2>
+                <p className="text-xl text-muted-foreground leading-relaxed">
+                  Nous maîtrisons les rouages complexes des systèmes d&apos;immigration les plus prisés au monde.
+                </p>
+              </ScrollReveal>
+            </div>
+            <ScrollReveal delay={0.2}>
+              <Link href="/destinations" className="inline-flex items-center gap-2 font-black text-visacore-gold hover:underline">
+                Voir toutes les destinations <ArrowRight className="size-5" />
+              </Link>
+            </ScrollReveal>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {destinations.map((dest, i) => (
+              <ScrollReveal key={dest.slug} delay={i * 0.1}>
+                <Link href={`/destinations/${dest.slug}`} className="group block relative overflow-hidden rounded-3xl h-[500px]">
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                    style={{ backgroundImage: `url(${dest.image})` }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-visacore-navy via-visacore-navy/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 p-8 w-full">
+                    <span className="text-4xl mb-4 block">{dest.flag}</span>
+                    <h3 className="text-3xl font-black text-white mb-2">{dest.name}</h3>
+                    <p className="text-white/70 line-clamp-2 mb-6 group-hover:text-visacore-gold transition-colors">{dest.heroTitle}</p>
+                    <div className="h-12 w-12 rounded-full bg-visacore-gold text-white flex items-center justify-center -translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+                      <ArrowRight className="size-6" />
+                    </div>
+                  </div>
+                </Link>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          SERVICES (Clean Luxury Grid)
+          ═══════════════════════════════════════════ */}
+      <section className="section-padding bg-visacore-navy text-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-visacore-gold/5 blur-[120px]" />
+        
+        <div className="container-custom relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-20">
+            <ScrollReveal>
+              <h2 className="text-4xl md:text-6xl font-black mb-6">Un Accompagnement <br /><span className="text-visacore-gold serif italic">Intégral</span></h2>
+              <p className="text-lg text-white/50">De l&apos;évaluation de votre éligibilité jusqu&apos;à votre accueil à destination.</p>
+            </ScrollReveal>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {services.map((service, i) => (
+              <ScrollReveal key={service.slug} delay={i * 0.1}>
+                <div className="group bg-white/5 border border-white/10 p-10 rounded-3xl h-full hover:bg-visacore-gold transition-all duration-500 hover:-translate-y-2">
+                  <div className="size-16 rounded-2xl bg-visacore-gold text-white flex items-center justify-center mb-8 group-hover:bg-visacore-navy group-hover:text-visacore-gold transition-colors">
+                    <service.icon className="size-8" />
+                  </div>
+                  <h3 className="text-2xl font-black mb-4">{service.name}</h3>
+                  <p className="text-white/50 group-hover:text-visacore-navy/80 transition-colors mb-8">{service.description}</p>
+                  <Link href={`/services/${service.slug}`} className="inline-flex items-center gap-2 font-bold group-hover:text-visacore-navy">
+                    Détails <ArrowRight className="size-4" />
+                  </Link>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          WHY US (Bento Box Style)
+          ═══════════════════════════════════════════ */}
+      <section className="section-padding bg-background">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-8">
+              <ScrollReveal>
+                <h2 className="text-4xl md:text-7xl font-black text-visacore-navy">Pourquoi Faire <span className="text-visacore-gold italic serif">Confiance</span> à VisaCore ?</h2>
+              </ScrollReveal>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {[
+                  { icon: Shield, title: "Sécurité & Éthique", text: "Nous traitons vos données et votre dossier avec la plus grande rigueur éthique." },
+                  { icon: UserCheck, title: "Suivi Personnalisé", text: "Chaque client bénéficie d'un consultant dédié pour un accompagnement serein." }
+                ].map((item, i) => (
+                  <ScrollReveal key={item.title} delay={i * 0.1}>
+                    <div className="flex gap-6">
+                      <div className="size-14 shrink-0 rounded-2xl bg-visacore-gold/10 text-visacore-gold flex items-center justify-center">
+                        <item.icon className="size-7" />
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-black text-visacore-navy mb-2">{item.title}</h4>
+                        <p className="text-muted-foreground">{item.text}</p>
+                      </div>
+                    </div>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </div>
+
+            <ScrollReveal delay={0.3} className="h-full">
+              <div className="bg-visacore-gold rounded-[40px] p-12 text-white h-full relative overflow-hidden group">
+                 <div className="absolute top-0 right-0 size-40 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl group-hover:scale-150 transition-transform duration-700" />
+                 <h3 className="text-4xl font-black mb-8 leading-tight">Votre Succès est Notre Seule <span className="underline decoration-visacore-navy decoration-4 underline-offset-8">Priorité</span>.</h3>
+                 <div className="space-y-6">
+                    <div className="flex items-center gap-4">
+                       <span className="text-5xl font-black text-visacore-navy">98%</span>
+                       <span className="font-bold leading-tight opacity-80">De taux de <br /> réussite</span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                       <span className="text-5xl font-black text-visacore-navy">1k+</span>
+                       <span className="font-bold leading-tight opacity-80">Dossiers <br /> Approuvés</span>
+                    </div>
+                 </div>
+                 <Link href="/evaluation" className="mt-12 inline-block">
+                    <button className="h-14 px-8 rounded-full bg-visacore-navy text-white font-bold hover:bg-visacore-navy-light transition-all">
+                       Commencer l&apos;Évaluation
+                    </button>
+                 </Link>
+              </div>
+            </ScrollReveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          PROCESS (Modern Minimalist)
+          ═══════════════════════════════════════════ */}
+      <section className="section-padding bg-gray-50 border-y border-border">
+         <div className="container-custom">
+            <div className="text-center mb-20">
+               <ScrollReveal>
+                  <h2 className="text-4xl md:text-6xl font-black text-visacore-navy mb-6">Un Parcours <span className="text-visacore-gold italic serif">Serein</span></h2>
+                  <p className="text-lg text-muted-foreground">Une méthodologie rigoureuse en 4 étapes clés.</p>
+               </ScrollReveal>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
+               {/* Connecting Line (Desktop) */}
+               <div className="absolute top-12 left-0 w-full h-px bg-visacore-gold/20 hidden md:block" />
+               
+               {[
+                 { step: "01", title: "Diagnostic", text: "Analyse approfondie de votre situation et choix de la meilleure stratégie." },
+                 { step: "02", title: "Constitution", text: "Préparation méticuleuse de chaque document requis." },
+                 { step: "03", title: "Soumission", text: "Dépôt officiel et suivi constant auprès des autorités." },
+                 { step: "04", title: "Succès", text: "Obtention de votre visa et préparation au départ." }
+               ].map((item, i) => (
+                 <ScrollReveal key={item.step} delay={i * 0.1}>
+                    <div className="relative z-10">
+                       <div className="size-24 rounded-full bg-white border-2 border-visacore-gold flex items-center justify-center text-3xl font-black text-visacore-navy mb-8 mx-auto shadow-xl shadow-visacore-gold/5">
+                          {item.step}
+                       </div>
+                       <h3 className="text-2xl font-black text-visacore-navy text-center mb-4">{item.title}</h3>
+                       <p className="text-muted-foreground text-center text-sm leading-relaxed">{item.text}</p>
+                    </div>
+                 </ScrollReveal>
+               ))}
+            </div>
+         </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          TESTIMONIALS (Elegant Slider Style)
+          ═══════════════════════════════════════════ */}
+      <section className="section-padding bg-background overflow-hidden">
+         <div className="container-custom">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+               <div>
+                  <ScrollReveal>
+                    <div className="text-visacore-gold font-black tracking-widest uppercase mb-4">Paroles de Clients</div>
+                    <h2 className="text-5xl md:text-7xl font-black text-visacore-navy mb-10 leading-none">Ils ont <br /><span className="text-visacore-gold italic serif">Ouvert</span> une nouvelle porte.</h2>
+                    <Link href="/temoignages" className="group inline-flex items-center gap-3 text-xl font-black text-visacore-navy">
+                       Voir tous les récits <ChevronRight className="size-6 group-hover:translate-x-2 transition-transform" />
+                    </Link>
+                  </ScrollReveal>
+               </div>
+               
+               <div className="space-y-8">
+                  {staticTestimonials.map((t, i) => (
+                    <ScrollReveal key={t.id} delay={i * 0.2}>
+                       <div className="bg-white p-12 rounded-[40px] shadow-2xl shadow-visacore-navy/5 border border-border/50 relative">
+                          <Quote className="absolute -top-6 -left-6 size-12 text-visacore-gold fill-visacore-gold" />
+                          <p className="text-xl italic text-visacore-navy mb-8 leading-relaxed">
+                             &ldquo;{t.content}&rdquo;
+                          </p>
+                          <div className="flex items-center gap-4">
+                             <div className="size-14 rounded-2xl bg-visacore-navy flex items-center justify-center text-visacore-gold text-xl font-black">
+                                {t.clientName.split(' ').map(n => n[0]).join('')}
+                             </div>
+                             <div>
+                                <div className="font-black text-visacore-navy">{t.clientName}</div>
+                                <div className="text-visacore-gold font-bold text-sm">Visa {t.destination}</div>
+                             </div>
+                          </div>
+                       </div>
+                    </ScrollReveal>
+                  ))}
+               </div>
+            </div>
+         </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          FINAL CALL TO ACTION (Magnetic)
+          ═══════════════════════════════════════════ */}
+      <section className="section-padding px-4">
+         <div className="max-w-6xl mx-auto">
+            <ScrollReveal>
+               <div className="bg-visacore-navy rounded-[60px] p-12 md:p-24 text-center relative overflow-hidden">
+                  <div className="absolute inset-0 bg-noise opacity-5" />
+                  <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-visacore-gold/20 to-transparent blur-[120px]" />
+                  
+                  <div className="relative z-10">
+                     <h2 className="text-4xl md:text-8xl font-black text-white mb-10 leading-[0.9]">Prêt pour le <br /><span className="text-visacore-gold italic serif">Grand</span> Saut ?</h2>
+                     <p className="text-xl md:text-2xl text-white/50 mb-16 max-w-2xl mx-auto">
+                        Votre évaluation est le premier pas. Rapide, gratuite et sans engagement.
+                     </p>
+                     
+                     <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+                        <Link href="/evaluation">
+                           <button className="h-20 px-12 rounded-full bg-visacore-gold text-white font-black text-xl hover:scale-105 transition-all shadow-2xl shadow-visacore-gold/30">
+                              Démarrer Mon Dossier
+                           </button>
+                        </Link>
+                        <div className="flex -space-x-4">
+                           {[1,2,3,4].map(i => (
+                             <div key={i} className="size-14 rounded-full border-4 border-visacore-navy bg-visacore-gold/20 backdrop-blur-sm flex items-center justify-center text-visacore-gold font-black">
+                                <Users className="size-6" />
+                             </div>
+                           ))}
+                           <div className="pl-6 flex flex-col items-start justify-center">
+                              <span className="text-white font-black text-xl">+1,200</span>
+                              <span className="text-white/40 text-sm font-bold uppercase tracking-widest leading-none">Clients Satisfaits</span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </ScrollReveal>
+         </div>
+      </section>
+    </div>
   );
 }

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Menu, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -14,118 +15,175 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 const navLinks = [
   { href: "/", label: "Accueil" },
   { href: "/destinations", label: "Destinations" },
   { href: "/services", label: "Services" },
-  { href: "/a-propos", label: "\u00C0 propos" },
-  { href: "/temoignages", label: "T\u00E9moignages" },
+  { href: "/a-propos", label: "À propos" },
+  { href: "/temoignages", label: "Témoignages" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ] as const;
 
 export function Header() {
+  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
+  // On non-homepage routes, always use the solid (scrolled) appearance
+  const useSolidHeader = !isHome || isScrolled;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/60">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <motion.header
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+        useSolidHeader
+          ? "bg-white/90 backdrop-blur-xl border-b border-visacore-navy/5 py-3 shadow-sm"
+          : "bg-transparent py-5"
+      )}
+    >
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="shrink-0">
+        <Link href="/" className="relative z-10 transition-transform duration-300 hover:scale-105">
           <Image
             src="/images/visacore_solution_logo.png"
             alt="VisaCore Solutions"
-            width={140}
-            height={40}
-            className="h-10 w-auto"
+            width={360}
+            height={100}
+            className={cn(
+              "w-auto transition-all duration-500",
+              useSolidHeader ? "h-16 lg:h-20" : "h-20 lg:h-24"
+            )}
             priority
           />
         </Link>
 
-        {/* Desktop navigation */}
+        {/* Desktop Navigation */}
         <nav className="hidden items-center gap-1 lg:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "rounded-md px-3 py-2 text-sm font-medium text-[#0A2540] transition-colors",
-                "hover:bg-[#0A2540]/5 hover:text-[#C9A227]"
+                "relative whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold transition-all duration-300",
+                useSolidHeader ? "text-visacore-navy" : "text-white",
+                "hover:text-visacore-gold group"
               )}
             >
-              {link.label}
+              <span className="relative z-10">{link.label}</span>
+              <span
+                className="absolute inset-0 z-0 rounded-full bg-visacore-gold/10 opacity-0 transition-opacity group-hover:opacity-100"
+              />
             </Link>
           ))}
         </nav>
 
         {/* Desktop CTA */}
-        <div className="hidden lg:flex">
+        <div className="hidden items-center gap-4 lg:flex">
           <Link href="/evaluation">
-            <Button className="bg-[#C9A227] text-white hover:bg-[#A88620]">
-              \u00C9valuation gratuite
+            <Button
+              className={cn(
+                "rounded-full px-6 py-5 font-bold transition-all duration-300 shadow-lg",
+                useSolidHeader
+                  ? "bg-visacore-gold text-white hover:bg-visacore-gold-dark hover:shadow-visacore-gold/20"
+                  : "bg-white text-visacore-navy hover:bg-visacore-gold hover:text-white"
+              )}
+            >
+              Évaluation gratuite
+              <ArrowRight className="ml-2 size-4" />
             </Button>
           </Link>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile menu toggle */}
         <div className="lg:hidden">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger
               render={
-                <Button variant="ghost" size="icon" aria-label="Ouvrir le menu" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    "rounded-full transition-colors",
+                    useSolidHeader ? "text-visacore-navy" : "text-white"
+                  )}
+                />
               }
             >
-              <Menu className="size-5 text-[#0A2540]" />
+              <Menu className="size-6" />
             </SheetTrigger>
 
-            <SheetContent side="right" className="w-[300px] sm:w-[350px]">
-              <SheetHeader>
-                <SheetTitle>
-                  <Image
-                    src="/images/visacore_solution_logo.png"
-                    alt="VisaCore Solutions"
-                    width={140}
-                    height={40}
-                    className="h-8 w-auto"
-                  />
-                </SheetTitle>
-              </SheetHeader>
+            <SheetContent side="right" className="w-full border-l-0 bg-visacore-navy p-0 sm:max-w-md">
+              <div className="flex h-full flex-col">
+                <SheetHeader className="flex flex-row items-center justify-between border-b border-white/10 p-6">
+                  <SheetTitle>
+                    <Image
+                      src="/images/visacore_solution_logo.png"
+                      alt="VisaCore Solutions"
+                      width={280}
+                      height={78}
+                      className="h-16 w-auto brightness-0 invert"
+                    />
+                  </SheetTitle>
+                </SheetHeader>
 
-              <nav className="flex flex-col gap-1 px-4">
-                {navLinks.map((link) => (
-                  <SheetClose key={link.href} render={<span />}>
-                    <Link
-                      href={link.href}
-                      onClick={() => setMobileOpen(false)}
-                      className={cn(
-                        "block rounded-md px-3 py-2.5 text-base font-medium text-[#0A2540] transition-colors",
-                        "hover:bg-[#0A2540]/5 hover:text-[#C9A227]"
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  </SheetClose>
-                ))}
-              </nav>
+                <nav className="flex-1 overflow-y-auto px-6 py-10">
+                  <div className="flex flex-col gap-6">
+                    {navLinks.map((link, idx) => (
+                      <motion.div
+                        key={link.href}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                      >
+                        <SheetClose
+                          render={
+                            <Link
+                              href={link.href}
+                              className="text-2xl font-bold text-white transition-colors hover:text-visacore-gold"
+                            />
+                          }
+                        >
+                          {link.label}
+                        </SheetClose>
+                      </motion.div>
+                    ))}
+                  </div>
+                </nav>
 
-              <div className="mt-4 px-4">
-                <SheetClose render={<span />}>
-                  <Link
-                    href="/evaluation"
-                    onClick={() => setMobileOpen(false)}
-                    className="block"
+                <div className="border-t border-white/10 p-8">
+                  <SheetClose
+                    render={
+                      <Link href="/evaluation" className="block" />
+                    }
                   >
-                    <Button className="w-full bg-[#C9A227] text-white hover:bg-[#A88620]">
-                      \u00C9valuation gratuite
+                    <Button className="h-14 w-full rounded-full bg-visacore-gold text-lg font-bold text-white hover:bg-visacore-gold-dark">
+                      Évaluation gratuite
+                      <ArrowRight className="ml-2 size-5" />
                     </Button>
-                  </Link>
-                </SheetClose>
+                  </SheetClose>
+                  <p className="mt-6 text-center text-sm text-white/40">
+                    &copy; {new Date().getFullYear()} VisaCore Solutions
+                  </p>
+                </div>
               </div>
             </SheetContent>
           </Sheet>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }

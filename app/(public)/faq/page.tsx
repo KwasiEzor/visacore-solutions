@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
-import { Button } from "@/components/ui/button"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
+import { HelpCircle, ArrowRight, MessageCircle } from "lucide-react"
+import { ScrollReveal } from "@/components/public/scroll-reveal"
 
 export const metadata: Metadata = {
   title: "FAQ",
@@ -32,60 +33,100 @@ export default async function FAQPage() {
   }, {})
 
   return (
-    <>
-      <section className="bg-[#0A2540] px-4 py-20 text-center text-white">
-        <h1 className="text-4xl font-bold md:text-5xl">Foire aux questions</h1>
-        <p className="mt-4 text-lg text-white/70">
-          Retrouvez les réponses aux questions les plus fréquentes.
-        </p>
-      </section>
+    <div className="pt-20">
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-visacore-navy py-24 sm:py-32">
+        <div className="absolute inset-0 bg-noise opacity-5" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-visacore-gold/15 rounded-full blur-[120px]" />
 
-      <section className="mx-auto max-w-3xl px-4 py-16">
-        {Object.entries(grouped).map(([category, items]) => (
-          <div key={category} className="mb-10">
-            <h2 className="mb-4 text-xl font-bold text-[#0A2540]">
-              {categoryLabels[category] ?? category}
-            </h2>
-            <Accordion>
-              {items.map((faq) => (
-                <AccordionItem key={faq.id} value={faq.id}>
-                  <AccordionTrigger className="text-left font-medium text-[#0A2540] hover:text-[#C9A227]">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+        <div className="container-custom relative z-10">
+          <div className="text-center max-w-3xl mx-auto">
+            <ScrollReveal>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-visacore-gold/30 bg-visacore-gold/10 px-4 py-1.5 text-sm font-black uppercase tracking-widest text-visacore-gold">
+                <HelpCircle className="size-4" />
+                FAQ
+              </div>
+              <h1 className="text-5xl md:text-7xl font-black text-white leading-none mb-8">
+                Questions <span className="text-visacore-gold italic serif">Fréquentes</span>
+              </h1>
+              <p className="text-xl text-white/60 leading-relaxed font-medium">
+                Retrouvez les réponses aux questions les plus courantes sur nos services et les démarches d&apos;immigration.
+              </p>
+            </ScrollReveal>
           </div>
-        ))}
-
-        {faqs.length === 0 && (
-          <p className="text-center text-muted-foreground">Aucune FAQ disponible pour le moment.</p>
-        )}
-      </section>
-
-      <section className="bg-secondary/30 px-4 py-16 text-center">
-        <h2 className="text-2xl font-bold text-[#0A2540]">
-          Vous n&apos;avez pas trouvé votre réponse ?
-        </h2>
-        <p className="mt-2 text-muted-foreground">
-          Notre équipe est disponible pour répondre à toutes vos questions.
-        </p>
-        <div className="mt-6 flex justify-center gap-4">
-          <Link href="/contact">
-            <Button variant="outline" className="border-[#0A2540] text-[#0A2540] hover:bg-[#0A2540] hover:text-white">
-              Nous contacter
-            </Button>
-          </Link>
-          <Link href="/evaluation">
-            <Button className="bg-[#C9A227] text-white hover:bg-[#A88620]">
-              Évaluation gratuite
-            </Button>
-          </Link>
         </div>
       </section>
-    </>
+
+      {/* FAQ Content */}
+      <section className="section-padding bg-background">
+        <div className="container-custom max-w-4xl">
+          {Object.entries(grouped).length > 0 ? (
+            Object.entries(grouped).map(([category, items], catIdx) => (
+              <ScrollReveal key={category} delay={catIdx * 0.1}>
+                <div className="mb-16 last:mb-0">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-visacore-gold/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-visacore-gold mb-8">
+                    {categoryLabels[category] ?? category}
+                  </div>
+
+                  <div className="bg-white border border-border rounded-[40px] p-8 md:p-12 shadow-sm">
+                    <Accordion>
+                      {items.map((faq) => (
+                        <AccordionItem key={faq.id} value={faq.id} className="border-b border-border/50 last:border-0">
+                          <AccordionTrigger className="text-left text-lg font-black text-visacore-navy hover:text-visacore-gold transition-colors py-6">
+                            {faq.question}
+                          </AccordionTrigger>
+                          <AccordionContent className="text-muted-foreground leading-relaxed font-medium pb-6">
+                            {faq.answer}
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  </div>
+                </div>
+              </ScrollReveal>
+            ))
+          ) : (
+            <div className="text-center py-20">
+              <div className="size-20 rounded-full bg-visacore-gold/10 flex items-center justify-center mx-auto mb-6">
+                <HelpCircle className="size-10 text-visacore-gold" />
+              </div>
+              <p className="text-xl text-muted-foreground font-medium">Aucune FAQ disponible pour le moment.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="section-padding bg-gray-50 border-t border-border">
+        <div className="container-custom">
+          <div className="bg-white border border-border rounded-[60px] p-12 md:p-20 text-center shadow-sm">
+            <ScrollReveal>
+              <div className="size-16 rounded-full bg-visacore-gold/10 flex items-center justify-center mx-auto mb-8">
+                <MessageCircle className="size-8 text-visacore-gold" />
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-visacore-navy mb-6">
+                Pas Trouvé Votre <span className="text-visacore-gold serif italic">Réponse</span> ?
+              </h2>
+              <p className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto font-medium">
+                Notre équipe est disponible pour répondre à toutes vos questions personnellement.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <Link href="/contact">
+                  <button className="h-16 px-10 rounded-full bg-visacore-navy text-white font-black hover:bg-visacore-navy-light transition-all">
+                    Nous Contacter
+                  </button>
+                </Link>
+                <Link href="/evaluation">
+                  <button className="h-16 px-10 rounded-full bg-visacore-gold text-white font-black hover:scale-105 transition-all shadow-lg shadow-visacore-gold/20">
+                    Évaluation Gratuite
+                    <ArrowRight className="inline ml-2 size-5" />
+                  </button>
+                </Link>
+              </div>
+            </ScrollReveal>
+          </div>
+        </div>
+      </section>
+    </div>
   )
 }

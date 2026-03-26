@@ -1,108 +1,78 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, MapPin, Phone, MessageCircle } from "lucide-react";
+import { Mail, MapPin, Phone, ArrowRight } from "lucide-react";
 
 const quickLinks = [
   { href: "/", label: "Accueil" },
   { href: "/destinations", label: "Destinations" },
-  { href: "/a-propos", label: "\u00C0 propos" },
-  { href: "/temoignages", label: "T\u00E9moignages" },
+  { href: "/a-propos", label: "À propos" },
+  { href: "/temoignages", label: "Témoignages" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ] as const;
 
 const serviceLinks = [
-  { href: "/services#visa-etudes", label: "Visa \u00E9tudes" },
+  { href: "/services#visa-etudes", label: "Visa études" },
   { href: "/services#visa-travail", label: "Visa travail" },
   { href: "/services#visa-tourisme", label: "Visa tourisme" },
   { href: "/services#visa-affaires", label: "Visa affaires" },
   { href: "/services#immigration", label: "Immigration" },
-  { href: "/evaluation", label: "\u00C9valuation gratuite" },
+  { href: "/evaluation", label: "Évaluation gratuite" },
 ] as const;
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#0A2540] text-white">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="bg-visacore-navy text-white pt-24 pb-12 overflow-hidden relative">
+      {/* Background patterns */}
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-visacore-gold/30 to-transparent" />
+      <div className="absolute -bottom-24 -right-24 size-96 bg-visacore-gold/5 rounded-full blur-[100px]" />
+
+      <div className="container-custom relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8">
           {/* Company info */}
-          <div className="sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="inline-block">
+          <div className="lg:pr-8">
+            <Link href="/" className="inline-block transition-transform hover:scale-105">
               <Image
                 src="/images/visacore_solution_logo.png"
                 alt="VisaCore Solutions"
-                width={140}
-                height={40}
-                className="h-10 w-auto brightness-0 invert"
+                width={320}
+                height={240}
+                className="h-20 w-auto brightness-0 invert"
               />
             </Link>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/70">
-              VisaCore Solutions est votre partenaire de confiance pour tous vos
-              projets d&apos;immigration et de visa. Nous vous accompagnons
-              \u00E0 chaque \u00E9tape de votre parcours vers l&apos;international.
+            <p className="mt-8 text-lg text-white/50 leading-relaxed font-medium">
+              Votre pont vers l&apos;international. Expertise, transparence et succès pour vos projets d&apos;immigration à Lomé.
             </p>
-            {/* Social links placeholder */}
-            <div className="mt-6 flex items-center gap-3">
-              <a
-                href="#"
-                aria-label="Facebook"
-                className="flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-[#C9A227]"
-              >
-                <svg
-                  className="size-4"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
-                </svg>
+            {/* Social links */}
+            <div className="mt-10 flex items-center gap-4">
+              <a href="#" aria-label="Facebook" className="flex size-12 items-center justify-center rounded-2xl bg-white/5 border border-white/10 transition-all hover:bg-visacore-gold hover:text-white hover:-translate-y-1">
+                <svg className="size-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
               </a>
-              <a
-                href="#"
-                aria-label="LinkedIn"
-                className="flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-[#C9A227]"
-              >
-                <svg
-                  className="size-4"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
+              <a href="#" aria-label="LinkedIn" className="flex size-12 items-center justify-center rounded-2xl bg-white/5 border border-white/10 transition-all hover:bg-visacore-gold hover:text-white hover:-translate-y-1">
+                <svg className="size-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
               </a>
-              <a
-                href="#"
-                aria-label="Instagram"
-                className="flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-[#C9A227]"
-              >
-                <svg
-                  className="size-4"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" />
-                </svg>
+              <a href="#" aria-label="Instagram" className="flex size-12 items-center justify-center rounded-2xl bg-white/5 border border-white/10 transition-all hover:bg-visacore-gold hover:text-white hover:-translate-y-1">
+                <svg className="size-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
               </a>
             </div>
           </div>
 
           {/* Quick links */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-[#C9A227]">
-              Liens rapides
-            </h3>
-            <ul className="mt-4 space-y-3">
+            <h3 className="text-xl font-black mb-8 text-visacore-gold italic serif">Navigation</h3>
+            <ul className="space-y-4">
               {quickLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white/70 transition-colors hover:text-[#C9A227]"
+                    className="group flex items-center text-white/60 transition-colors hover:text-visacore-gold"
                   >
-                    {link.label}
+                    <ArrowRight className="size-4 mr-2 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                    <span className="font-bold">{link.label}</span>
                   </Link>
                 </li>
               ))}
@@ -111,17 +81,16 @@ export function Footer() {
 
           {/* Services */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-[#C9A227]">
-              Nos services
-            </h3>
-            <ul className="mt-4 space-y-3">
+            <h3 className="text-xl font-black mb-8 text-visacore-gold italic serif">Expertises</h3>
+            <ul className="space-y-4">
               {serviceLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white/70 transition-colors hover:text-[#C9A227]"
+                    className="group flex items-center text-white/60 transition-colors hover:text-visacore-gold"
                   >
-                    {link.label}
+                    <ArrowRight className="size-4 mr-2 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                    <span className="font-bold">{link.label}</span>
                   </Link>
                 </li>
               ))}
@@ -130,45 +99,36 @@ export function Footer() {
 
           {/* Contact info */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-[#C9A227]">
-              Contact
-            </h3>
-            <ul className="mt-4 space-y-4">
-              <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 size-4 shrink-0 text-[#C9A227]" />
-                <span className="text-sm text-white/70">
-                  Boulevard du 13 Janvier,
-                  <br />
-                  Lom\u00E9, Togo
+            <h3 className="text-xl font-black mb-8 text-visacore-gold italic serif">Contact</h3>
+            <ul className="space-y-6">
+              <li className="flex items-start gap-4">
+                <div className="size-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
+                  <MapPin className="size-5 text-visacore-gold" />
+                </div>
+                <span className="text-white/60 font-medium pt-1">
+                  Boulevard du 13 Janvier,<br />Lomé, Togo
                 </span>
               </li>
               <li>
                 <a
                   href="tel:+22890000000"
-                  className="flex items-center gap-3 text-sm text-white/70 transition-colors hover:text-[#C9A227]"
+                  className="group flex items-center gap-4 text-white/60 transition-colors hover:text-visacore-gold"
                 >
-                  <Phone className="size-4 shrink-0 text-[#C9A227]" />
-                  +228 90 00 00 00
+                  <div className="size-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-visacore-gold/20 transition-colors">
+                    <Phone className="size-5 text-visacore-gold" />
+                  </div>
+                  <span className="font-bold">+228 90 00 00 00</span>
                 </a>
               </li>
               <li>
                 <a
                   href="mailto:contact@visacore-solutions.com"
-                  className="flex items-center gap-3 text-sm text-white/70 transition-colors hover:text-[#C9A227]"
+                  className="group flex items-center gap-4 text-white/60 transition-colors hover:text-visacore-gold"
                 >
-                  <Mail className="size-4 shrink-0 text-[#C9A227]" />
-                  contact@visacore-solutions.com
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://wa.me/22890000000"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-sm text-white/70 transition-colors hover:text-[#C9A227]"
-                >
-                  <MessageCircle className="size-4 shrink-0 text-[#C9A227]" />
-                  WhatsApp
+                  <div className="size-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-visacore-gold/20 transition-colors">
+                    <Mail className="size-5 text-visacore-gold" />
+                  </div>
+                  <span className="font-bold truncate">contact@visacore.com</span>
                 </a>
               </li>
             </ul>
@@ -176,10 +136,14 @@ export function Footer() {
         </div>
 
         {/* Divider & copyright */}
-        <div className="mt-12 border-t border-white/10 pt-8">
-          <p className="text-center text-sm text-white/50">
-            &copy; {currentYear} VisaCore Solutions. Tous droits r\u00E9serv\u00E9s.
+        <div className="mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-sm text-white/30 font-bold tracking-widest uppercase">
+            &copy; {currentYear} VisaCore Solutions. Designed for Excellence.
           </p>
+          <div className="flex gap-8 text-xs font-black text-white/20 uppercase tracking-widest">
+             <Link href="/privacy" className="hover:text-visacore-gold transition-colors">Confidentialité</Link>
+             <Link href="/terms" className="hover:text-visacore-gold transition-colors">Mentions Légales</Link>
+          </div>
         </div>
       </div>
     </footer>
