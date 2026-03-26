@@ -5,53 +5,91 @@ import { createUserSchema } from "@/lib/validations/auth"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
 import bcrypt from "bcryptjs"
+import { z } from "zod"
+
+const userRoleSchema = z.enum(["SUPER_ADMIN", "ADMIN", "EDITOR"])
 
 export async function createUser(data: unknown) {
-  const session = await auth()
-  if (!session || session.user.role !== "SUPER_ADMIN") return { error: "Non autorisé" }
+  try {
+    const session = await auth()
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return { success: false, error: "Non autorisé" }
+    }
 
-  const parsed = createUserSchema.safeParse(data)
-  if (!parsed.success) {
-    return { error: "Données invalides", details: parsed.error.flatten() }
+    const parsed = createUserSchema.safeParse(data)
+    if (!parsed.success) {
+      return { 
+        success: false, 
+        error: "Données invalides", 
+        details: parsed.error.flatten().fieldErrors 
+      }
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email: parsed.data.email },
+    })
+    if (existingUser) {
+      return { success: false, error: "Cet email est déjà utilisé" }
+    }
+
+    const hashedPassword = await bcrypt.hash(parsed.data.password, 12)
+
+    await prisma.user.create({
+      data: {
+        name: parsed.data.name,
+        email: parsed.data.email,
+        hashedPassword,
+        role: parsed.data.role as "SUPER_ADMIN" | "ADMIN" | "EDITOR",
+      },
+    })
+    revalidatePath("/admin/users")
+    return { success: true }
+  } catch (error) {
+    console.error("[CREATE_USER_ERROR]", error)
+    return { success: false, error: "Impossible de créer l'utilisateur" }
   }
-
-  const existingUser = await prisma.user.findUnique({
-    where: { email: parsed.data.email },
-  })
-  if (existingUser) return { error: "Cet email est déjà utilisé" }
-
-  const hashedPassword = await bcrypt.hash(parsed.data.password, 12)
-
-  await prisma.user.create({
-    data: {
-      name: parsed.data.name,
-      email: parsed.data.email,
-      hashedPassword,
-      role: parsed.data.role as "SUPER_ADMIN" | "ADMIN" | "EDITOR",
-    },
-  })
-  revalidatePath("/admin/users")
-  return { success: true }
 }
 
 export async function updateUserRole(id: string, role: string) {
-  const session = await auth()
-  if (!session || session.user.role !== "SUPER_ADMIN") return { error: "Non autorisé" }
+  try {
+    const session = await auth()
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return { success: false, error: "Non autorisé" }
+    }
 
-  await prisma.user.update({
-    where: { id },
-    data: { role: role as "SUPER_ADMIN" | "ADMIN" | "EDITOR" },
-  })
-  revalidatePath("/admin/users")
-  return { success: true }
+    const parsedRole = userRoleSchema.safeParse(role)
+    if (!parsedRole.success) {
+      return { success: false, error: "Rôle invalide" }
+    }
+
+    await prisma.user.update({
+      where: { id },
+      data: { role: parsedRole.data },
+    })
+    revalidatePath("/admin/users")
+    return { success: true }
+  } catch (error) {
+    console.error("[UPDATE_USER_ROLE_ERROR]", error)
+    return { success: false, error: "Impossible de mettre à jour le rôle" }
+  }
 }
 
 export async function deleteUser(id: string) {
-  const session = await auth()
-  if (!session || session.user.role !== "SUPER_ADMIN") return { error: "Non autorisé" }
-  if (session.user.id === id) return { error: "Vous ne pouvez pas vous supprimer" }
+  try {
+    const session = await auth()
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return { success: false, error: "Non autorisé" }
+    }
+    
+    if (session.user.id === id) {
+      return { success: false, error: "Vous ne pouvez pas vous supprimer" }
+    }
 
-  await prisma.user.delete({ where: { id } })
-  revalidatePath("/admin/users")
-  return { success: true }
+    await prisma.user.delete({ where: { id } })
+    revalidatePath("/admin/users")
+    return { success: true }
+  } catch (error) {
+    console.error("[DELETE_USER_ERROR]", error)
+    return { success: false, error: "Impossible de supprimer l'utilisateur" }
+  }
 }

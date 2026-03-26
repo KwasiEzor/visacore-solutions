@@ -19,41 +19,66 @@ const storySchema = z.object({
 })
 
 export async function createStory(data: unknown) {
-  const session = await auth()
-  if (!session) return { error: "Non autorisé" }
+  try {
+    const session = await auth()
+    if (!session) return { success: false, error: "Non autorisé" }
 
-  const parsed = storySchema.safeParse(data)
-  if (!parsed.success) {
-    return { error: "Données invalides", details: parsed.error.flatten() }
+    const parsed = storySchema.safeParse(data)
+    if (!parsed.success) {
+      return { 
+        success: false, 
+        error: "Données invalides", 
+        details: parsed.error.flatten().fieldErrors 
+      }
+    }
+
+    await prisma.successStory.create({ data: parsed.data })
+    revalidatePath("/admin/stories")
+    revalidatePath("/temoignages")
+    return { success: true }
+  } catch (error) {
+    console.error("[CREATE_STORY_ERROR]", error)
+    return { success: false, error: "Impossible de créer la story" }
   }
-
-  await prisma.successStory.create({ data: parsed.data })
-  revalidatePath("/admin/stories")
-  revalidatePath("/temoignages")
-  return { success: true }
 }
 
 export async function updateStory(id: string, data: unknown) {
-  const session = await auth()
-  if (!session) return { error: "Non autorisé" }
+  try {
+    const session = await auth()
+    if (!session) return { success: false, error: "Non autorisé" }
 
-  const parsed = storySchema.safeParse(data)
-  if (!parsed.success) {
-    return { error: "Données invalides", details: parsed.error.flatten() }
+    const parsed = storySchema.safeParse(data)
+    if (!parsed.success) {
+      return { 
+        success: false, 
+        error: "Données invalides", 
+        details: parsed.error.flatten().fieldErrors 
+      }
+    }
+
+    await prisma.successStory.update({ where: { id }, data: parsed.data })
+    revalidatePath("/admin/stories")
+    revalidatePath("/temoignages")
+    return { success: true }
+  } catch (error) {
+    console.error("[UPDATE_STORY_ERROR]", error)
+    return { success: false, error: "Impossible de mettre à jour la story" }
   }
-
-  await prisma.successStory.update({ where: { id }, data: parsed.data })
-  revalidatePath("/admin/stories")
-  revalidatePath("/temoignages")
-  return { success: true }
 }
 
 export async function deleteStory(id: string) {
-  const session = await auth()
-  if (!session || session.user.role === "EDITOR") return { error: "Non autorisé" }
+  try {
+    const session = await auth()
+    if (!session || session.user.role === "EDITOR") {
+      return { success: false, error: "Non autorisé" }
+    }
 
-  await prisma.successStory.delete({ where: { id } })
-  revalidatePath("/admin/stories")
-  revalidatePath("/temoignages")
-  return { success: true }
+    await prisma.successStory.delete({ where: { id } })
+    revalidatePath("/admin/stories")
+    revalidatePath("/temoignages")
+    return { success: true }
+  } catch (error) {
+    console.error("[DELETE_STORY_ERROR]", error)
+    return { success: false, error: "Impossible de supprimer la story" }
+  }
 }

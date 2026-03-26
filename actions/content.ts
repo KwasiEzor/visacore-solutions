@@ -16,35 +16,51 @@ const pageContentSchema = z.object({
 })
 
 export async function upsertPageContent(data: unknown) {
-  const session = await auth()
-  if (!session) return { error: "Non autorisé" }
+  try {
+    const session = await auth()
+    if (!session) return { success: false, error: "Non autorisé" }
 
-  const parsed = pageContentSchema.safeParse(data)
-  if (!parsed.success) {
-    return { error: "Données invalides", details: parsed.error.flatten() }
-  }
+    const parsed = pageContentSchema.safeParse(data)
+    if (!parsed.success) {
+      return { 
+        success: false, 
+        error: "Données invalides", 
+        details: parsed.error.flatten().fieldErrors 
+      }
+    }
 
-  await prisma.pageContent.upsert({
-    where: {
-      pageKey_sectionKey: {
-        pageKey: parsed.data.pageKey,
-        sectionKey: parsed.data.sectionKey,
+    await prisma.pageContent.upsert({
+      where: {
+        pageKey_sectionKey: {
+          pageKey: parsed.data.pageKey,
+          sectionKey: parsed.data.sectionKey,
+        },
       },
-    },
-    update: parsed.data,
-    create: parsed.data,
-  })
-  revalidatePath("/")
-  revalidatePath("/admin/content")
-  return { success: true }
+      update: parsed.data,
+      create: parsed.data,
+    })
+    revalidatePath("/")
+    revalidatePath("/admin/content")
+    return { success: true }
+  } catch (error) {
+    console.error("[UPSERT_CONTENT_ERROR]", error)
+    return { success: false, error: "Impossible de mettre à jour le contenu" }
+  }
 }
 
 export async function deletePageContent(id: string) {
-  const session = await auth()
-  if (!session || session.user.role === "EDITOR") return { error: "Non autorisé" }
+  try {
+    const session = await auth()
+    if (!session || session.user.role === "EDITOR") {
+      return { success: false, error: "Non autorisé" }
+    }
 
-  await prisma.pageContent.delete({ where: { id } })
-  revalidatePath("/")
-  revalidatePath("/admin/content")
-  return { success: true }
+    await prisma.pageContent.delete({ where: { id } })
+    revalidatePath("/")
+    revalidatePath("/admin/content")
+    return { success: true }
+  } catch (error) {
+    console.error("[DELETE_CONTENT_ERROR]", error)
+    return { success: false, error: "Impossible de supprimer le contenu" }
+  }
 }
