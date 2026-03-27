@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { LeadForm } from "@/components/public/lead-form"
 import { Shield, Clock, CheckCircle, Sparkles, Star, Users } from "lucide-react"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
+import { getCaptchaServerConfig } from "@/lib/captcha.server"
 
 export const metadata: Metadata = {
   title: "Évaluation gratuite",
@@ -9,6 +10,8 @@ export const metadata: Metadata = {
 }
 
 export default function EvaluationPage() {
+  const captchaConfig = getCaptchaServerConfig()
+
   return (
     <div className="pt-20">
       {/* Hero */}
@@ -123,7 +126,7 @@ export default function EvaluationPage() {
                   <p className="text-muted-foreground font-medium text-center mb-12">
                     Tous les champs marqués d&apos;un * sont obligatoires.
                   </p>
-                  <LeadForm />
+                  <LeadForm captchaSiteKey={captchaConfig.siteKey} />
                 </div>
               </ScrollReveal>
             </div>

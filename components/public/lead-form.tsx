@@ -14,6 +14,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Loader2, CheckCircle } from "lucide-react"
 import { toast } from "sonner"
+import { getCaptchaPublicConfig } from "@/lib/captcha.shared"
+import { TurnstileWidget } from "@/components/public/turnstile-widget"
 
 const destinations = [
   { value: "Canada", label: "Canada" },
@@ -31,22 +33,45 @@ const servicesOptions = [
   { value: "Consultation", label: "Consultation personnalisée" },
 ]
 
-export function LeadForm() {
+interface LeadFormProps {
+  captchaSiteKey?: string | null
+}
+
+export function LeadForm({ captchaSiteKey }: LeadFormProps) {
+  const captchaConfig = getCaptchaPublicConfig({
+    ...process.env,
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY:
+      captchaSiteKey ?? process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+  })
+  const captchaEnabled = captchaConfig.enabled && Boolean(captchaConfig.siteKey)
   const [submittedState, setSubmittedState] = useState<{
     title: string
     message: string
     tone: "success" | "info"
   } | null>(null)
+  const [captchaRefreshKey, setCaptchaRefreshKey] = useState(0)
+  const [hasCaptchaToken, setHasCaptchaToken] = useState(false)
   const {
     register,
     handleSubmit,
+    setError,
+    clearErrors,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LeadSubmissionData>({
     resolver: zodResolver(leadSubmissionSchema),
-    defaultValues: { consent: false, website: "" },
+    defaultValues: { consent: false, website: "", captchaToken: "" },
   })
 
   async function onSubmit(data: LeadSubmissionData) {
+    if (captchaEnabled && !data.captchaToken) {
+      setError("captchaToken", {
+        type: "manual",
+        message: "Veuillez confirmer la vérification anti-spam.",
+      })
+      return
+    }
+
     try {
       const result = await createLead(data)
       if (result.success) {
@@ -65,9 +90,19 @@ export function LeadForm() {
           result.message || "Demande envoyée avec succès !"
         )
       } else {
+        if (captchaEnabled) {
+          setValue("captchaToken", "", { shouldValidate: true })
+          setHasCaptchaToken(false)
+          setCaptchaRefreshKey((current) => current + 1)
+        }
         toast.error(result.error || "Une erreur est survenue")
       }
     } catch {
+      if (captchaEnabled) {
+        setValue("captchaToken", "", { shouldValidate: true })
+        setHasCaptchaToken(false)
+        setCaptchaRefreshKey((current) => current + 1)
+      }
       toast.error(
         "Impossible d'envoyer votre demande pour le moment. Merci de réessayer dans quelques instants."
       )
@@ -122,6 +157,7 @@ export function LeadForm() {
         aria-hidden="true"
         {...register("website")}
       />
+      <input type="hidden" {...register("captchaToken")} />
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="fullName">Nom complet *</Label>
@@ -195,7 +231,49 @@ export function LeadForm() {
         </Label>
       </div>
       {errors.consent && <p className="text-sm text-destructive">{errors.consent.message}</p>}
-      <Button type="submit" disabled={isSubmitting} size="lg" className="w-full bg-[#C9A227] text-white hover:bg-[#A88620]">
+      {captchaEnabled && captchaConfig.siteKey ? (
+        <div className="space-y-2">
+          <Label className="text-sm">Vérification de sécurité *</Label>
+          <TurnstileWidget
+            siteKey={captchaConfig.siteKey}
+            action="lead_form"
+            refreshKey={captchaRefreshKey}
+            onTokenChange={(token) => {
+              setValue("captchaToken", token, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+              setHasCaptchaToken(Boolean(token))
+              if (token) {
+                clearErrors("captchaToken")
+              }
+            }}
+            onErrorMessage={(message) => {
+              setValue("captchaToken", "", { shouldValidate: true })
+              setHasCaptchaToken(false)
+              if (message) {
+                setError("captchaToken", {
+                  type: "manual",
+                  message,
+                })
+                return
+              }
+              clearErrors("captchaToken")
+            }}
+          />
+          {errors.captchaToken && (
+            <p className="text-sm text-destructive">
+              {errors.captchaToken.message}
+            </p>
+          )}
+        </div>
+      ) : null}
+      <Button
+        type="submit"
+        disabled={isSubmitting || (captchaEnabled && !hasCaptchaToken)}
+        size="lg"
+        className="w-full bg-[#C9A227] text-white hover:bg-[#A88620]"
+      >
         {isSubmitting ? <><Loader2 className="mr-2 size-4 animate-spin" />Envoi...</> : "Obtenir mon évaluation gratuite"}
       </Button>
       <p className="text-center text-sm text-muted-foreground">

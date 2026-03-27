@@ -12,6 +12,7 @@ export type ContactFormData = z.infer<typeof contactSchema>
 
 export const contactSubmissionSchema = contactSchema.extend({
   website: z.string().optional(),
+  captchaToken: z.string().optional(),
 })
 
 export type ContactSubmissionData = z.infer<typeof contactSubmissionSchema>

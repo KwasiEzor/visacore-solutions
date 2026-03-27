@@ -18,6 +18,7 @@ import {
   getTelHref,
   getWhatsAppHref,
 } from "@/lib/site-config"
+import { getCaptchaServerConfig } from "@/lib/captcha.server"
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -57,6 +58,7 @@ const guarantees = [
 
 export default async function ContactPage() {
   const siteConfig = await getPublicSiteConfig()
+  const captchaConfig = getCaptchaServerConfig()
   const businessHours = getBusinessHoursRows(siteConfig.businessHours)
   const contactChannels: ContactChannel[] = [
     {
@@ -220,7 +222,7 @@ export default async function ContactPage() {
                       répondrons dans les plus brefs délais.
                     </p>
                   </div>
-                  <ContactForm />
+                  <ContactForm captchaSiteKey={captchaConfig.siteKey} />
                 </div>
               </ScrollReveal>
             </div>

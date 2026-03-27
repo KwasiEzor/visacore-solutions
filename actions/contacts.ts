@@ -13,6 +13,10 @@ import {
 } from "@/lib/submission-guards.shared"
 import { hasPermission } from "@/lib/rbac"
 import { buildContactRequestCreateData } from "@/lib/submission-payloads"
+import {
+  logCaptchaFailureEvent,
+  verifyCaptchaTokenForRequest,
+} from "@/lib/captcha.server"
 
 export async function createContactRequest(data: unknown) {
   try {
@@ -27,6 +31,54 @@ export async function createContactRequest(data: unknown) {
 
     const normalizedEmail = normalizeSubmissionEmail(parsed.data.email)
     const normalizedSubject = parsed.data.subject.trim()
+    const filteredGuard = evaluateSubmissionGuard({
+      honeypotValue: parsed.data.website,
+      duplicateCount: 0,
+      rateLimitCount: 0,
+      duplicateMessage:
+        "Nous avons déjà reçu un message récent avec ce sujet. Notre équipe vous répondra dès que possible sans qu'il soit nécessaire de renvoyer le formulaire.",
+      rateLimitedMessage:
+        "Trop de messages récents ont été détectés. Merci d'attendre quelques minutes avant de réessayer.",
+      filteredMessage:
+        "Votre message est bien reçu. Notre équipe vous répondra dans les plus brefs délais.",
+    })
+
+    if (filteredGuard.status === "filtered") {
+      logSubmissionGuardEvent({
+        channel: "contact",
+        status: filteredGuard.status,
+        email: normalizedEmail,
+        subject: normalizedSubject,
+        duplicateCount: 0,
+        rateLimitCount: 0,
+      })
+
+      return {
+        success: true,
+        status: filteredGuard.status,
+        message: filteredGuard.message,
+      }
+    }
+
+    const captchaVerification = await verifyCaptchaTokenForRequest({
+      token: parsed.data.captchaToken,
+      expectedAction: "contact_form",
+    })
+
+    if (!captchaVerification.success) {
+      logCaptchaFailureEvent({
+        channel: "contact",
+        errorCodes: captchaVerification.errorCodes,
+      })
+
+      return {
+        success: false,
+        status: "captcha_failed" as const,
+        error:
+          "Veuillez confirmer la vérification anti-spam avant de réessayer.",
+      }
+    }
+
     const now = Date.now()
     const duplicateWindowStart = new Date(now - duplicateSubmissionWindowMs)
     const rateLimitWindowStart = new Date(now - rateLimitWindowMs)
@@ -48,7 +100,7 @@ export async function createContactRequest(data: unknown) {
     ])
 
     const guard = evaluateSubmissionGuard({
-      honeypotValue: parsed.data.website,
+      honeypotValue: "",
       duplicateCount: recentDuplicateCount,
       rateLimitCount: recentSubmissionCount,
       duplicateMessage:

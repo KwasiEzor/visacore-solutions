@@ -70,10 +70,11 @@ It focuses on real issues observed in the current codebase, not generic best pra
 - Phase 8 completed: admin form guardrails and searchable lead/contact workflows
 - Phase 9 completed: smoke coverage for public CTAs, contact submission, and admin login gate
 - Phase 10 completed: redacted abuse-event logging for guarded public submissions
+- Phase 11 completed: Cloudflare Turnstile support for public lead and contact forms
 
 ### Remaining implementation backlog
 
-- Consider CAPTCHA only if the current guardrails and audit logging stop being sufficient against real spam volume
+- Monitor real submission volume and tune CAPTCHA policy only if stronger friction or stricter thresholds become necessary
 
 ## Phase 1: Stabilize Core Content Flows
 

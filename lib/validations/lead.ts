@@ -18,6 +18,7 @@ export type LeadFormData = z.infer<typeof leadSchema>
 
 export const leadSubmissionSchema = leadSchema.extend({
   website: z.string().optional(),
+  captchaToken: z.string().optional(),
 })
 
 export type LeadSubmissionData = z.infer<typeof leadSubmissionSchema>

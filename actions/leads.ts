@@ -17,6 +17,10 @@ import {
 } from "@/lib/submission-guards.shared"
 import { hasPermission } from "@/lib/rbac"
 import { buildLeadCreateData } from "@/lib/submission-payloads"
+import {
+  logCaptchaFailureEvent,
+  verifyCaptchaTokenForRequest,
+} from "@/lib/captcha.server"
 
 export async function createLead(data: unknown) {
   try {
@@ -31,6 +35,54 @@ export async function createLead(data: unknown) {
 
     const normalizedEmail = normalizeSubmissionEmail(parsed.data.email)
     const normalizedPhone = normalizeSubmissionPhone(parsed.data.phone)
+    const filteredGuard = evaluateSubmissionGuard({
+      honeypotValue: parsed.data.website,
+      duplicateCount: 0,
+      rateLimitCount: 0,
+      duplicateMessage:
+        "Nous avons déjà reçu une demande récente avec ces coordonnées. Notre équipe revient vers vous sous 24 heures ouvrées.",
+      rateLimitedMessage:
+        "Trop de tentatives récentes ont été détectées. Merci d'attendre quelques minutes avant de réessayer.",
+      filteredMessage:
+        "Votre demande est bien reçue. Notre équipe revient vers vous sous 24 heures ouvrées.",
+    })
+
+    if (filteredGuard.status === "filtered") {
+      logSubmissionGuardEvent({
+        channel: "lead",
+        status: filteredGuard.status,
+        email: normalizedEmail,
+        phone: normalizedPhone,
+        duplicateCount: 0,
+        rateLimitCount: 0,
+      })
+
+      return {
+        success: true,
+        status: filteredGuard.status,
+        message: filteredGuard.message,
+      }
+    }
+
+    const captchaVerification = await verifyCaptchaTokenForRequest({
+      token: parsed.data.captchaToken,
+      expectedAction: "lead_form",
+    })
+
+    if (!captchaVerification.success) {
+      logCaptchaFailureEvent({
+        channel: "lead",
+        errorCodes: captchaVerification.errorCodes,
+      })
+
+      return {
+        success: false,
+        status: "captcha_failed" as const,
+        error:
+          "Veuillez confirmer la vérification anti-spam avant de réessayer.",
+      }
+    }
+
     const now = Date.now()
     const duplicateWindowStart = new Date(now - duplicateSubmissionWindowMs)
     const rateLimitWindowStart = new Date(now - rateLimitWindowMs)
@@ -72,7 +124,7 @@ export async function createLead(data: unknown) {
     ])
 
     const guard = evaluateSubmissionGuard({
-      honeypotValue: parsed.data.website,
+      honeypotValue: "",
       duplicateCount: Math.max(
         recentEmailDuplicateCount,
         recentPhoneDuplicateCount
