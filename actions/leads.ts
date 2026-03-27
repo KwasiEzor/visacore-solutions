@@ -1,13 +1,24 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
-import { leadSchema, leadStatusSchema } from "@/lib/validations/lead"
+import {
+  leadStatusSchema,
+  leadSubmissionSchema,
+} from "@/lib/validations/lead"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
+import {
+  duplicateSubmissionWindowMs,
+  evaluateSubmissionGuard,
+  normalizeOptionalSubmissionText,
+  normalizeSubmissionEmail,
+  normalizeSubmissionPhone,
+  rateLimitWindowMs,
+} from "@/lib/submission-guards.shared"
 
 export async function createLead(data: unknown) {
   try {
-    const parsed = leadSchema.safeParse(data)
+    const parsed = leadSubmissionSchema.safeParse(data)
     if (!parsed.success) {
       return { 
         success: false, 
@@ -16,8 +27,103 @@ export async function createLead(data: unknown) {
       }
     }
 
-    await prisma.lead.create({ data: parsed.data })
-    return { success: true }
+    const normalizedEmail = normalizeSubmissionEmail(parsed.data.email)
+    const normalizedPhone = normalizeSubmissionPhone(parsed.data.phone)
+    const now = Date.now()
+    const duplicateWindowStart = new Date(now - duplicateSubmissionWindowMs)
+    const rateLimitWindowStart = new Date(now - rateLimitWindowMs)
+
+    const [
+      recentEmailDuplicateCount,
+      recentPhoneDuplicateCount,
+      recentEmailSubmissionCount,
+      recentPhoneSubmissionCount,
+    ] = await Promise.all([
+      prisma.lead.count({
+        where: {
+          email: normalizedEmail,
+          createdAt: { gte: duplicateWindowStart },
+        },
+      }),
+      normalizedPhone
+        ? prisma.lead.count({
+            where: {
+              phone: normalizedPhone,
+              createdAt: { gte: duplicateWindowStart },
+            },
+          })
+        : Promise.resolve(0),
+      prisma.lead.count({
+        where: {
+          email: normalizedEmail,
+          createdAt: { gte: rateLimitWindowStart },
+        },
+      }),
+      normalizedPhone
+        ? prisma.lead.count({
+            where: {
+              phone: normalizedPhone,
+              createdAt: { gte: rateLimitWindowStart },
+            },
+          })
+        : Promise.resolve(0),
+    ])
+
+    const guard = evaluateSubmissionGuard({
+      honeypotValue: parsed.data.website,
+      duplicateCount: Math.max(
+        recentEmailDuplicateCount,
+        recentPhoneDuplicateCount
+      ),
+      rateLimitCount: Math.max(
+        recentEmailSubmissionCount,
+        recentPhoneSubmissionCount
+      ),
+      duplicateMessage:
+        "Nous avons déjà reçu une demande récente avec ces coordonnées. Notre équipe revient vers vous sous 24 heures ouvrées.",
+      rateLimitedMessage:
+        "Trop de tentatives récentes ont été détectées. Merci d'attendre quelques minutes avant de réessayer.",
+      filteredMessage:
+        "Votre demande est bien reçue. Notre équipe revient vers vous sous 24 heures ouvrées.",
+    })
+
+    if (!guard.shouldPersist) {
+      if (guard.success) {
+        return {
+          success: true,
+          status: guard.status,
+          message: guard.message,
+        }
+      }
+
+      return {
+        success: false,
+        status: guard.status,
+        error: guard.message,
+      }
+    }
+
+    await prisma.lead.create({
+      data: {
+        fullName: parsed.data.fullName.trim(),
+        email: normalizedEmail,
+        phone: normalizedPhone ?? parsed.data.phone.trim(),
+        country: parsed.data.country.trim(),
+        destination: parsed.data.destination.trim(),
+        situation: normalizeOptionalSubmissionText(parsed.data.situation),
+        serviceNeeded: normalizeOptionalSubmissionText(parsed.data.serviceNeeded),
+        message: normalizeOptionalSubmissionText(parsed.data.message),
+        consent: parsed.data.consent,
+        source: "public-evaluation-form",
+      },
+    })
+
+    return {
+      success: true,
+      status: "accepted" as const,
+      message:
+        "Votre demande est bien reçue. Nous analysons votre profil et revenons vers vous sous 24 heures ouvrées avec les prochaines étapes.",
+    }
   } catch (error) {
     console.error("[CREATE_LEAD_ERROR]", error)
     return { success: false, error: "Une erreur est survenue lors de la création du lead" }

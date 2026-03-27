@@ -16,6 +16,12 @@ export const leadSchema = z.object({
 
 export type LeadFormData = z.infer<typeof leadSchema>
 
+export const leadSubmissionSchema = leadSchema.extend({
+  website: z.string().optional(),
+})
+
+export type LeadSubmissionData = z.infer<typeof leadSubmissionSchema>
+
 export const leadStatusSchema = z.enum([
   "NEW",
   "CONTACTED",
