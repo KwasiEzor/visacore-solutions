@@ -5,7 +5,10 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { serviceSchema, type ServiceFormData } from "@/lib/validations/service"
+import {
+  serviceFormSchema,
+  type ServiceFormData,
+} from "@/lib/validations/service"
 import { createService, updateService } from "@/actions/services"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -38,7 +41,7 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
     setValue,
     formState: { errors },
   } = useForm<ServiceFormData>({
-    resolver: zodResolver(serviceSchema),
+    resolver: zodResolver(serviceFormSchema),
     defaultValues: initialData
       ? {
           name: initialData.name,
@@ -77,23 +80,33 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
     }
   }
 
-  function parseJsonField(value: unknown): unknown {
-    if (typeof value === "string" && value.trim() !== "") {
-      try {
-        return JSON.parse(value)
-      } catch {
-        return null
+  function parseJsonField(label: string, value: unknown) {
+    if (typeof value !== "string" || value.trim() === "") {
+      return { success: true as const, value: null }
+    }
+
+    try {
+      return { success: true as const, value: JSON.parse(value) }
+    } catch {
+      return {
+        success: false as const,
+        error: `Le champ "${label}" contient un JSON invalide.`,
       }
     }
-    return value ?? null
   }
 
   function onSubmit(data: ServiceFormData) {
     startTransition(async () => {
       try {
+        const benefits = parseJsonField("Avantages", data.benefits)
+        if (!benefits.success) {
+          toast.error(benefits.error)
+          return
+        }
+
         const payload = {
           ...data,
-          benefits: parseJsonField(data.benefits),
+          benefits: benefits.value,
         }
 
         const result = isEditing

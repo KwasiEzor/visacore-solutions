@@ -3,16 +3,14 @@
 import { motion } from "framer-motion";
 import { MessageCircle } from "lucide-react";
 
-const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
-
-export function WhatsAppButton() {
-  if (!whatsappNumber) {
+export function WhatsAppButton({ href }: { href?: string }) {
+  if (!href) {
     return null;
   }
 
   return (
     <motion.a
-      href={`https://wa.me/${whatsappNumber}`}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Nous contacter sur WhatsApp"

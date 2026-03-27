@@ -1,17 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import {
-  Globe,
-  GraduationCap,
-  Briefcase,
-  Plane,
-  Building2,
-  FileCheck,
-  ArrowRight,
-  Sparkles,
-} from "lucide-react";
+import { Globe, ArrowRight, Sparkles } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
+import { fallbackServices, serviceIconMap } from "@/lib/public-content";
 
 export const revalidate = 3600;
 
@@ -21,44 +13,8 @@ export const metadata: Metadata = {
     "Expertise en visa études, travail, tourisme, affaires et immigration permanente.",
 };
 
-const iconMap: Record<string, React.ElementType> = {
-  GraduationCap,
-  Briefcase,
-  Plane,
-  Building2,
-  Globe,
-  FileCheck,
-};
-
-const staticServices = [
-  {
-    slug: "visa-etudes",
-    name: "Visa Études",
-    icon: "GraduationCap",
-    description: "Accompagnement complet pour vos études à l'étranger : recherche d'établissements, admission et visa.",
-  },
-  {
-    slug: "visa-travail",
-    name: "Visa Travail",
-    icon: "Briefcase",
-    description: "Lancez votre carrière internationale. Nous gérons l'ensemble du processus de permis de travail.",
-  },
-  {
-    slug: "visa-tourisme",
-    name: "Visa Tourisme",
-    icon: "Plane",
-    description: "Préparez vos voyages en toute sérénité. Nous optimisons votre dossier pour un succès maximal.",
-  },
-  {
-    slug: "immigration",
-    name: "Immigration",
-    icon: "Globe",
-    description: "Résidence permanente, programmes provinciaux et regroupement familial.",
-  },
-];
-
 export default async function ServicesPage() {
-  let services = staticServices;
+  let services = fallbackServices;
 
   try {
     const dbServices = await prisma.service.findMany({
@@ -107,7 +63,7 @@ export default async function ServicesPage() {
         <div className="container-custom">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {services.map((service, i) => {
-              const Icon = iconMap[service.icon] || Globe;
+              const Icon = serviceIconMap[service.icon] || Globe;
               return (
                 <ScrollReveal key={service.slug} delay={i * 0.1}>
                   <Link

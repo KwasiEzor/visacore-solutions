@@ -21,6 +21,7 @@ export async function createTestimonial(data: unknown) {
 
     await prisma.testimonial.create({ data: parsed.data })
     revalidatePath("/admin/testimonials")
+    revalidatePath("/")
     revalidatePath("/temoignages")
     return { success: true }
   } catch (error) {
@@ -45,6 +46,7 @@ export async function updateTestimonial(id: string, data: unknown) {
 
     await prisma.testimonial.update({ where: { id }, data: parsed.data })
     revalidatePath("/admin/testimonials")
+    revalidatePath("/")
     revalidatePath("/temoignages")
     return { success: true }
   } catch (error) {
@@ -62,6 +64,7 @@ export async function deleteTestimonial(id: string) {
 
     await prisma.testimonial.delete({ where: { id } })
     revalidatePath("/admin/testimonials")
+    revalidatePath("/")
     revalidatePath("/temoignages")
     return { success: true }
   } catch (error) {
@@ -78,6 +81,7 @@ export async function toggleTestimonialPublished(id: string) {
     if (!t) return { success: false, error: "Témoignage introuvable" }
     await prisma.testimonial.update({ where: { id }, data: { published: !t.published } })
     revalidatePath("/admin/testimonials")
+    revalidatePath("/")
     revalidatePath("/temoignages")
     return { success: true }
   } catch (error) {
@@ -94,6 +98,7 @@ export async function toggleTestimonialFeatured(id: string) {
     if (!t) return { success: false, error: "Témoignage introuvable" }
     await prisma.testimonial.update({ where: { id }, data: { featured: !t.featured } })
     revalidatePath("/admin/testimonials")
+    revalidatePath("/")
     revalidatePath("/temoignages")
     return { success: true }
   } catch (error) {
@@ -108,6 +113,7 @@ export async function bulkDeleteTestimonials(ids: string[]) {
     if (!session || session.user.role === "EDITOR") return { success: false, error: "Non autorisé" }
     await prisma.testimonial.deleteMany({ where: { id: { in: ids } } })
     revalidatePath("/admin/testimonials")
+    revalidatePath("/")
     revalidatePath("/temoignages")
     return { success: true }
   } catch (error) {

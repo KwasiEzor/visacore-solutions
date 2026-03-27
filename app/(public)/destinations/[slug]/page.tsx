@@ -10,6 +10,10 @@ import {
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
+import {
+  normalizeStructuredCardItems,
+  normalizeVisaCategoryItems,
+} from "@/lib/content-structures";
 
 export const revalidate = 3600;
 
@@ -24,22 +28,6 @@ export async function generateStaticParams() {
 /* ────────────────────────────────────────────────
    Types for JSON fields
    ──────────────────────────────────────────────── */
-
-interface Opportunity {
-  title: string;
-  description: string;
-}
-
-interface VisaCategory {
-  name: string;
-  description: string;
-  duration?: string;
-}
-
-interface WhyChooseItem {
-  title: string;
-  description: string;
-}
 
 /* ────────────────────────────────────────────────
    generateMetadata
@@ -97,9 +85,9 @@ export default async function DestinationPage({
     notFound();
   }
 
-  const opportunities = (destination.opportunities as Opportunity[] | null) || [];
-  const visaCategories = (destination.visaCategories as VisaCategory[] | null) || [];
-  const whyChoose = (destination.whyChoose as WhyChooseItem[] | null) || [];
+  const opportunities = normalizeStructuredCardItems(destination.opportunities);
+  const visaCategories = normalizeVisaCategoryItems(destination.visaCategories);
+  const whyChoose = normalizeStructuredCardItems(destination.whyChoose);
 
   return (
     <div className="pt-20">

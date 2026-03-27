@@ -41,12 +41,36 @@ async function main() {
       heroDescription:
         "Le Canada offre des opportunités exceptionnelles pour les travailleurs qualifiés, les étudiants et les familles. Découvrez comment nous pouvons vous accompagner dans votre projet d'immigration canadienne.",
       opportunities: [
-        "Programme Entrée Express",
-        "Programme des Travailleurs Qualifiés",
-        "Programmes Provinciaux (PNP)",
-        "Permis d'études",
-        "Permis de travail",
-        "Regroupement familial",
+        {
+          title: "Programme Entrée Express",
+          description:
+            "Voie rapide pour les profils qualifiés avec classement CRS et invitation à présenter une demande.",
+        },
+        {
+          title: "Programme des Travailleurs Qualifiés",
+          description:
+            "Option adaptée aux professionnels ayant une expérience reconnue et un projet d'installation durable.",
+        },
+        {
+          title: "Programmes Provinciaux (PNP)",
+          description:
+            "Solutions ciblées selon les besoins spécifiques des provinces canadiennes.",
+        },
+        {
+          title: "Permis d'études",
+          description:
+            "Accès aux collèges et universités canadiennes avec accompagnement sur le projet académique.",
+        },
+        {
+          title: "Permis de travail",
+          description:
+            "Parcours vers une insertion professionnelle légale et structurée au Canada.",
+        },
+        {
+          title: "Regroupement familial",
+          description:
+            "Réunification des proches dans le respect des conditions d'immigration canadiennes.",
+        },
       ],
       visaCategories: [
         { name: "Résidence permanente", description: "Entrée Express, PNP, parrainage familial" },
@@ -55,11 +79,31 @@ async function main() {
         { name: "Visa visiteur", description: "Tourisme, visite familiale, super visa" },
       ],
       whyChoose: [
-        "Qualité de vie exceptionnelle",
-        "Système de santé universel",
-        "Éducation de classe mondiale",
-        "Économie stable et diversifiée",
-        "Société multiculturelle et accueillante",
+        {
+          title: "Qualité de vie exceptionnelle",
+          description:
+            "Le Canada combine sécurité, stabilité et infrastructures modernes pour les familles comme pour les professionnels.",
+        },
+        {
+          title: "Système de santé universel",
+          description:
+            "Les résidents bénéficient d'un accès structuré à un système de santé reconnu pour sa qualité.",
+        },
+        {
+          title: "Éducation de classe mondiale",
+          description:
+            "Les établissements canadiens sont valorisés à l'international pour leur qualité académique.",
+        },
+        {
+          title: "Économie stable et diversifiée",
+          description:
+            "Le marché canadien offre des perspectives dans la tech, la santé, l'ingénierie et bien d'autres secteurs.",
+        },
+        {
+          title: "Société multiculturelle et accueillante",
+          description:
+            "L'intégration y est facilitée par un environnement ouvert à la diversité culturelle.",
+        },
       ],
       ctaText: "Évaluer mon profil pour le Canada",
       published: true,
@@ -80,12 +124,36 @@ async function main() {
       heroDescription:
         "Les États-Unis restent une destination de premier choix pour les professionnels ambitieux et les étudiants. Notre expertise vous guide à travers le processus complexe de l'immigration américaine.",
       opportunities: [
-        "Visa H-1B (travailleurs spécialisés)",
-        "Visa L-1 (transfert intra-entreprise)",
-        "Visa F-1 (études)",
-        "Visa J-1 (échange)",
-        "Loterie Visa (DV Lottery)",
-        "Visa investisseur (EB-5)",
+        {
+          title: "Visa H-1B",
+          description:
+            "Programme phare pour les travailleurs spécialisés recrutés par des employeurs américains.",
+        },
+        {
+          title: "Visa L-1",
+          description:
+            "Solution pour les transferts intra-entreprise des cadres et profils stratégiques.",
+        },
+        {
+          title: "Visa F-1",
+          description:
+            "Accès aux universités et établissements américains pour les projets académiques ambitieux.",
+        },
+        {
+          title: "Visa J-1",
+          description:
+            "Programme d'échange pour la formation, la recherche ou certaines expériences professionnelles.",
+        },
+        {
+          title: "DV Lottery",
+          description:
+            "Voie annuelle basée sur le tirage au sort pour accéder à une résidence permanente.",
+        },
+        {
+          title: "Visa investisseur (EB-5)",
+          description:
+            "Option destinée aux profils capables d'investir dans un projet économique admissible.",
+        },
       ],
       visaCategories: [
         { name: "Visa de travail", description: "H-1B, L-1, O-1, TN" },
@@ -94,11 +162,31 @@ async function main() {
         { name: "Visa visiteur", description: "B-1/B-2, ESTA" },
       ],
       whyChoose: [
-        "Première économie mondiale",
-        "Universités de renommée mondiale",
-        "Opportunités professionnelles illimitées",
-        "Innovation et technologie de pointe",
-        "Diversité culturelle incomparable",
+        {
+          title: "Première économie mondiale",
+          description:
+            "Les États-Unis concentrent un marché immense et des opportunités de croissance dans de nombreux secteurs.",
+        },
+        {
+          title: "Universités de renommée mondiale",
+          description:
+            "Le pays abrite certaines des institutions académiques les plus reconnues au monde.",
+        },
+        {
+          title: "Opportunités professionnelles majeures",
+          description:
+            "Les talents spécialisés y trouvent des perspectives d'évolution rapides et compétitives.",
+        },
+        {
+          title: "Innovation et technologie de pointe",
+          description:
+            "L'écosystème américain reste un moteur central de l'innovation mondiale.",
+        },
+        {
+          title: "Diversité culturelle incomparable",
+          description:
+            "La variété des profils, des régions et des industries favorise une intégration progressive.",
+        },
       ],
       ctaText: "Évaluer mon profil pour les États-Unis",
       published: true,
@@ -119,12 +207,36 @@ async function main() {
       heroDescription:
         "L'Europe offre une qualité de vie remarquable et des opportunités diversifiées. De la France à l'Allemagne, du Royaume-Uni aux pays nordiques, nous vous guidons vers votre destination européenne idéale.",
       opportunities: [
-        "Visa Schengen",
-        "Carte bleue européenne",
-        "Études en France, Allemagne, Belgique",
-        "Regroupement familial",
-        "Visa long séjour",
-        "Programmes de travail saisonnier",
+        {
+          title: "Visa Schengen",
+          description:
+            "Accès simplifié à l'espace Schengen pour les séjours courts, touristiques ou professionnels.",
+        },
+        {
+          title: "Carte bleue européenne",
+          description:
+            "Option attractive pour les professionnels qualifiés visant une insertion durable en Europe.",
+        },
+        {
+          title: "Études en France, Allemagne, Belgique",
+          description:
+            "Parcours académiques variés avec accompagnement sur l'admission et le visa étudiant.",
+        },
+        {
+          title: "Regroupement familial",
+          description:
+            "Solutions pour rejoindre un proche établi légalement dans un pays européen.",
+        },
+        {
+          title: "Visa long séjour",
+          description:
+            "Cadre adapté aux projets d'installation, de travail ou d'études sur plusieurs mois.",
+        },
+        {
+          title: "Programmes de travail saisonnier",
+          description:
+            "Opportunités ciblées dans certains secteurs à forte demande de main-d'œuvre.",
+        },
       ],
       visaCategories: [
         { name: "Visa de travail", description: "Carte bleue, visa salarié, détachement" },
@@ -133,11 +245,31 @@ async function main() {
         { name: "Visa Schengen", description: "Court séjour, tourisme, affaires" },
       ],
       whyChoose: [
-        "Richesse culturelle et historique",
-        "Protection sociale avancée",
-        "Éducation accessible et de qualité",
-        "Proximité géographique avec l'Afrique",
-        "Francophonie (France, Belgique, Suisse)",
+        {
+          title: "Richesse culturelle et historique",
+          description:
+            "L'Europe offre un cadre de vie varié avec des environnements culturels et professionnels distincts.",
+        },
+        {
+          title: "Protection sociale avancée",
+          description:
+            "De nombreux pays européens proposent des systèmes sociaux structurés et protecteurs.",
+        },
+        {
+          title: "Éducation accessible et de qualité",
+          description:
+            "Les étudiants peuvent accéder à des parcours reconnus, parfois à coûts maîtrisés.",
+        },
+        {
+          title: "Proximité géographique avec l'Afrique",
+          description:
+            "La distance et les liaisons facilitent les échanges familiaux et professionnels.",
+        },
+        {
+          title: "Espaces francophones",
+          description:
+            "Plusieurs destinations permettent une intégration plus fluide pour les profils francophones.",
+        },
       ],
       ctaText: "Évaluer mon profil pour l'Europe",
       published: true,
@@ -163,10 +295,26 @@ async function main() {
       requiredSupport:
         "Relevés de notes, diplômes, tests de langue (IELTS, TOEFL, TCF), lettre de motivation, preuves financières.",
       benefits: [
-        "Orientation vers les meilleurs programmes",
-        "Aide à la rédaction du dossier",
-        "Préparation à l'entretien consulaire",
-        "Suivi post-admission",
+        {
+          title: "Orientation vers les meilleurs programmes",
+          description:
+            "Sélection d'établissements et de parcours cohérents avec votre profil et votre budget.",
+        },
+        {
+          title: "Aide à la rédaction du dossier",
+          description:
+            "Accompagnement sur la lettre de motivation, le storytelling et les pièces académiques.",
+        },
+        {
+          title: "Préparation à l'entretien consulaire",
+          description:
+            "Simulation et cadrage des réponses attendues pour maximiser la crédibilité du projet.",
+        },
+        {
+          title: "Suivi post-admission",
+          description:
+            "Support jusqu'à la demande de visa et à la préparation du départ.",
+        },
       ],
       ctaText: "Démarrer mon projet d'études",
       order: 1,
@@ -182,10 +330,26 @@ async function main() {
       requiredSupport:
         "CV, lettres de recommandation, certifications professionnelles, preuves d'expérience.",
       benefits: [
-        "Analyse des programmes disponibles",
-        "Optimisation du dossier",
-        "Accompagnement administratif complet",
-        "Conseils sur le marché du travail",
+        {
+          title: "Analyse des programmes disponibles",
+          description:
+            "Identification des voies de travail pertinentes selon votre métier et votre destination.",
+        },
+        {
+          title: "Optimisation du dossier",
+          description:
+            "Structuration des preuves d'expérience et des éléments qui renforcent votre employabilité.",
+        },
+        {
+          title: "Accompagnement administratif complet",
+          description:
+            "Suivi des exigences documentaires et du calendrier de soumission.",
+        },
+        {
+          title: "Conseils sur le marché du travail",
+          description:
+            "Orientation pragmatique sur les secteurs qui recrutent et les attentes locales.",
+        },
       ],
       ctaText: "Trouver mon opportunité de travail",
       order: 2,
@@ -201,10 +365,26 @@ async function main() {
       requiredSupport:
         "Documents d'état civil, preuves de fonds, évaluations de diplômes, tests de langue.",
       benefits: [
-        "Évaluation complète du profil",
-        "Stratégie d'immigration personnalisée",
-        "Montage de dossier rigoureux",
-        "Suivi jusqu'à l'obtention du statut",
+        {
+          title: "Évaluation complète du profil",
+          description:
+            "Analyse des facteurs clés qui influencent vos chances d'admission à la résidence.",
+        },
+        {
+          title: "Stratégie d'immigration personnalisée",
+          description:
+            "Choix du programme le plus pertinent selon votre situation familiale, académique et professionnelle.",
+        },
+        {
+          title: "Montage de dossier rigoureux",
+          description:
+            "Préparation structurée des preuves et contrôle qualité de chaque pièce du dossier.",
+        },
+        {
+          title: "Suivi jusqu'à l'obtention du statut",
+          description:
+            "Accompagnement sur toute la durée du processus jusqu'à la décision finale.",
+        },
       ],
       ctaText: "Évaluer mes chances",
       order: 3,
@@ -220,10 +400,26 @@ async function main() {
       requiredSupport:
         "Invitation, preuves de liens avec le pays d'origine, justificatifs financiers, assurance voyage.",
       benefits: [
-        "Préparation du dossier sur mesure",
-        "Conseils pour l'entretien",
-        "Vérification complète des documents",
-        "Taux d'approbation optimisé",
+        {
+          title: "Préparation du dossier sur mesure",
+          description:
+            "Construction d'un dossier crédible en cohérence avec l'objet du voyage.",
+        },
+        {
+          title: "Conseils pour l'entretien",
+          description:
+            "Préparation ciblée lorsque l'entretien fait partie de la procédure consulaire.",
+        },
+        {
+          title: "Vérification complète des documents",
+          description:
+            "Contrôle des pièces justificatives pour limiter les refus liés aux incohérences.",
+        },
+        {
+          title: "Taux d'approbation optimisé",
+          description:
+            "Amélioration de la qualité globale de la demande avant soumission.",
+        },
       ],
       ctaText: "Préparer mon visa visiteur",
       order: 4,
@@ -239,10 +435,26 @@ async function main() {
       requiredSupport:
         "Tous documents pertinents selon le type de demande.",
       benefits: [
-        "Revue complète des documents",
-        "Traduction certifiée si nécessaire",
-        "Organisation et compilation professionnelle",
-        "Vérification de conformité",
+        {
+          title: "Revue complète des documents",
+          description:
+            "Contrôle minutieux de chaque pièce afin d'éviter les oublis et incohérences.",
+        },
+        {
+          title: "Traduction certifiée si nécessaire",
+          description:
+            "Orientation sur les traductions requises et intégration propre des versions traduites.",
+        },
+        {
+          title: "Organisation et compilation professionnelle",
+          description:
+            "Structuration claire du dossier pour faciliter son traitement par les autorités.",
+        },
+        {
+          title: "Vérification de conformité",
+          description:
+            "Dernier contrôle qualité avant soumission officielle.",
+        },
       ],
       ctaText: "Confier mon dossier à un expert",
       order: 5,
@@ -258,10 +470,26 @@ async function main() {
       requiredSupport:
         "Aucun document requis au préalable. Venez avec vos questions et votre projet.",
       benefits: [
-        "Analyse personnalisée de votre situation",
-        "Recommandations stratégiques",
-        "Plan d'action concret",
-        "Réponses à toutes vos questions",
+        {
+          title: "Analyse personnalisée de votre situation",
+          description:
+            "Lecture rapide des forces, risques et blocages potentiels de votre projet.",
+        },
+        {
+          title: "Recommandations stratégiques",
+          description:
+            "Priorisation des meilleures options en fonction de votre réalité et de votre budget.",
+        },
+        {
+          title: "Plan d'action concret",
+          description:
+            "Feuille de route claire avec les prochaines étapes à engager immédiatement.",
+        },
+        {
+          title: "Réponses à toutes vos questions",
+          description:
+            "Temps dédié pour clarifier les zones d'incertitude avant de vous engager.",
+        },
       ],
       ctaText: "Réserver ma consultation",
       order: 6,

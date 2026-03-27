@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
+import { hasPermission } from "@/lib/rbac"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -71,7 +72,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!isLoggedIn) return false
         
         // Restriction : Seul SUPER_ADMIN peut gérer les utilisateurs et les paramètres globaux
-        if ((isOnUserMgmt || isOnSettings) && role !== "SUPER_ADMIN") {
+        if (
+          isOnUserMgmt &&
+          !hasPermission(role, "manage_users")
+        ) {
+          return Response.redirect(new URL("/admin", request.nextUrl))
+        }
+
+        if (
+          isOnSettings &&
+          !hasPermission(role, "manage_settings")
+        ) {
           return Response.redirect(new URL("/admin", request.nextUrl))
         }
         

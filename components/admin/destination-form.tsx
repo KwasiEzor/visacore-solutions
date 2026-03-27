@@ -5,7 +5,10 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { destinationSchema, type DestinationFormData } from "@/lib/validations/destination"
+import {
+  destinationFormSchema,
+  type DestinationFormData,
+} from "@/lib/validations/destination"
 import { createDestination, updateDestination } from "@/actions/destinations"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -38,7 +41,7 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
     setValue,
     formState: { errors },
   } = useForm<DestinationFormData>({
-    resolver: zodResolver(destinationSchema),
+    resolver: zodResolver(destinationFormSchema),
     defaultValues: initialData
       ? {
           name: initialData.name,
@@ -79,25 +82,50 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
     }
   }
 
-  function parseJsonField(value: unknown): unknown {
-    if (typeof value === "string" && value.trim() !== "") {
-      try {
-        return JSON.parse(value)
-      } catch {
-        return null
+  function parseJsonField(label: string, value: unknown) {
+    if (typeof value !== "string" || value.trim() === "") {
+      return { success: true as const, value: null }
+    }
+
+    try {
+      return { success: true as const, value: JSON.parse(value) }
+    } catch {
+      return {
+        success: false as const,
+        error: `Le champ "${label}" contient un JSON invalide.`,
       }
     }
-    return null
   }
 
   function onSubmit(data: DestinationFormData) {
     startTransition(async () => {
       try {
+        const opportunities = parseJsonField("Opportunités", data.opportunities)
+        if (!opportunities.success) {
+          toast.error(opportunities.error)
+          return
+        }
+
+        const visaCategories = parseJsonField(
+          "Catégories de visa",
+          data.visaCategories
+        )
+        if (!visaCategories.success) {
+          toast.error(visaCategories.error)
+          return
+        }
+
+        const whyChoose = parseJsonField("Pourquoi choisir", data.whyChoose)
+        if (!whyChoose.success) {
+          toast.error(whyChoose.error)
+          return
+        }
+
         const payload = {
           ...data,
-          opportunities: parseJsonField(data.opportunities),
-          visaCategories: parseJsonField(data.visaCategories),
-          whyChoose: parseJsonField(data.whyChoose),
+          opportunities: opportunities.value,
+          visaCategories: visaCategories.value,
+          whyChoose: whyChoose.value,
         }
 
         const result = isEditing

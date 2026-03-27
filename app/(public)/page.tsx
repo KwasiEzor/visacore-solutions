@@ -3,91 +3,94 @@ import {
   Users,
   Shield,
   Globe,
-  GraduationCap,
-  Briefcase,
-  Plane,
   UserCheck,
   ArrowRight,
   Quote,
   ChevronRight,
 } from "lucide-react";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
+import { prisma } from "@/lib/prisma";
+import {
+  fallbackDestinations,
+  fallbackServices,
+  fallbackTestimonials,
+  getDestinationVisual,
+  serviceIconMap,
+} from "@/lib/public-content";
 
-/* ────────────────────────────────────────────────
-   Static fallback data
-   ──────────────────────────────────────────────── */
-
-const staticDestinations = [
-  {
-    slug: "canada",
-    name: "Canada",
-    heroTitle: "Immigrez au Canada avec confiance",
-    flag: "🇨🇦",
-    image: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    slug: "etats-unis",
-    name: "États-Unis",
-    heroTitle: "Concrétisez votre rêve américain",
-    flag: "🇺🇸",
-    image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    slug: "europe",
-    name: "Europe",
-    heroTitle: "Découvrez les opportunités en Europe",
-    flag: "🇪🇺",
-    image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&q=80&w=800",
-  },
-];
-
-const staticServices = [
-  {
-    slug: "visa-etudes",
-    name: "Visa Études",
-    icon: GraduationCap,
-    description: "Accompagnement complet pour vos études : admission, visa et installation.",
-  },
-  {
-    slug: "visa-travail",
-    name: "Visa Travail",
-    icon: Briefcase,
-    description: "Obtenez votre permis de travail et lancez votre carrière internationale.",
-  },
-  {
-    slug: "visa-tourisme",
-    name: "Visa Tourisme",
-    icon: Plane,
-    description: "Préparez vos voyages en toute sérénité avec notre service dédié.",
-  },
-  {
-    slug: "immigration",
-    name: "Immigration",
-    icon: Globe,
-    description: "Programmes de résidence permanente et regroupement familial.",
-  },
-];
-
-const staticTestimonials = [
-  {
-    id: "1",
-    clientName: "Kofi Mensah",
-    destination: "Canada",
-    content: "Grâce à VisaCore Solutions, j'ai obtenu mon visa d'études en seulement 3 semaines. L'équipe m'a guidé avec un professionnalisme exemplaire.",
-    rating: 5,
-  },
-  {
-    id: "2",
-    clientName: "Ama Touré",
-    destination: "France",
-    content: "Un accompagnement exceptionnel du début à la fin. Mon dossier de visa travail a été approuvé du premier coup. Je recommande vivement !",
-    rating: 5,
-  },
-];
+export const revalidate = 3600;
 
 export default async function HomePage() {
-  const destinations = staticDestinations;
-  const services = staticServices;
+  let destinations = fallbackDestinations;
+  let services = fallbackServices;
+  let testimonials = fallbackTestimonials;
+
+  try {
+    const [dbDestinations, dbServices, dbTestimonials] = await Promise.all([
+      prisma.destination.findMany({
+        where: { published: true },
+        orderBy: { order: "asc" },
+        take: 3,
+        select: {
+          slug: true,
+          name: true,
+          heroTitle: true,
+          heroDescription: true,
+        },
+      }),
+      prisma.service.findMany({
+        where: { published: true },
+        orderBy: { order: "asc" },
+        take: 4,
+        select: {
+          slug: true,
+          name: true,
+          icon: true,
+          description: true,
+        },
+      }),
+      prisma.testimonial.findMany({
+        where: { published: true },
+        orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+        take: 2,
+        select: {
+          id: true,
+          clientName: true,
+          destination: true,
+          content: true,
+          rating: true,
+        },
+      }),
+    ]);
+
+    if (dbDestinations.length > 0) {
+      destinations = dbDestinations.map((destination) => ({
+        slug: destination.slug,
+        name: destination.name,
+        heroTitle: destination.heroTitle,
+        heroDescription: destination.heroDescription || "",
+        ...getDestinationVisual(destination.slug),
+      }));
+    }
+
+    if (dbServices.length > 0) {
+      services = dbServices.map((service) => ({
+        slug: service.slug,
+        name: service.name,
+        icon: service.icon || "Globe",
+        description: service.description || "",
+      }));
+    }
+
+    if (dbTestimonials.length > 0) {
+      testimonials = dbTestimonials.map((testimonial) => ({
+        ...testimonial,
+        destination: testimonial.destination || "Internationale",
+      }));
+    }
+  } catch {
+    // Fall back to static content when database reads are unavailable.
+  }
 
   return (
     <div className="relative">
@@ -259,20 +262,24 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {services.map((service, i) => (
-              <ScrollReveal key={service.slug} delay={i * 0.1}>
-                <div className="group bg-white/5 border border-white/10 p-10 rounded-3xl h-full hover:bg-visacore-gold transition-all duration-500 hover:-translate-y-2">
-                  <div className="size-16 rounded-2xl bg-visacore-gold text-white flex items-center justify-center mb-8 group-hover:bg-visacore-navy group-hover:text-visacore-gold transition-colors">
-                    <service.icon className="size-8" />
+            {services.map((service, i) => {
+              const Icon = serviceIconMap[service.icon] || Globe
+
+              return (
+                <ScrollReveal key={service.slug} delay={i * 0.1}>
+                  <div className="group bg-white/5 border border-white/10 p-10 rounded-3xl h-full hover:bg-visacore-gold transition-all duration-500 hover:-translate-y-2">
+                    <div className="size-16 rounded-2xl bg-visacore-gold text-white flex items-center justify-center mb-8 group-hover:bg-visacore-navy group-hover:text-visacore-gold transition-colors">
+                      <Icon className="size-8" />
+                    </div>
+                    <h3 className="text-2xl font-black mb-4">{service.name}</h3>
+                    <p className="text-white/50 group-hover:text-visacore-navy/80 transition-colors mb-8">{service.description}</p>
+                    <Link href={`/services/${service.slug}`} className="inline-flex items-center gap-2 font-bold group-hover:text-visacore-navy">
+                      Détails <ArrowRight className="size-4" />
+                    </Link>
                   </div>
-                  <h3 className="text-2xl font-black mb-4">{service.name}</h3>
-                  <p className="text-white/50 group-hover:text-visacore-navy/80 transition-colors mb-8">{service.description}</p>
-                  <Link href={`/services/${service.slug}`} className="inline-flex items-center gap-2 font-bold group-hover:text-visacore-navy">
-                    Détails <ArrowRight className="size-4" />
-                  </Link>
-                </div>
-              </ScrollReveal>
-            ))}
+                </ScrollReveal>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -386,7 +393,7 @@ export default async function HomePage() {
                </div>
                
                <div className="space-y-8">
-                  {staticTestimonials.map((t, i) => (
+                  {testimonials.map((t, i) => (
                     <ScrollReveal key={t.id} delay={i * 0.2}>
                        <div className="bg-white p-12 rounded-[40px] shadow-2xl shadow-visacore-navy/5 border border-border/50 relative">
                           <Quote className="absolute -top-6 -left-6 size-12 text-visacore-gold fill-visacore-gold" />

@@ -3,15 +3,16 @@
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
+import { hasPermission } from "@/lib/rbac"
 
 export async function updateSetting(
   key: string, 
   value: string, 
   type: "TEXT" | "IMAGE" | "JSON" | "BOOLEAN" = "TEXT"
-) {
+  ) {
   try {
     const session = await auth()
-    if (!session || session.user.role === "EDITOR") {
+    if (!session || !hasPermission(session.user.role, "manage_settings")) {
       return { success: false, error: "Non autorisé" }
     }
 
@@ -21,7 +22,7 @@ export async function updateSetting(
       create: { key, value, type },
     })
     revalidatePath("/admin/settings")
-    revalidatePath("/")
+    revalidatePath("/", "layout")
     return { success: true }
   } catch (error) {
     console.error("[UPDATE_SETTING_ERROR]", error)

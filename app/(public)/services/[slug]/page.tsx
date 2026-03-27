@@ -3,11 +3,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   Globe,
-  GraduationCap,
-  Briefcase,
-  Plane,
-  Building2,
-  FileCheck,
   ArrowRight,
   CheckCircle2,
   ChevronRight,
@@ -16,6 +11,10 @@ import {
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
+import {
+  normalizeStructuredCardItems,
+} from "@/lib/content-structures";
+import { serviceIconMap } from "@/lib/public-content";
 
 export const revalidate = 3600;
 
@@ -30,20 +29,6 @@ export async function generateStaticParams() {
 /* ────────────────────────────────────────────────
    Types
    ──────────────────────────────────────────────── */
-
-interface Benefit {
-  title: string;
-  description: string;
-}
-
-const iconMap: Record<string, React.ElementType> = {
-  GraduationCap,
-  Briefcase,
-  Plane,
-  Building2,
-  Globe,
-  FileCheck,
-};
 
 /* ────────────────────────────────────────────────
    generateMetadata
@@ -101,8 +86,8 @@ export default async function ServicePage({
     notFound();
   }
 
-  const Icon = iconMap[service.icon || ""] || Globe;
-  const benefits = (service.benefits as Benefit[] | null) || [];
+  const Icon = serviceIconMap[service.icon || ""] || Globe;
+  const benefits = normalizeStructuredCardItems(service.benefits);
 
   return (
     <div className="pt-20">

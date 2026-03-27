@@ -3,6 +3,10 @@ import type { Metadata } from "next";
 import { ArrowRight, MapPin } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
+import {
+  fallbackDestinations,
+  getDestinationVisual,
+} from "@/lib/public-content";
 
 export const revalidate = 3600;
 
@@ -12,38 +16,8 @@ export const metadata: Metadata = {
     "Explorez les pays d'immigration accompagnés par VisaCore Solutions : Canada, États-Unis, Europe.",
 };
 
-const staticDestinations = [
-  {
-    slug: "canada",
-    name: "Canada",
-    heroTitle: "Immigrez au Canada avec confiance",
-    heroDescription:
-      "Le Canada offre d'excellentes opportunités avec ses programmes variés : Entrée express, PVT, visa études et regroupement familial.",
-    flag: "🇨🇦",
-    image: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    slug: "etats-unis",
-    name: "États-Unis",
-    heroTitle: "Concrétisez votre rêve américain",
-    heroDescription:
-      "Les États-Unis restent une destination de choix. Nous vous guidons à travers les différentes catégories de visas disponibles.",
-    flag: "🇺🇸",
-    image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    slug: "europe",
-    name: "Europe",
-    heroTitle: "Découvrez les opportunités en Europe",
-    heroDescription:
-      "L'Europe offre un cadre de vie exceptionnel et de nombreuses opportunités professionnelles. France, Allemagne, Belgique et plus.",
-    flag: "🇪🇺",
-    image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&q=80&w=800",
-  },
-];
-
 export default async function DestinationsPage() {
-  let destinations = staticDestinations;
+  let destinations = fallbackDestinations;
 
   try {
     const dbDestinations = await prisma.destination.findMany({
@@ -51,13 +25,12 @@ export default async function DestinationsPage() {
       orderBy: { order: "asc" },
     });
     if (dbDestinations.length > 0) {
-      destinations = dbDestinations.map((d, i) => ({
+      destinations = dbDestinations.map((d) => ({
         slug: d.slug,
         name: d.name,
         heroTitle: d.heroTitle,
         heroDescription: d.heroDescription || "",
-        flag: staticDestinations[i]?.flag || "🌍",
-        image: staticDestinations[i]?.image || "https://images.unsplash.com/photo-1436491865332-7a61a109c0f2?auto=format&fit=crop&q=80&w=800",
+        ...getDestinationVisual(d.slug),
       }));
     }
   } catch {
