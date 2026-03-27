@@ -1,6 +1,10 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { DestinationForm } from "@/components/admin/destination-form"
+import {
+  normalizeStructuredCardItems,
+  normalizeVisaCategoryItems,
+} from "@/lib/content-structures"
 
 export default async function EditDestinationPage({
   params,
@@ -33,15 +37,9 @@ export default async function EditDestinationPage({
           heroTitle: destination.heroTitle,
           heroDescription: destination.heroDescription || "",
           heroImage: destination.heroImage || "",
-          opportunities: destination.opportunities
-            ? JSON.stringify(destination.opportunities, null, 2)
-            : "",
-          visaCategories: destination.visaCategories
-            ? JSON.stringify(destination.visaCategories, null, 2)
-            : "",
-          whyChoose: destination.whyChoose
-            ? JSON.stringify(destination.whyChoose, null, 2)
-            : "",
+          opportunities: normalizeStructuredCardItems(destination.opportunities),
+          visaCategories: normalizeVisaCategoryItems(destination.visaCategories),
+          whyChoose: normalizeStructuredCardItems(destination.whyChoose),
           ctaText: destination.ctaText || "",
           published: destination.published,
           order: destination.order,

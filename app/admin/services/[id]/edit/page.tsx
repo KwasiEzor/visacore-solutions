@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { ServiceForm } from "@/components/admin/service-form"
+import { normalizeStructuredCardItems } from "@/lib/content-structures"
 
 export default async function EditServicePage({
   params,
@@ -34,9 +35,7 @@ export default async function EditServicePage({
           description: service.description || "",
           whoIsItFor: service.whoIsItFor || "",
           requiredSupport: service.requiredSupport || "",
-          benefits: service.benefits
-            ? JSON.stringify(service.benefits, null, 2)
-            : "",
+          benefits: normalizeStructuredCardItems(service.benefits),
           ctaText: service.ctaText || "",
           published: service.published,
           order: service.order,

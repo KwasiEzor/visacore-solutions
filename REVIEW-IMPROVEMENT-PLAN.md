@@ -56,6 +56,25 @@ It focuses on real issues observed in the current codebase, not generic best pra
 - Add test coverage for critical public flows and admin mutations
 - Improve SEO/content operations workflow
 
+## Current Status
+
+### Completed phases
+
+- Phase 1 completed: core content/data source alignment
+- Phase 2 completed: CMS-driven public content mapping
+- Phase 3 completed: public form hardening and submission feedback
+- Phase 4 completed: RBAC alignment and upload policy hardening
+- Phase 5 completed: trust/UX cleanup and semantic fixes
+- Phase 6 completed: automated quality gates and DB-backed content integrity checks
+
+### Remaining implementation backlog
+
+- Replace raw JSON textareas in service/destination admin forms with structured repeatable editors
+- Add unsaved-change guards and validation summaries to large admin forms
+- Add search/filter UX for leads and contacts admin screens
+- Add E2E smoke coverage for public CTAs, contact submission, and admin login
+- Consider optional CAPTCHA and abuse-event logging if the public funnel starts attracting spam beyond the current guardrails
+
 ## Phase 1: Stabilize Core Content Flows
 
 ### 1.1 Unify service slugs and source of truth

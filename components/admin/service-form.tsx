@@ -1,6 +1,6 @@
 "use client"
 
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
@@ -10,6 +10,12 @@ import {
   type ServiceFormData,
 } from "@/lib/validations/service"
 import { createService, updateService } from "@/actions/services"
+import type { StructuredCardItem } from "@/lib/content-structures"
+import {
+  normalizeStructuredCardItemDraft,
+  prepareStructuredCardItemsForSubmit,
+} from "@/lib/structured-content-editor"
+import { StructuredCardItemsEditor } from "@/components/admin/structured-card-items-editor"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -17,8 +23,15 @@ import { Label } from "@/components/ui/label"
 import { ArrowLeft, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
+type ServiceScalarFields = Omit<ServiceFormData, "benefits">
+
+interface ServiceFormInitialData extends ServiceScalarFields {
+  id: string
+  benefits: StructuredCardItem[]
+}
+
 interface ServiceFormProps {
-  initialData?: ServiceFormData & { id: string }
+  initialData?: ServiceFormInitialData
 }
 
 function slugify(text: string): string {
@@ -34,14 +47,17 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const isEditing = !!initialData?.id
+  const [benefits, setBenefits] = useState(() =>
+    normalizeStructuredCardItemDraft(initialData?.benefits)
+  )
 
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<ServiceFormData>({
-    resolver: zodResolver(serviceFormSchema),
+  } = useForm<ServiceScalarFields>({
+    resolver: zodResolver(serviceFormSchema.omit({ benefits: true })),
     defaultValues: initialData
       ? {
           name: initialData.name,
@@ -50,7 +66,6 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
           description: initialData.description ?? "",
           whoIsItFor: initialData.whoIsItFor ?? "",
           requiredSupport: initialData.requiredSupport ?? "",
-          benefits: initialData.benefits ?? "",
           ctaText: initialData.ctaText ?? "",
           published: initialData.published,
           order: initialData.order,
@@ -64,7 +79,6 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
           description: "",
           whoIsItFor: "",
           requiredSupport: "",
-          benefits: "",
           ctaText: "",
           published: false,
           order: 0,
@@ -80,33 +94,21 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
     }
   }
 
-  function parseJsonField(label: string, value: unknown) {
-    if (typeof value !== "string" || value.trim() === "") {
-      return { success: true as const, value: null }
-    }
-
-    try {
-      return { success: true as const, value: JSON.parse(value) }
-    } catch {
-      return {
-        success: false as const,
-        error: `Le champ "${label}" contient un JSON invalide.`,
-      }
-    }
-  }
-
-  function onSubmit(data: ServiceFormData) {
+  function onSubmit(data: ServiceScalarFields) {
     startTransition(async () => {
       try {
-        const benefits = parseJsonField("Avantages", data.benefits)
-        if (!benefits.success) {
-          toast.error(benefits.error)
+        const benefitsResult = prepareStructuredCardItemsForSubmit(
+          benefits,
+          "Avantages"
+        )
+        if (!benefitsResult.success) {
+          toast.error(benefitsResult.error)
           return
         }
 
         const payload = {
           ...data,
-          benefits: benefits.value,
+          benefits: benefitsResult.value,
         }
 
         const result = isEditing
@@ -133,7 +135,7 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
     <div className="space-y-6">
       <Link
         href="/admin/services"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
         Retour
@@ -141,9 +143,8 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="rounded-xl border bg-card p-6 shadow-sm space-y-6"
+        className="space-y-6 rounded-xl border bg-card p-6 shadow-sm"
       >
-        {/* Name & Slug */}
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium">
@@ -173,7 +174,6 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
           </div>
         </div>
 
-        {/* Icon */}
         <div className="space-y-2">
           <Label htmlFor="icon" className="text-sm font-medium">
             Icône
@@ -185,7 +185,6 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
           />
         </div>
 
-        {/* Description */}
         <div className="space-y-2">
           <Label htmlFor="description" className="text-sm font-medium">
             Description
@@ -203,7 +202,6 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
           )}
         </div>
 
-        {/* Who Is It For */}
         <div className="space-y-2">
           <Label htmlFor="whoIsItFor" className="text-sm font-medium">
             À qui s&apos;adresse ce service ?
@@ -216,7 +214,6 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
           />
         </div>
 
-        {/* Required Support */}
         <div className="space-y-2">
           <Label htmlFor="requiredSupport" className="text-sm font-medium">
             Accompagnement requis
@@ -229,24 +226,15 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
           />
         </div>
 
-        {/* Benefits (JSON) */}
-        <div className="space-y-2">
-          <Label htmlFor="benefits" className="text-sm font-medium">
-            Avantages (JSON)
-          </Label>
-          <Textarea
-            id="benefits"
-            {...register("benefits")}
-            rows={4}
-            placeholder='[{"title": "Accompagnement complet", "description": "..."}]'
-            className="font-mono text-sm"
-          />
-          <p className="text-xs text-muted-foreground">
-            Format JSON. Laissez vide si aucune donnée.
-          </p>
-        </div>
+        <StructuredCardItemsEditor
+          title="Avantages"
+          hint="Ajoutez les bénéfices affichés sur la fiche service."
+          items={benefits}
+          onChange={setBenefits}
+          titlePlaceholder="Ex: Accompagnement complet"
+          descriptionPlaceholder="Décrivez cet avantage..."
+        />
 
-        {/* CTA Text */}
         <div className="space-y-2">
           <Label htmlFor="ctaText" className="text-sm font-medium">
             Texte CTA
@@ -258,7 +246,6 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
           />
         </div>
 
-        {/* Published & Order */}
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="flex items-center gap-3">
             <input
@@ -281,57 +268,41 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
               {...register("order", { valueAsNumber: true })}
               placeholder="0"
             />
-            {errors.order && (
-              <p className="text-sm text-destructive">
-                {errors.order.message}
-              </p>
-            )}
           </div>
         </div>
 
-        {/* SEO */}
-        <div className="space-y-2">
-          <Label htmlFor="seoTitle" className="text-sm font-medium">
-            Titre SEO
-          </Label>
-          <Input
-            id="seoTitle"
-            {...register("seoTitle")}
-            placeholder="Titre pour les moteurs de recherche"
-          />
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="seoTitle" className="text-sm font-medium">
+              SEO Title
+            </Label>
+            <Input
+              id="seoTitle"
+              {...register("seoTitle")}
+              placeholder="Titre SEO"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="seoDescription" className="text-sm font-medium">
+              SEO Description
+            </Label>
+            <Textarea
+              id="seoDescription"
+              {...register("seoDescription")}
+              rows={3}
+              placeholder="Description SEO..."
+            />
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="seoDescription" className="text-sm font-medium">
-            Description SEO
-          </Label>
-          <Textarea
-            id="seoDescription"
-            {...register("seoDescription")}
-            rows={2}
-            placeholder="Description pour les moteurs de recherche..."
-          />
-        </div>
-
-        {/* Submit */}
-        <div className="flex items-center gap-3 pt-2">
+        <div className="flex items-center gap-3">
           <Button type="submit" disabled={isPending}>
-            {isPending ? (
-              <>
-                <Loader2 className="mr-2 size-4 animate-spin" />
-                Sauvegarde...
-              </>
-            ) : isEditing ? (
-              "Mettre à jour"
-            ) : (
-              "Créer le service"
-            )}
+            {isPending && <Loader2 className="size-4 animate-spin" />}
+            {isEditing ? "Mettre à jour" : "Créer le service"}
           </Button>
-          <Link href="/admin/services">
-            <Button type="button" variant="outline">
-              Annuler
-            </Button>
-          </Link>
+          <Button type="button" variant="outline" onClick={() => router.push("/admin/services")}>
+            Annuler
+          </Button>
         </div>
       </form>
     </div>

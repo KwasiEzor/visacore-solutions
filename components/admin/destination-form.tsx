@@ -1,6 +1,6 @@
 "use client"
 
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
@@ -10,6 +10,18 @@ import {
   type DestinationFormData,
 } from "@/lib/validations/destination"
 import { createDestination, updateDestination } from "@/actions/destinations"
+import type {
+  StructuredCardItem,
+  VisaCategoryItem,
+} from "@/lib/content-structures"
+import {
+  normalizeStructuredCardItemDraft,
+  normalizeVisaCategoryDraft,
+  prepareStructuredCardItemsForSubmit,
+  prepareVisaCategoriesForSubmit,
+} from "@/lib/structured-content-editor"
+import { StructuredCardItemsEditor } from "@/components/admin/structured-card-items-editor"
+import { VisaCategoriesEditor } from "@/components/admin/visa-categories-editor"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -17,8 +29,20 @@ import { Label } from "@/components/ui/label"
 import { ArrowLeft, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
+type DestinationScalarFields = Omit<
+  DestinationFormData,
+  "opportunities" | "visaCategories" | "whyChoose"
+>
+
+interface DestinationFormInitialData extends DestinationScalarFields {
+  id: string
+  opportunities: StructuredCardItem[]
+  visaCategories: VisaCategoryItem[]
+  whyChoose: StructuredCardItem[]
+}
+
 interface DestinationFormProps {
-  initialData?: DestinationFormData & { id: string }
+  initialData?: DestinationFormInitialData
 }
 
 function slugify(text: string): string {
@@ -34,14 +58,29 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const isEditing = !!initialData?.id
+  const [opportunities, setOpportunities] = useState(() =>
+    normalizeStructuredCardItemDraft(initialData?.opportunities)
+  )
+  const [visaCategories, setVisaCategories] = useState(() =>
+    normalizeVisaCategoryDraft(initialData?.visaCategories)
+  )
+  const [whyChoose, setWhyChoose] = useState(() =>
+    normalizeStructuredCardItemDraft(initialData?.whyChoose)
+  )
 
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<DestinationFormData>({
-    resolver: zodResolver(destinationFormSchema),
+  } = useForm<DestinationScalarFields>({
+    resolver: zodResolver(
+      destinationFormSchema.omit({
+        opportunities: true,
+        visaCategories: true,
+        whyChoose: true,
+      })
+    ),
     defaultValues: initialData
       ? {
           name: initialData.name,
@@ -49,9 +88,6 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
           heroTitle: initialData.heroTitle,
           heroDescription: initialData.heroDescription ?? "",
           heroImage: initialData.heroImage ?? "",
-          opportunities: initialData.opportunities ?? "",
-          visaCategories: initialData.visaCategories ?? "",
-          whyChoose: initialData.whyChoose ?? "",
           ctaText: initialData.ctaText ?? "",
           published: initialData.published,
           order: initialData.order,
@@ -64,9 +100,6 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
           heroTitle: "",
           heroDescription: "",
           heroImage: "",
-          opportunities: "",
-          visaCategories: "",
-          whyChoose: "",
           ctaText: "",
           published: false,
           order: 0,
@@ -82,50 +115,40 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
     }
   }
 
-  function parseJsonField(label: string, value: unknown) {
-    if (typeof value !== "string" || value.trim() === "") {
-      return { success: true as const, value: null }
-    }
-
-    try {
-      return { success: true as const, value: JSON.parse(value) }
-    } catch {
-      return {
-        success: false as const,
-        error: `Le champ "${label}" contient un JSON invalide.`,
-      }
-    }
-  }
-
-  function onSubmit(data: DestinationFormData) {
+  function onSubmit(data: DestinationScalarFields) {
     startTransition(async () => {
       try {
-        const opportunities = parseJsonField("Opportunités", data.opportunities)
-        if (!opportunities.success) {
-          toast.error(opportunities.error)
-          return
-        }
-
-        const visaCategories = parseJsonField(
-          "Catégories de visa",
-          data.visaCategories
+        const opportunitiesResult = prepareStructuredCardItemsForSubmit(
+          opportunities,
+          "Opportunités"
         )
-        if (!visaCategories.success) {
-          toast.error(visaCategories.error)
+        if (!opportunitiesResult.success) {
+          toast.error(opportunitiesResult.error)
           return
         }
 
-        const whyChoose = parseJsonField("Pourquoi choisir", data.whyChoose)
-        if (!whyChoose.success) {
-          toast.error(whyChoose.error)
+        const visaCategoriesResult = prepareVisaCategoriesForSubmit(
+          visaCategories
+        )
+        if (!visaCategoriesResult.success) {
+          toast.error(visaCategoriesResult.error)
+          return
+        }
+
+        const whyChooseResult = prepareStructuredCardItemsForSubmit(
+          whyChoose,
+          "Pourquoi choisir"
+        )
+        if (!whyChooseResult.success) {
+          toast.error(whyChooseResult.error)
           return
         }
 
         const payload = {
           ...data,
-          opportunities: opportunities.value,
-          visaCategories: visaCategories.value,
-          whyChoose: whyChoose.value,
+          opportunities: opportunitiesResult.value,
+          visaCategories: visaCategoriesResult.value,
+          whyChoose: whyChooseResult.value,
         }
 
         const result = isEditing
@@ -152,7 +175,7 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
     <div className="space-y-6">
       <Link
         href="/admin/destinations"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
         Retour
@@ -160,9 +183,8 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="rounded-xl border bg-card p-6 shadow-sm space-y-6"
+        className="space-y-6 rounded-xl border bg-card p-6 shadow-sm"
       >
-        {/* Name & Slug */}
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium">
@@ -181,18 +203,13 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
             <Label htmlFor="slug" className="text-sm font-medium">
               Slug *
             </Label>
-            <Input
-              id="slug"
-              {...register("slug")}
-              placeholder="Ex: canada"
-            />
+            <Input id="slug" {...register("slug")} placeholder="Ex: canada" />
             {errors.slug && (
               <p className="text-sm text-destructive">{errors.slug.message}</p>
             )}
           </div>
         </div>
 
-        {/* Hero Title */}
         <div className="space-y-2">
           <Label htmlFor="heroTitle" className="text-sm font-medium">
             Titre Hero *
@@ -209,7 +226,6 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
           )}
         </div>
 
-        {/* Hero Description */}
         <div className="space-y-2">
           <Label htmlFor="heroDescription" className="text-sm font-medium">
             Description Hero
@@ -227,7 +243,6 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
           )}
         </div>
 
-        {/* Hero Image */}
         <div className="space-y-2">
           <Label htmlFor="heroImage" className="text-sm font-medium">
             Image Hero (URL)
@@ -244,7 +259,6 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
           )}
         </div>
 
-        {/* CTA Text */}
         <div className="space-y-2">
           <Label htmlFor="ctaText" className="text-sm font-medium">
             Texte CTA
@@ -256,56 +270,29 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
           />
         </div>
 
-        {/* JSON fields */}
-        <div className="space-y-2">
-          <Label htmlFor="opportunities" className="text-sm font-medium">
-            Opportunites (JSON)
-          </Label>
-          <Textarea
-            id="opportunities"
-            {...register("opportunities")}
-            rows={4}
-            placeholder='[{"title": "Travail", "description": "..."}]'
-            className="font-mono text-sm"
-          />
-          <p className="text-xs text-muted-foreground">
-            Format JSON. Laissez vide si aucune donnee.
-          </p>
-        </div>
+        <StructuredCardItemsEditor
+          title="Opportunités"
+          hint="Ajoutez les opportunités ou atouts affichés sur la page destination."
+          items={opportunities}
+          onChange={setOpportunities}
+          titlePlaceholder="Ex: Travail"
+          descriptionPlaceholder="Décrivez cette opportunité..."
+        />
 
-        <div className="space-y-2">
-          <Label htmlFor="visaCategories" className="text-sm font-medium">
-            Categories de Visa (JSON)
-          </Label>
-          <Textarea
-            id="visaCategories"
-            {...register("visaCategories")}
-            rows={4}
-            placeholder='[{"name": "Visa etudiant", "description": "..."}]'
-            className="font-mono text-sm"
-          />
-          <p className="text-xs text-muted-foreground">
-            Format JSON. Laissez vide si aucune donnee.
-          </p>
-        </div>
+        <VisaCategoriesEditor
+          items={visaCategories}
+          onChange={setVisaCategories}
+        />
 
-        <div className="space-y-2">
-          <Label htmlFor="whyChoose" className="text-sm font-medium">
-            Pourquoi choisir (JSON)
-          </Label>
-          <Textarea
-            id="whyChoose"
-            {...register("whyChoose")}
-            rows={4}
-            placeholder='[{"title": "Accompagnement complet", "description": "..."}]'
-            className="font-mono text-sm"
-          />
-          <p className="text-xs text-muted-foreground">
-            Format JSON. Laissez vide si aucune donnee.
-          </p>
-        </div>
+        <StructuredCardItemsEditor
+          title="Pourquoi choisir"
+          hint="Ajoutez les raisons mises en avant pour cette destination."
+          items={whyChoose}
+          onChange={setWhyChoose}
+          titlePlaceholder="Ex: Expertise locale"
+          descriptionPlaceholder="Décrivez cet argument..."
+        />
 
-        {/* Published & Order */}
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="flex items-center gap-3">
             <input
@@ -315,7 +302,7 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
               className="size-4 rounded border-gray-300"
             />
             <Label htmlFor="published" className="text-sm font-medium">
-              Publiee
+              Publié
             </Label>
           </div>
           <div className="space-y-2">
@@ -328,57 +315,45 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
               {...register("order", { valueAsNumber: true })}
               placeholder="0"
             />
-            {errors.order && (
-              <p className="text-sm text-destructive">
-                {errors.order.message}
-              </p>
-            )}
           </div>
         </div>
 
-        {/* SEO */}
-        <div className="space-y-2">
-          <Label htmlFor="seoTitle" className="text-sm font-medium">
-            Titre SEO
-          </Label>
-          <Input
-            id="seoTitle"
-            {...register("seoTitle")}
-            placeholder="Titre pour les moteurs de recherche"
-          />
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="seoTitle" className="text-sm font-medium">
+              SEO Title
+            </Label>
+            <Input
+              id="seoTitle"
+              {...register("seoTitle")}
+              placeholder="Titre SEO"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="seoDescription" className="text-sm font-medium">
+              SEO Description
+            </Label>
+            <Textarea
+              id="seoDescription"
+              {...register("seoDescription")}
+              rows={3}
+              placeholder="Description SEO..."
+            />
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="seoDescription" className="text-sm font-medium">
-            Description SEO
-          </Label>
-          <Textarea
-            id="seoDescription"
-            {...register("seoDescription")}
-            rows={2}
-            placeholder="Description pour les moteurs de recherche..."
-          />
-        </div>
-
-        {/* Submit */}
-        <div className="flex items-center gap-3 pt-2">
+        <div className="flex items-center gap-3">
           <Button type="submit" disabled={isPending}>
-            {isPending ? (
-              <>
-                <Loader2 className="mr-2 size-4 animate-spin" />
-                Sauvegarde...
-              </>
-            ) : isEditing ? (
-              "Mettre a jour"
-            ) : (
-              "Creer la destination"
-            )}
+            {isPending && <Loader2 className="size-4 animate-spin" />}
+            {isEditing ? "Mettre à jour" : "Créer la destination"}
           </Button>
-          <Link href="/admin/destinations">
-            <Button type="button" variant="outline">
-              Annuler
-            </Button>
-          </Link>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push("/admin/destinations")}
+          >
+            Annuler
+          </Button>
         </div>
       </form>
     </div>
