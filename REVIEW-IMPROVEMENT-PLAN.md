@@ -66,13 +66,12 @@ It focuses on real issues observed in the current codebase, not generic best pra
 - Phase 4 completed: RBAC alignment and upload policy hardening
 - Phase 5 completed: trust/UX cleanup and semantic fixes
 - Phase 6 completed: automated quality gates and DB-backed content integrity checks
+- Phase 7 completed: structured admin editors for service and destination content
+- Phase 8 completed: admin form guardrails and searchable lead/contact workflows
+- Phase 9 completed: smoke coverage for public CTAs, contact submission, and admin login gate
 
 ### Remaining implementation backlog
 
-- Replace raw JSON textareas in service/destination admin forms with structured repeatable editors
-- Add unsaved-change guards and validation summaries to large admin forms
-- Add search/filter UX for leads and contacts admin screens
-- Add E2E smoke coverage for public CTAs, contact submission, and admin login
 - Consider optional CAPTCHA and abuse-event logging if the public funnel starts attracting spam beyond the current guardrails
 
 ## Phase 1: Stabilize Core Content Flows
