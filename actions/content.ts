@@ -3,29 +3,35 @@
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
-import { z } from "zod"
-
-const pageContentSchema = z.object({
-  pageKey: z.string().min(1),
-  sectionKey: z.string().min(1),
-  title: z.string().optional(),
-  subtitle: z.string().optional(),
-  content: z.any().optional(),
-  published: z.boolean().default(true),
-  order: z.number().int().default(0),
-})
+import { Prisma } from "@/lib/generated/prisma/client"
+import {
+  getPageContentDefinition,
+  validatePageContentInput,
+} from "@/lib/page-content.shared"
 
 export async function upsertPageContent(data: unknown) {
   try {
     const session = await auth()
     if (!session) return { success: false, error: "Non autorisé" }
 
-    const parsed = pageContentSchema.safeParse(data)
+    const parsed = validatePageContentInput(data)
     if (!parsed.success) {
-      return { 
-        success: false, 
-        error: "Données invalides", 
-        details: parsed.error.flatten().fieldErrors 
+      return {
+        success: false,
+        error: parsed.error,
+        details: parsed.details,
+      }
+    }
+
+    const definition = getPageContentDefinition(
+      parsed.data.pageKey,
+      parsed.data.sectionKey
+    )
+
+    if (!definition) {
+      return {
+        success: false,
+        error: "Section non prise en charge",
       }
     }
 
@@ -36,10 +42,16 @@ export async function upsertPageContent(data: unknown) {
           sectionKey: parsed.data.sectionKey,
         },
       },
-      update: parsed.data,
-      create: parsed.data,
+      update: {
+        ...parsed.data,
+        content: parsed.data.content as Prisma.InputJsonValue,
+      },
+      create: {
+        ...parsed.data,
+        content: parsed.data.content as Prisma.InputJsonValue,
+      },
     })
-    revalidatePath("/")
+    revalidatePath(definition.route)
     revalidatePath("/admin/content")
     return { success: true }
   } catch (error) {

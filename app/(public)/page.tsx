@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
 import { prisma } from "@/lib/prisma";
+import { getHomePageContent } from "@/lib/page-content";
+import { buildHomePageContent } from "@/lib/page-content.shared";
 import {
   fallbackDestinations,
   fallbackServices,
@@ -21,47 +23,53 @@ import {
 export const revalidate = 3600;
 
 export default async function HomePage() {
+  const pageContentPromise = getHomePageContent()
+  let pageContent = buildHomePageContent([])
   let destinations = fallbackDestinations;
   let services = fallbackServices;
   let testimonials = fallbackTestimonials;
 
   try {
-    const [dbDestinations, dbServices, dbTestimonials] = await Promise.all([
-      prisma.destination.findMany({
-        where: { published: true },
-        orderBy: { order: "asc" },
-        take: 3,
-        select: {
-          slug: true,
-          name: true,
-          heroTitle: true,
-          heroDescription: true,
-        },
-      }),
-      prisma.service.findMany({
-        where: { published: true },
-        orderBy: { order: "asc" },
-        take: 4,
-        select: {
-          slug: true,
-          name: true,
-          icon: true,
-          description: true,
-        },
-      }),
-      prisma.testimonial.findMany({
-        where: { published: true },
-        orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
-        take: 2,
-        select: {
-          id: true,
-          clientName: true,
-          destination: true,
-          content: true,
-          rating: true,
-        },
-      }),
-    ]);
+    const [resolvedPageContent, dbDestinations, dbServices, dbTestimonials] =
+      await Promise.all([
+        pageContentPromise,
+        prisma.destination.findMany({
+          where: { published: true },
+          orderBy: { order: "asc" },
+          take: 3,
+          select: {
+            slug: true,
+            name: true,
+            heroTitle: true,
+            heroDescription: true,
+          },
+        }),
+        prisma.service.findMany({
+          where: { published: true },
+          orderBy: { order: "asc" },
+          take: 4,
+          select: {
+            slug: true,
+            name: true,
+            icon: true,
+            description: true,
+          },
+        }),
+        prisma.testimonial.findMany({
+          where: { published: true },
+          orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+          take: 2,
+          select: {
+            id: true,
+            clientName: true,
+            destination: true,
+            content: true,
+            rating: true,
+          },
+        }),
+      ]);
+
+    pageContent = resolvedPageContent
 
     if (dbDestinations.length > 0) {
       destinations = dbDestinations.map((destination) => ({
@@ -124,20 +132,19 @@ export default async function HomePage() {
             <ScrollReveal>
               <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-visacore-gold text-sm font-bold uppercase tracking-widest mb-8">
                 <Globe className="size-4" />
-                <span>Expertise Mondiale &bull; Service Local</span>
+                <span>{pageContent.hero.content.eyebrow}</span>
               </div>
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] mb-8">
-                Réalisez Votre <br />
-                <span className="text-visacore-gold italic serif">Rêve</span> d&apos;Ailleurs
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] mb-8 max-w-5xl">
+                {pageContent.hero.title}
               </h1>
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
               <p className="text-xl md:text-2xl text-white/70 max-w-2xl leading-relaxed mb-12">
-                VisaCore Solutions simplifie l&apos;immigration vers le Canada, les États-Unis et l&apos;Europe. Une approche sur-mesure pour un succès garanti.
+                {pageContent.hero.subtitle}
               </p>
             </ScrollReveal>
 
@@ -145,13 +152,13 @@ export default async function HomePage() {
               <div className="flex flex-col sm:flex-row gap-6">
                 <Link href="/evaluation">
                   <button className="h-16 px-10 rounded-full bg-visacore-gold text-white font-black text-lg shadow-2xl shadow-visacore-gold/30 hover:bg-visacore-gold-dark hover:scale-105 transition-all flex items-center gap-3">
-                    Évaluation Gratuite
+                    {pageContent.hero.content.primaryCta}
                     <ArrowRight className="size-6" />
                   </button>
                 </Link>
                 <Link href="/contact">
                   <button className="h-16 px-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white font-bold text-lg hover:bg-white/20 transition-all">
-                    Parler à un Expert
+                    {pageContent.hero.content.secondaryCta}
                   </button>
                 </Link>
               </div>
@@ -159,17 +166,25 @@ export default async function HomePage() {
 
             {/* Trust badges inline */}
             <ScrollReveal delay={0.4}>
-              <div className="mt-16 flex flex-wrap items-center gap-8">
-                {[
-                  { value: "98%", label: "Réussite" },
-                  { value: "1k+", label: "Dossiers" },
-                  { value: "24h", label: "Réponse" },
-                ].map((stat) => (
-                  <div key={stat.label} className="flex items-center gap-3">
-                    <span className="text-3xl font-black text-visacore-gold">{stat.value}</span>
-                    <span className="text-sm font-bold text-white/50 uppercase tracking-widest">{stat.label}</span>
-                  </div>
-                ))}
+              <div className="mt-16 space-y-4">
+                <div>
+                  <p className="text-sm font-black text-white/40 uppercase tracking-[0.3em]">
+                    {pageContent.trust.title}
+                  </p>
+                  {pageContent.trust.subtitle && (
+                    <p className="mt-2 text-sm text-white/50">
+                      {pageContent.trust.subtitle}
+                    </p>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-8">
+                  {pageContent.trust.content.stats.map((stat) => (
+                    <div key={`${stat.value}-${stat.label}`} className="flex items-center gap-3">
+                      <span className="text-3xl font-black text-visacore-gold">{stat.value}</span>
+                      <span className="text-sm font-bold text-white/50 uppercase tracking-widest">{stat.label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </ScrollReveal>
           </div>

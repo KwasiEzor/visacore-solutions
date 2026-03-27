@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Target, Eye, Heart, Globe, MapPin, Users, Award, Shield } from "lucide-react"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
+import { getAboutPageContent } from "@/lib/page-content"
 
 export const metadata: Metadata = {
   title: "À propos",
@@ -17,7 +18,9 @@ const values = [
   { icon: MapPin, title: "Proximité", description: "Basés à Lomé, nous sommes proches de vous pour un accompagnement de qualité." },
 ]
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const pageContent = await getAboutPageContent()
+
   return (
     <div className="pt-20">
       {/* Hero */}
@@ -49,12 +52,15 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <ScrollReveal>
               <h2 className="text-4xl md:text-6xl font-black text-visacore-navy leading-tight">
-                Née d&apos;une <span className="text-visacore-gold serif italic">Conviction</span>
+                {pageContent.story.title}
               </h2>
+              {pageContent.story.subtitle && (
+                <p className="mt-6 text-sm font-bold uppercase tracking-[0.3em] text-visacore-gold">
+                  {pageContent.story.subtitle}
+                </p>
+              )}
               <p className="mt-8 text-lg text-muted-foreground leading-relaxed font-medium">
-                Fondée à Lomé, Togo, VisaCore Solutions est née de la conviction que chaque personne mérite un accès
-                équitable aux opportunités internationales. Notre équipe de consultants expérimentés combine expertise
-                locale et connaissance approfondie des systèmes d&apos;immigration mondiaux.
+                {pageContent.story.content.text}
               </p>
               <p className="mt-6 text-lg text-muted-foreground leading-relaxed font-medium">
                 Depuis notre création, nous avons accompagné plus de 1000 personnes dans leurs projets d&apos;immigration
@@ -91,10 +97,11 @@ export default function AboutPage() {
                 <div className="size-16 rounded-2xl bg-visacore-navy flex items-center justify-center mb-8">
                   <Target className="size-8 text-visacore-gold" />
                 </div>
-                <h3 className="text-3xl font-black text-visacore-navy mb-4">Notre Mission</h3>
+                <h3 className="text-3xl font-black text-visacore-navy mb-4">
+                  {pageContent.mission.title}
+                </h3>
                 <p className="text-lg text-muted-foreground leading-relaxed font-medium">
-                  Faciliter l&apos;accès aux opportunités internationales pour les Africains en offrant un accompagnement
-                  professionnel, transparent et humain dans toutes les démarches d&apos;immigration.
+                  {pageContent.mission.content.text}
                 </p>
               </div>
             </ScrollReveal>
@@ -106,10 +113,11 @@ export default function AboutPage() {
                   <div className="size-16 rounded-2xl bg-visacore-gold/10 border border-visacore-gold/20 flex items-center justify-center mb-8">
                     <Eye className="size-8 text-visacore-gold" />
                   </div>
-                  <h3 className="text-3xl font-black text-white mb-4">Notre Vision</h3>
+                  <h3 className="text-3xl font-black text-white mb-4">
+                    {pageContent.vision.title}
+                  </h3>
                   <p className="text-lg text-white/60 leading-relaxed font-medium">
-                    Devenir le partenaire de référence en immigration pour l&apos;Afrique de l&apos;Ouest, reconnu pour
-                    l&apos;excellence de son accompagnement et le succès de ses clients à l&apos;international.
+                    {pageContent.vision.content.text}
                   </p>
                 </div>
               </div>

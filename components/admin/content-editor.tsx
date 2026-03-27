@@ -9,7 +9,11 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { upsertPageContent } from "@/actions/content"
 import { toast } from "sonner"
-import { Loader2 } from "lucide-react"
+import { Loader2, Plus, Trash2 } from "lucide-react"
+import {
+  getPageContentDefinition,
+  getPageContentDraft,
+} from "@/lib/page-content.shared"
 
 interface PageContentItem {
   id: string
@@ -17,7 +21,7 @@ interface PageContentItem {
   sectionKey: string
   title: string | null
   subtitle: string | null
-  content: string | null
+  content: unknown
   published: boolean
   order: number
 }
@@ -29,20 +33,58 @@ interface ContentEditorProps {
 }
 
 export function ContentEditor({ content, open, onOpenChange }: ContentEditorProps) {
+  const definition = getPageContentDefinition(content.pageKey, content.sectionKey)
+  const initialDraft = definition
+    ? getPageContentDraft(content.pageKey, content.sectionKey, content.content)
+    : content.content
   const [title, setTitle] = useState(content.title ?? "")
   const [subtitle, setSubtitle] = useState(content.subtitle ?? "")
-  const [contentJson, setContentJson] = useState(content.content ?? "")
   const [published, setPublished] = useState(content.published)
   const [order, setOrder] = useState(content.order)
+  const [fallbackJson, setFallbackJson] = useState(
+    content.content ? JSON.stringify(content.content, null, 2) : ""
+  )
+  const [heroContent, setHeroContent] = useState(() =>
+    definition?.editor === "hero"
+      ? (initialDraft as {
+          eyebrow: string
+          primaryCta: string
+          secondaryCta: string
+        })
+      : {
+          eyebrow: "",
+          primaryCta: "",
+          secondaryCta: "",
+        }
+  )
+  const [statsContent, setStatsContent] = useState(() =>
+    definition?.editor === "stats"
+      ? (initialDraft as { stats: Array<{ value: string; label: string }> })
+      : {
+          stats: [{ value: "", label: "" }],
+        }
+  )
+  const [textContent, setTextContent] = useState(() =>
+    definition?.editor === "richText"
+      ? (initialDraft as { text: string })
+      : { text: "" }
+  )
   const [isPending, startTransition] = useTransition()
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
 
-    let parsedContent: unknown = undefined
-    if (contentJson.trim()) {
+    let parsedContent: unknown
+
+    if (definition?.editor === "hero") {
+      parsedContent = heroContent
+    } else if (definition?.editor === "stats") {
+      parsedContent = statsContent
+    } else if (definition?.editor === "richText") {
+      parsedContent = textContent
+    } else if (fallbackJson.trim()) {
       try {
-        parsedContent = JSON.parse(contentJson)
+        parsedContent = JSON.parse(fallbackJson)
       } catch {
         toast.error("Le contenu JSON est invalide")
         return
@@ -106,17 +148,147 @@ export function ContentEditor({ content, open, onOpenChange }: ContentEditorProp
             />
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="ce-content">Contenu (JSON)</Label>
-            <Textarea
-              id="ce-content"
-              value={contentJson}
-              onChange={(e) => setContentJson(e.target.value)}
-              placeholder='{"text": "..."}'
-              rows={5}
-              className="font-mono text-xs"
-            />
-          </div>
+          {definition?.editor === "hero" && (
+            <div className="space-y-4 rounded-xl border p-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="ce-eyebrow">Badge hero</Label>
+                <Input
+                  id="ce-eyebrow"
+                  value={heroContent.eyebrow}
+                  onChange={(e) =>
+                    setHeroContent((current) => ({
+                      ...current,
+                      eyebrow: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="ce-primary-cta">Bouton principal</Label>
+                <Input
+                  id="ce-primary-cta"
+                  value={heroContent.primaryCta}
+                  onChange={(e) =>
+                    setHeroContent((current) => ({
+                      ...current,
+                      primaryCta: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="ce-secondary-cta">Bouton secondaire</Label>
+                <Input
+                  id="ce-secondary-cta"
+                  value={heroContent.secondaryCta}
+                  onChange={(e) =>
+                    setHeroContent((current) => ({
+                      ...current,
+                      secondaryCta: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+          )}
+
+          {definition?.editor === "stats" && (
+            <div className="space-y-3 rounded-xl border p-4">
+              <div className="flex items-center justify-between">
+                <Label>Indicateurs</Label>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() =>
+                    setStatsContent((current) => ({
+                      stats: [...current.stats, { value: "", label: "" }],
+                    }))
+                  }
+                >
+                  <Plus className="mr-1.5 size-3.5" />
+                  Ajouter
+                </Button>
+              </div>
+              <div className="space-y-3">
+                {statsContent.stats.map((stat, index) => (
+                  <div key={`${index}-${stat.label}`} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+                    <Input
+                      value={stat.value}
+                      onChange={(e) =>
+                        setStatsContent((current) => ({
+                          stats: current.stats.map((item, itemIndex) =>
+                            itemIndex === index
+                              ? { ...item, value: e.target.value }
+                              : item
+                          ),
+                        }))
+                      }
+                      placeholder="98%"
+                    />
+                    <Input
+                      value={stat.label}
+                      onChange={(e) =>
+                        setStatsContent((current) => ({
+                          stats: current.stats.map((item, itemIndex) =>
+                            itemIndex === index
+                              ? { ...item, label: e.target.value }
+                              : item
+                          ),
+                        }))
+                      }
+                      placeholder="Réussite"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() =>
+                        setStatsContent((current) => ({
+                          stats:
+                            current.stats.length === 1
+                              ? [{ value: "", label: "" }]
+                              : current.stats.filter((_, itemIndex) => itemIndex !== index),
+                        }))
+                      }
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {definition?.editor === "richText" && (
+            <div className="space-y-1.5">
+              <Label htmlFor="ce-content-text">Texte</Label>
+              <Textarea
+                id="ce-content-text"
+                value={textContent.text}
+                onChange={(e) =>
+                  setTextContent({
+                    text: e.target.value,
+                  })
+                }
+                rows={8}
+              />
+            </div>
+          )}
+
+          {!definition && (
+            <div className="space-y-1.5">
+              <Label htmlFor="ce-content">Contenu (JSON)</Label>
+              <Textarea
+                id="ce-content"
+                value={fallbackJson}
+                onChange={(e) => setFallbackJson(e.target.value)}
+                placeholder='{"text": "..."}'
+                rows={6}
+                className="font-mono text-xs"
+              />
+            </div>
+          )}
 
           <div className="space-y-1.5">
             <Label htmlFor="ce-order">Ordre</Label>

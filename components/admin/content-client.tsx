@@ -5,32 +5,39 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PublishedBadge } from "@/components/admin/status-badge"
 import { ContentEditor } from "@/components/admin/content-editor"
-import { Pencil } from "lucide-react"
+import { Pencil, Route, TriangleAlert } from "lucide-react"
 
 interface PageContentItem {
   id: string
   pageKey: string
   sectionKey: string
+  pageLabel: string
+  sectionLabel: string
+  route: string
+  component: string
+  description: string
   title: string | null
   subtitle: string | null
-  content: string | null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  content: any
   published: boolean
   order: number
+  existsInDatabase: boolean
+}
+
+interface UnsupportedPageContentItem {
+  id: string
+  pageKey: string
+  sectionKey: string
+  title: string | null
 }
 
 interface ContentClientProps {
   data: PageContentItem[]
+  unsupportedSections: UnsupportedPageContentItem[]
 }
 
-const pageLabels: Record<string, string> = {
-  home: "Page d'accueil",
-  about: "A propos",
-  services: "Services",
-  destinations: "Destinations",
-  contact: "Contact",
-}
-
-export function ContentClient({ data }: ContentClientProps) {
+export function ContentClient({ data, unsupportedSections }: ContentClientProps) {
   const [editingItem, setEditingItem] = useState<PageContentItem | null>(null)
 
   const grouped = data.reduce<Record<string, PageContentItem[]>>((acc, item) => {
@@ -44,7 +51,7 @@ export function ContentClient({ data }: ContentClientProps) {
       {Object.entries(grouped).map(([pageKey, sections]) => (
         <Card key={pageKey}>
           <CardHeader>
-            <CardTitle>{pageLabels[pageKey] ?? pageKey}</CardTitle>
+            <CardTitle>{sections[0]?.pageLabel ?? pageKey}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -59,8 +66,17 @@ export function ContentClient({ data }: ContentClientProps) {
                         {section.sectionKey}
                       </span>
                       <PublishedBadge published={section.published} />
+                      {!section.existsInDatabase && (
+                        <span className="rounded bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-700">
+                          Fallback actif
+                        </span>
+                      )}
                     </div>
-                    <p className="mt-1.5 font-semibold">
+                    <p className="mt-1.5 font-semibold">{section.sectionLabel}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {section.description}
+                    </p>
+                    <p className="mt-2 text-sm font-medium">
                       {section.title ?? "Sans titre"}
                     </p>
                     {section.subtitle && (
@@ -68,6 +84,13 @@ export function ContentClient({ data }: ContentClientProps) {
                         {section.subtitle}
                       </p>
                     )}
+                    <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1">
+                        <Route className="size-3" />
+                        {section.route}
+                      </span>
+                      <span className="font-mono">{section.component}</span>
+                    </div>
                   </div>
                   <Button
                     variant="outline"
@@ -84,6 +107,32 @@ export function ContentClient({ data }: ContentClientProps) {
         </Card>
       ))}
 
+      {unsupportedSections.length > 0 && (
+        <Card className="border-amber-200 bg-amber-50/40">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-amber-900">
+              <TriangleAlert className="size-4" />
+              Sections non prises en charge
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm text-amber-900">
+            <p>
+              Ces entrées existent en base mais ne sont reliées à aucun composant
+              public. Elles ne sont donc pas éditables depuis l&apos;interface.
+            </p>
+            {unsupportedSections.map((section) => (
+              <div
+                key={section.id}
+                className="rounded-lg border border-amber-200 bg-white/70 px-3 py-2 font-mono text-xs"
+              >
+                {section.pageKey}.{section.sectionKey}
+                {section.title ? ` — ${section.title}` : ""}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       {data.length === 0 && (
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
@@ -94,6 +143,7 @@ export function ContentClient({ data }: ContentClientProps) {
 
       {editingItem && (
         <ContentEditor
+          key={editingItem.id}
           content={editingItem}
           open={!!editingItem}
           onOpenChange={(open) => {

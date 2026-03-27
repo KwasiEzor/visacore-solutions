@@ -676,6 +676,7 @@ async function main() {
       title: "Votre avenir à l'international commence ici",
       subtitle: "Experts en immigration vers le Canada, les États-Unis et l'Europe",
       content: {
+        eyebrow: "Expertise Mondiale • Service Local",
         primaryCta: "Obtenir mon évaluation gratuite",
         secondaryCta: "Prendre rendez-vous",
       },
@@ -684,6 +685,7 @@ async function main() {
       pageKey: "home",
       sectionKey: "trust",
       title: "Pourquoi nous faire confiance",
+      subtitle: "Des résultats concrets, suivis de près par notre équipe.",
       content: {
         stats: [
           { value: "+1000", label: "Dossiers accompagnés" },
@@ -696,6 +698,7 @@ async function main() {
       pageKey: "about",
       sectionKey: "story",
       title: "Notre histoire",
+      subtitle: "Une histoire locale portée par une ambition internationale.",
       content: {
         text: "Fondée à Lomé, Togo, VisaCore Solutions est née de la conviction que chaque personne mérite un accès équitable aux opportunités internationales. Notre équipe de consultants expérimentés combine expertise locale et connaissance approfondie des systèmes d'immigration mondiaux pour offrir un accompagnement de qualité supérieure.",
       },
