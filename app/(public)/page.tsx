@@ -4,6 +4,8 @@ import {
   Shield,
   Globe,
   UserCheck,
+  FileCheck,
+  FolderCheck,
   ArrowRight,
   Quote,
   ChevronRight,
@@ -21,6 +23,34 @@ import {
 } from "@/lib/public-content";
 
 export const revalidate = 3600;
+
+const trustCapabilities = [
+  {
+    icon: FileCheck,
+    title: "Étude de dossier",
+    detail: "Analyse rigoureuse de votre profil et des pièces déjà disponibles.",
+  },
+  {
+    icon: Globe,
+    title: "Stratégie visa",
+    detail: "Choix du programme, de la destination et du calendrier les plus cohérents.",
+  },
+  {
+    icon: FolderCheck,
+    title: "Préparation documentaire",
+    detail: "Structuration claire des preuves pour réduire les zones d'incertitude.",
+  },
+  {
+    icon: Shield,
+    title: "Suivi administratif",
+    detail: "Pilotage des dépôts, relances et prochaines étapes du dossier.",
+  },
+  {
+    icon: UserCheck,
+    title: "Accompagnement humain",
+    detail: "Un échange réel avec une équipe qui contextualise chaque décision.",
+  },
+] as const;
 
 export default async function HomePage() {
   const pageContentPromise = getHomePageContent()
@@ -204,14 +234,75 @@ export default async function HomePage() {
       {/* ═══════════════════════════════════════════
           TRUST STRIP
           ═══════════════════════════════════════════ */}
-      <section className="bg-white py-12 border-b border-border">
+      <section className="border-b border-border bg-[linear-gradient(180deg,#ffffff_0%,#f7f8fb_100%)] py-12 md:py-16">
         <div className="container-custom">
-          <div className="flex flex-wrap justify-between items-center gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
-             <span className="text-xl font-black tracking-tighter">ÉTUDE DE DOSSIER</span>
-             <span className="text-xl font-black tracking-tighter">STRATÉGIE VISA</span>
-             <span className="text-xl font-black tracking-tighter">PRÉPARATION DOCUMENTAIRE</span>
-             <span className="text-xl font-black tracking-tighter">SUIVI ADMINISTRATIF</span>
-             <span className="text-xl font-black tracking-tighter">ACCOMPAGNEMENT HUMAIN</span>
+          <div className="overflow-hidden rounded-[36px] border border-visacore-navy/8 bg-white shadow-[0_25px_80px_-50px_rgba(10,37,64,0.28)]">
+            <div className="grid grid-cols-1 gap-0 lg:grid-cols-[0.95fr_1.45fr]">
+              <div className="relative border-b border-border/70 p-8 sm:p-10 lg:border-b-0 lg:border-r">
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-visacore-gold/45 to-transparent" />
+                <ScrollReveal>
+                  <p className="text-xs font-black uppercase tracking-[0.32em] text-visacore-gold">
+                    Notre méthode
+                  </p>
+                  <h2 className="mt-4 max-w-sm text-3xl font-black leading-[0.95] text-visacore-navy sm:text-4xl">
+                    Un pilotage <span className="serif italic text-visacore-gold">premium</span>, de l&apos;analyse au dépôt.
+                  </h2>
+                  <p className="mt-5 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
+                    Nous ne vendons pas une simple checklist. Nous cadrons votre projet,
+                    hiérarchisons les preuves et sécurisons chaque étape pour que le dossier
+                    tienne autant sur le fond que sur la forme.
+                  </p>
+                  <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-visacore-navy/10 bg-visacore-navy/4 px-4 py-3">
+                    <div className="flex size-10 items-center justify-center rounded-full bg-visacore-navy text-visacore-gold">
+                      <Users className="size-5" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-black uppercase tracking-[0.24em] text-visacore-gold">
+                        VisaCore Process
+                      </p>
+                      <p className="text-sm font-bold text-visacore-navy">
+                        Clarté, rigueur, accompagnement.
+                      </p>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2">
+                {trustCapabilities.map((item, index) => (
+                  <ScrollReveal key={item.title} delay={index * 0.06}>
+                    <div
+                      className={`group relative flex h-full min-h-[12rem] flex-col justify-between border-border/70 p-7 transition-colors duration-300 hover:bg-visacore-navy hover:text-white sm:p-8 ${
+                        index % 2 === 0 ? "sm:border-r" : ""
+                      } ${
+                        index < trustCapabilities.length - 2 ? "border-b" : ""
+                      } ${
+                        index === trustCapabilities.length - 1 ? "sm:col-span-2" : ""
+                      }`}
+                    >
+                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-visacore-gold/22 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex size-12 items-center justify-center rounded-2xl bg-visacore-gold/10 text-visacore-gold transition-colors duration-300 group-hover:bg-white/10 group-hover:text-visacore-gold-light">
+                          <item.icon className="size-5" />
+                        </div>
+                        <span className="text-[11px] font-black uppercase tracking-[0.24em] text-visacore-navy/35 transition-colors duration-300 group-hover:text-white/30">
+                          0{index + 1}
+                        </span>
+                      </div>
+
+                      <div className="mt-8">
+                        <h3 className="text-xl font-black tracking-tight text-visacore-navy transition-colors duration-300 group-hover:text-white">
+                          {item.title}
+                        </h3>
+                        <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground transition-colors duration-300 group-hover:text-white/70">
+                          {item.detail}
+                        </p>
+                      </div>
+                    </div>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
