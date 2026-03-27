@@ -4,7 +4,6 @@ import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import {
   destinationFormSchema,
   type DestinationFormData,
@@ -20,7 +19,9 @@ import {
   prepareStructuredCardItemsForSubmit,
   prepareVisaCategoriesForSubmit,
 } from "@/lib/structured-content-editor"
+import { FormValidationSummary } from "@/components/admin/form-validation-summary"
 import { StructuredCardItemsEditor } from "@/components/admin/structured-card-items-editor"
+import { useUnsavedChangesGuard } from "@/components/admin/use-unsaved-changes-guard"
 import { VisaCategoriesEditor } from "@/components/admin/visa-categories-editor"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -58,21 +59,30 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const isEditing = !!initialData?.id
+  const initialOpportunities = normalizeStructuredCardItemDraft(
+    initialData?.opportunities
+  )
+  const initialVisaCategories = normalizeVisaCategoryDraft(
+    initialData?.visaCategories
+  )
+  const initialWhyChoose = normalizeStructuredCardItemDraft(
+    initialData?.whyChoose
+  )
   const [opportunities, setOpportunities] = useState(() =>
-    normalizeStructuredCardItemDraft(initialData?.opportunities)
+    initialOpportunities
   )
   const [visaCategories, setVisaCategories] = useState(() =>
-    normalizeVisaCategoryDraft(initialData?.visaCategories)
+    initialVisaCategories
   )
   const [whyChoose, setWhyChoose] = useState(() =>
-    normalizeStructuredCardItemDraft(initialData?.whyChoose)
+    initialWhyChoose
   )
 
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<DestinationScalarFields>({
     resolver: zodResolver(
       destinationFormSchema.omit({
@@ -107,6 +117,14 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
           seoDescription: "",
         },
   })
+  const hasUnsavedChanges =
+    isDirty ||
+    JSON.stringify(opportunities) !== JSON.stringify(initialOpportunities) ||
+    JSON.stringify(visaCategories) !== JSON.stringify(initialVisaCategories) ||
+    JSON.stringify(whyChoose) !== JSON.stringify(initialWhyChoose)
+  const { confirmIfDirty } = useUnsavedChangesGuard(
+    hasUnsavedChanges && !isPending
+  )
 
   function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
     const name = e.target.value
@@ -173,18 +191,21 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/admin/destinations"
+      <button
+        type="button"
+        onClick={() => confirmIfDirty(() => router.push("/admin/destinations"))}
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
         Retour
-      </Link>
+      </button>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-6 rounded-xl border bg-card p-6 shadow-sm"
       >
+        <FormValidationSummary errors={errors} />
+
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium">
@@ -350,7 +371,9 @@ export function DestinationForm({ initialData }: DestinationFormProps) {
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push("/admin/destinations")}
+            onClick={() =>
+              confirmIfDirty(() => router.push("/admin/destinations"))
+            }
           >
             Annuler
           </Button>

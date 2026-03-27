@@ -4,7 +4,6 @@ import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import {
   serviceFormSchema,
   type ServiceFormData,
@@ -15,7 +14,9 @@ import {
   normalizeStructuredCardItemDraft,
   prepareStructuredCardItemsForSubmit,
 } from "@/lib/structured-content-editor"
+import { FormValidationSummary } from "@/components/admin/form-validation-summary"
 import { StructuredCardItemsEditor } from "@/components/admin/structured-card-items-editor"
+import { useUnsavedChangesGuard } from "@/components/admin/use-unsaved-changes-guard"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -47,15 +48,16 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const isEditing = !!initialData?.id
+  const initialBenefits = normalizeStructuredCardItemDraft(initialData?.benefits)
   const [benefits, setBenefits] = useState(() =>
-    normalizeStructuredCardItemDraft(initialData?.benefits)
+    initialBenefits
   )
 
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<ServiceScalarFields>({
     resolver: zodResolver(serviceFormSchema.omit({ benefits: true })),
     defaultValues: initialData
@@ -86,6 +88,11 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
           seoDescription: "",
         },
   })
+  const hasUnsavedChanges =
+    isDirty || JSON.stringify(benefits) !== JSON.stringify(initialBenefits)
+  const { confirmIfDirty } = useUnsavedChangesGuard(
+    hasUnsavedChanges && !isPending
+  )
 
   function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
     const name = e.target.value
@@ -133,18 +140,21 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/admin/services"
+      <button
+        type="button"
+        onClick={() => confirmIfDirty(() => router.push("/admin/services"))}
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
         Retour
-      </Link>
+      </button>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-6 rounded-xl border bg-card p-6 shadow-sm"
       >
+        <FormValidationSummary errors={errors} />
+
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium">
@@ -300,7 +310,11 @@ export function ServiceForm({ initialData }: ServiceFormProps) {
             {isPending && <Loader2 className="size-4 animate-spin" />}
             {isEditing ? "Mettre à jour" : "Créer le service"}
           </Button>
-          <Button type="button" variant="outline" onClick={() => router.push("/admin/services")}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => confirmIfDirty(() => router.push("/admin/services"))}
+          >
             Annuler
           </Button>
         </div>

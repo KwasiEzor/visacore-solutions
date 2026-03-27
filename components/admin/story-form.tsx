@@ -4,9 +4,11 @@ import { useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import { storySchema, type StoryFormData } from "@/lib/validations/story"
 import { createStory, updateStory } from "@/actions/stories"
+import { parseOptionalJsonField } from "@/lib/admin-ux.shared"
+import { FormValidationSummary } from "@/components/admin/form-validation-summary"
+import { useUnsavedChangesGuard } from "@/components/admin/use-unsaved-changes-guard"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -36,7 +38,7 @@ export function StoryForm({ initialData }: StoryFormProps) {
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<StoryFormData>({
     resolver: zodResolver(storySchema),
     defaultValues: initialData
@@ -65,6 +67,7 @@ export function StoryForm({ initialData }: StoryFormProps) {
           seoDescription: "",
         },
   })
+  const { confirmIfDirty } = useUnsavedChangesGuard(isDirty && !isPending)
 
   function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const title = e.target.value
@@ -73,23 +76,18 @@ export function StoryForm({ initialData }: StoryFormProps) {
     }
   }
 
-  function parseJsonField(value: unknown): unknown {
-    if (typeof value === "string" && value.trim() !== "") {
-      try {
-        return JSON.parse(value)
-      } catch {
-        return null
-      }
-    }
-    return null
-  }
-
   function onSubmit(data: StoryFormData) {
     startTransition(async () => {
       try {
+        const imagesResult = parseOptionalJsonField("Images", data.images)
+        if (!imagesResult.success) {
+          toast.error(imagesResult.error)
+          return
+        }
+
         const payload = {
           ...data,
-          images: parseJsonField(data.images),
+          images: imagesResult.value,
         }
 
         const result = isEditing
@@ -114,18 +112,21 @@ export function StoryForm({ initialData }: StoryFormProps) {
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/admin/stories"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+      <button
+        type="button"
+        onClick={() => confirmIfDirty(() => router.push("/admin/stories"))}
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
         Retour
-      </Link>
+      </button>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="rounded-xl border bg-card p-6 shadow-sm space-y-6"
       >
+        <FormValidationSummary errors={errors} />
+
         {/* Title & Slug */}
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2">
@@ -287,11 +288,13 @@ export function StoryForm({ initialData }: StoryFormProps) {
               "Créer la story"
             )}
           </Button>
-          <Link href="/admin/stories">
-            <Button type="button" variant="outline">
-              Annuler
-            </Button>
-          </Link>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => confirmIfDirty(() => router.push("/admin/stories"))}
+          >
+            Annuler
+          </Button>
         </div>
       </form>
     </div>
