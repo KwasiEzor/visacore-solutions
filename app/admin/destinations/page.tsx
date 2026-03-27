@@ -1,8 +1,6 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
-import { Plus, Download } from "lucide-react"
-import { PublishedBadge } from "@/components/admin/status-badge"
-import { DestinationRowActions } from "@/components/admin/destination-actions"
+import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DestinationsClient } from "@/components/admin/destinations-client"
 

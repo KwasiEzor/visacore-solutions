@@ -57,7 +57,13 @@ const columns: ColumnDef<ServiceRow>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <ServiceRowActions serviceId={row.original.id} />,
+    cell: ({ row }) => (
+      <ServiceRowActions
+        serviceId={row.original.id}
+        serviceSlug={row.original.slug}
+        published={row.original.published}
+      />
+    ),
   },
 ]
 

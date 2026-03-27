@@ -3,14 +3,20 @@
 import { useTransition } from "react"
 import { toast } from "sonner"
 import { deleteDestination } from "@/actions/destinations"
-import { Trash2, Pencil } from "lucide-react"
+import { Trash2, Pencil, ExternalLink } from "lucide-react"
 import Link from "next/link"
 
 interface DestinationRowActionsProps {
   destinationId: string
+  destinationSlug: string
+  published: boolean
 }
 
-export function DestinationRowActions({ destinationId }: DestinationRowActionsProps) {
+export function DestinationRowActions({
+  destinationId,
+  destinationSlug,
+  published,
+}: DestinationRowActionsProps) {
   const [isPending, startTransition] = useTransition()
 
   function handleDelete() {
@@ -31,6 +37,17 @@ export function DestinationRowActions({ destinationId }: DestinationRowActionsPr
 
   return (
     <div className="flex items-center gap-1">
+      {published && (
+        <Link
+          href={`/destinations/${destinationSlug}`}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          aria-label="Prévisualiser"
+        >
+          <ExternalLink className="size-3.5" />
+        </Link>
+      )}
       <Link
         href={`/admin/destinations/${destinationId}/edit`}
         className="inline-flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"

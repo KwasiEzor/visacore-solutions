@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 import {
+  getBusinessHoursRows,
   getPublicSiteConfig,
   getTelHref,
   getWhatsAppHref,
@@ -56,6 +57,7 @@ const guarantees = [
 
 export default async function ContactPage() {
   const siteConfig = await getPublicSiteConfig()
+  const businessHours = getBusinessHoursRows(siteConfig.businessHours)
   const contactChannels: ContactChannel[] = [
     {
       icon: Phone,
@@ -76,7 +78,7 @@ export default async function ContactPage() {
     {
       icon: MessageCircle,
       label: "WhatsApp",
-      value: siteConfig.contactPhone,
+      value: siteConfig.whatsappNumber,
       href: getWhatsAppHref(siteConfig.whatsappNumber),
       description: "Réponse instantanée",
       color: "bg-green-50 text-green-600",
@@ -162,28 +164,19 @@ export default async function ContactPage() {
                     </h3>
                   </div>
                   <div className="space-y-3 text-sm">
-                    <div className="flex items-center justify-between rounded-xl bg-white px-4 py-3">
-                      <span className="font-semibold text-visacore-navy">
-                        Lundi — Vendredi
-                      </span>
-                      <span className="font-bold text-visacore-gold">
-                        8h00 — 18h00
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between rounded-xl bg-white px-4 py-3">
-                      <span className="font-semibold text-visacore-navy">
-                        Samedi
-                      </span>
-                      <span className="font-bold text-visacore-gold">
-                        9h00 — 13h00
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between rounded-xl bg-white px-4 py-3">
-                      <span className="font-semibold text-visacore-navy">
-                        Dimanche
-                      </span>
-                      <span className="text-muted-foreground">Fermé</span>
-                    </div>
+                    {businessHours.map((item) => (
+                      <div
+                        key={`${item.label}-${item.value}`}
+                        className="flex items-center justify-between rounded-xl bg-white px-4 py-3"
+                      >
+                        <span className="font-semibold text-visacore-navy">
+                          {item.label}
+                        </span>
+                        <span className="font-bold text-visacore-gold">
+                          {item.value}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
 

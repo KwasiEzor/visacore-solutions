@@ -115,15 +115,17 @@ export default async function DestinationsPage() {
                 Nos experts étudient également des projets vers d&apos;autres destinations mondiales. Parlons de votre vision.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                <Link href="/evaluation">
-                  <button className="h-16 px-10 rounded-full bg-visacore-gold text-white font-black hover:scale-105 transition-all">
-                    Évaluation Personnalisée
-                  </button>
+                <Link
+                  href="/evaluation"
+                  className="inline-flex h-16 items-center rounded-full bg-visacore-gold px-10 font-black text-white transition-all hover:scale-105"
+                >
+                  Évaluation Personnalisée
                 </Link>
-                <Link href="/contact">
-                  <button className="h-16 px-10 rounded-full border-2 border-white/20 text-white font-bold hover:bg-white/10 transition-all">
-                    Nous Contacter
-                  </button>
+                <Link
+                  href="/contact"
+                  className="inline-flex h-16 items-center rounded-full border-2 border-white/20 px-10 font-bold text-white transition-all hover:bg-white/10"
+                >
+                  Nous Contacter
                 </Link>
               </div>
             </ScrollReveal>

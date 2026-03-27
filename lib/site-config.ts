@@ -8,6 +8,7 @@ import type { PublicSiteConfig } from "@/lib/site-config.shared"
 
 export {
   defaultPublicSiteConfig,
+  getBusinessHoursRows,
   getTelHref,
   getWhatsAppHref,
   mapPublicSiteConfig,

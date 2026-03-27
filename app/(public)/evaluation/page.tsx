@@ -66,8 +66,8 @@ export default function EvaluationPage() {
 
                 <div className="space-y-8">
                   {[
-                    { number: "98%", label: "Taux de Réussite", text: "Un des taux les plus élevés du secteur grâce à notre préparation minutieuse." },
-                    { number: "1k+", label: "Dossiers Approuvés", text: "Plus de 1000 clients ont concrétisé leur projet avec nous." },
+                    { number: "Clair", label: "Diagnostic Structuré", text: "Nous analysons votre situation de manière lisible pour identifier les options les plus pertinentes." },
+                    { number: "Humain", label: "Accompagnement Réel", text: "Vous échangez avec une équipe qui contextualise votre projet et vos documents." },
                     { number: "24h", label: "Délai de Réponse", text: "Votre profil sera analysé et vous recevrez un retour expert sous 24 heures." },
                   ].map((stat, i) => (
                     <ScrollReveal key={stat.label} delay={i * 0.1}>
@@ -104,9 +104,9 @@ export default function EvaluationPage() {
                         </div>
                       </div>
                       <p className="font-black text-lg leading-tight">
-                        &ldquo;VisaCore a transformé mon rêve en réalité.&rdquo;
+                        Un échange clair en amont permet de cadrer le projet, les risques et les documents attendus.
                       </p>
-                      <p className="mt-2 text-sm font-bold text-white/70">— Kofi M., Canada</p>
+                      <p className="mt-2 text-sm font-bold text-white/70">Approche structurée et confidentielle</p>
                     </div>
                   </div>
                 </ScrollReveal>

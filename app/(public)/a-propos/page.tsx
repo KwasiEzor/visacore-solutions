@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Target, Eye, Heart, Globe, MapPin, Users, Award, Shield } from "lucide-react"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 import { getAboutPageContent } from "@/lib/page-content"
+import { getPublicSiteConfig } from "@/lib/site-config"
 
 export const metadata: Metadata = {
   title: "À propos",
@@ -19,7 +20,10 @@ const values = [
 ]
 
 export default async function AboutPage() {
-  const pageContent = await getAboutPageContent()
+  const [pageContent, siteConfig] = await Promise.all([
+    getAboutPageContent(),
+    getPublicSiteConfig(),
+  ])
 
   return (
     <div className="pt-20">
@@ -63,19 +67,18 @@ export default async function AboutPage() {
                 {pageContent.story.content.text}
               </p>
               <p className="mt-6 text-lg text-muted-foreground leading-relaxed font-medium">
-                Depuis notre création, nous avons accompagné plus de 1000 personnes dans leurs projets d&apos;immigration
-                vers le Canada, les États-Unis et l&apos;Europe. Notre taux de réussite élevé témoigne de notre engagement
-                envers l&apos;excellence.
+                Nous accompagnons chaque projet avec une approche structurée, un suivi humain et une préparation
+                documentaire rigoureuse pour les destinations que nous couvrons.
               </p>
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
               <div className="grid grid-cols-2 gap-6">
                 {[
-                  { number: "1k+", label: "Dossiers Approuvés" },
-                  { number: "98%", label: "Taux de Réussite" },
-                  { number: "3+", label: "Destinations" },
-                  { number: "5+", label: "Années d'Expérience" },
+                  { number: "Humain", label: "Accompagnement" },
+                  { number: "Clair", label: "Processus" },
+                  { number: "Multi", label: "Destinations" },
+                  { number: "Local", label: "Présence à Lomé" },
                 ].map((stat) => (
                   <div key={stat.label} className="bg-white border border-border rounded-[30px] p-8 text-center shadow-sm hover:shadow-xl transition-shadow duration-500">
                     <div className="text-4xl font-black text-visacore-gold">{stat.number}</div>
@@ -172,19 +175,20 @@ export default async function AboutPage() {
                   Basés à <span className="text-visacore-gold italic serif">Lomé</span>
                 </h2>
                 <p className="text-xl text-white/50 mb-12 max-w-2xl mx-auto">
-                  Notre bureau situé sur le Boulevard du 13 Janvier à Lomé vous accueille du lundi au vendredi
-                  de 8h à 18h et le samedi de 9h à 13h.
+                  Notre bureau vous reçoit à {siteConfig.officeAddress}. Horaires d&apos;accueil : {siteConfig.businessHours}.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                  <Link href="/contact">
-                    <button className="h-16 px-10 rounded-full bg-visacore-gold text-white font-black hover:scale-105 transition-all shadow-2xl shadow-visacore-gold/30">
-                      Prendre Rendez-vous
-                    </button>
+                  <Link
+                    href="/contact"
+                    className="inline-flex h-16 items-center justify-center rounded-full bg-visacore-gold px-10 font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105"
+                  >
+                    Prendre Rendez-vous
                   </Link>
-                  <Link href="/evaluation">
-                    <button className="h-16 px-10 rounded-full border-2 border-white/20 text-white font-bold hover:bg-white/10 transition-all">
-                      Évaluation en Ligne
-                    </button>
+                  <Link
+                    href="/evaluation"
+                    className="inline-flex h-16 items-center justify-center rounded-full border-2 border-white/20 px-10 font-bold text-white transition-all hover:bg-white/10"
+                  >
+                    Évaluation en Ligne
                   </Link>
                 </div>
               </div>

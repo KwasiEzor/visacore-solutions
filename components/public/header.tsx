@@ -106,18 +106,17 @@ export function Header() {
 
         {/* Desktop CTA */}
         <div className="hidden items-center gap-4 lg:flex">
-          <Link href="/evaluation">
-            <Button
-              className={cn(
-                "rounded-full px-6 py-5 font-bold transition-all duration-300 shadow-lg",
-                useSolidHeader
-                  ? "bg-visacore-gold text-white hover:bg-visacore-gold-dark hover:shadow-visacore-gold/20"
-                  : "bg-white text-visacore-navy hover:bg-visacore-gold hover:text-white"
-              )}
-            >
-              Évaluation gratuite
-              <ArrowRight className="ml-2 size-4" />
-            </Button>
+          <Link
+            href="/evaluation"
+            className={cn(
+              "inline-flex items-center rounded-full px-6 py-5 font-bold transition-all duration-300 shadow-lg",
+              useSolidHeader
+                ? "bg-visacore-gold text-white hover:bg-visacore-gold-dark hover:shadow-visacore-gold/20"
+                : "bg-white text-visacore-navy hover:bg-visacore-gold hover:text-white"
+            )}
+          >
+            Évaluation gratuite
+            <ArrowRight className="ml-2 size-4" />
           </Link>
         </div>
 
@@ -187,13 +186,14 @@ export function Header() {
                 <div className="border-t border-white/10 p-8">
                   <SheetClose
                     render={
-                      <Link href="/evaluation" className="block" />
+                      <Link
+                        href="/evaluation"
+                        className="inline-flex h-14 w-full items-center justify-center rounded-full bg-visacore-gold text-lg font-bold text-white transition-colors hover:bg-visacore-gold-dark"
+                      />
                     }
                   >
-                    <Button className="h-14 w-full rounded-full bg-visacore-gold text-lg font-bold text-white hover:bg-visacore-gold-dark">
-                      Évaluation gratuite
-                      <ArrowRight className="ml-2 size-5" />
-                    </Button>
+                    Évaluation gratuite
+                    <ArrowRight className="ml-2 size-5" />
                   </SheetClose>
                   <p className="mt-6 text-center text-sm text-white/40">
                     &copy; {new Date().getFullYear()} VisaCore Solutions

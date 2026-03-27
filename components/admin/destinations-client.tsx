@@ -51,7 +51,13 @@ const columns: ColumnDef<DestinationRow>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <DestinationRowActions destinationId={row.original.id} />,
+    cell: ({ row }) => (
+      <DestinationRowActions
+        destinationId={row.original.id}
+        destinationSlug={row.original.slug}
+        published={row.original.published}
+      />
+    ),
   },
 ]
 

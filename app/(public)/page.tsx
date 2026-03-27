@@ -150,16 +150,18 @@ export default async function HomePage() {
 
             <ScrollReveal delay={0.3}>
               <div className="flex flex-col sm:flex-row gap-6">
-                <Link href="/evaluation">
-                  <button className="h-16 px-10 rounded-full bg-visacore-gold text-white font-black text-lg shadow-2xl shadow-visacore-gold/30 hover:bg-visacore-gold-dark hover:scale-105 transition-all flex items-center gap-3">
-                    {pageContent.hero.content.primaryCta}
-                    <ArrowRight className="size-6" />
-                  </button>
+                <Link
+                  href="/evaluation"
+                  className="inline-flex h-16 items-center gap-3 rounded-full bg-visacore-gold px-10 text-lg font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105 hover:bg-visacore-gold-dark"
+                >
+                  {pageContent.hero.content.primaryCta}
+                  <ArrowRight className="size-6" />
                 </Link>
-                <Link href="/contact">
-                  <button className="h-16 px-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white font-bold text-lg hover:bg-white/20 transition-all">
-                    {pageContent.hero.content.secondaryCta}
-                  </button>
+                <Link
+                  href="/contact"
+                  className="inline-flex h-16 items-center rounded-full border border-white/30 bg-white/10 px-10 text-lg font-bold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+                >
+                  {pageContent.hero.content.secondaryCta}
                 </Link>
               </div>
             </ScrollReveal>
@@ -205,12 +207,11 @@ export default async function HomePage() {
       <section className="bg-white py-12 border-b border-border">
         <div className="container-custom">
           <div className="flex flex-wrap justify-between items-center gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
-             {/* Replace with real partner logos if available, using text for now */}
-             <span className="text-xl font-black tracking-tighter">IMMIGRATION CANADA</span>
-             <span className="text-xl font-black tracking-tighter">EUROPEAN TRAVEL</span>
-             <span className="text-xl font-black tracking-tighter">US VISA SERVICES</span>
-             <span className="text-xl font-black tracking-tighter">WORLDWIDE TRAVEL</span>
-             <span className="text-xl font-black tracking-tighter">GLOBAL CONNECT</span>
+             <span className="text-xl font-black tracking-tighter">ÉTUDE DE DOSSIER</span>
+             <span className="text-xl font-black tracking-tighter">STRATÉGIE VISA</span>
+             <span className="text-xl font-black tracking-tighter">PRÉPARATION DOCUMENTAIRE</span>
+             <span className="text-xl font-black tracking-tighter">SUIVI ADMINISTRATIF</span>
+             <span className="text-xl font-black tracking-tighter">ACCOMPAGNEMENT HUMAIN</span>
           </div>
         </div>
       </section>
@@ -336,18 +337,19 @@ export default async function HomePage() {
                  <h3 className="text-4xl font-black mb-8 leading-tight">Votre Succès est Notre Seule <span className="underline decoration-visacore-navy decoration-4 underline-offset-8">Priorité</span>.</h3>
                  <div className="space-y-6">
                     <div className="flex items-center gap-4">
-                       <span className="text-5xl font-black text-visacore-navy">98%</span>
-                       <span className="font-bold leading-tight opacity-80">De taux de <br /> réussite</span>
+                       <span className="text-5xl font-black text-visacore-navy">Clair</span>
+                       <span className="font-bold leading-tight opacity-80">Un cadre de <br /> décision lisible</span>
                     </div>
                     <div className="flex items-center gap-4">
-                       <span className="text-5xl font-black text-visacore-navy">1k+</span>
-                       <span className="font-bold leading-tight opacity-80">Dossiers <br /> Approuvés</span>
+                       <span className="text-5xl font-black text-visacore-navy">Suivi</span>
+                       <span className="font-bold leading-tight opacity-80">Un accompagnement <br /> à chaque étape</span>
                     </div>
                  </div>
-                 <Link href="/evaluation" className="mt-12 inline-block">
-                    <button className="h-14 px-8 rounded-full bg-visacore-navy text-white font-bold hover:bg-visacore-navy-light transition-all">
-                       Commencer l&apos;Évaluation
-                    </button>
+                 <Link
+                    href="/evaluation"
+                    className="mt-12 inline-flex h-14 items-center rounded-full bg-visacore-navy px-8 font-bold text-white transition-all hover:bg-visacore-navy-light"
+                 >
+                    Commencer l&apos;Évaluation
                  </Link>
               </div>
             </ScrollReveal>
@@ -449,10 +451,11 @@ export default async function HomePage() {
                      </p>
                      
                      <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-                        <Link href="/evaluation">
-                           <button className="h-20 px-12 rounded-full bg-visacore-gold text-white font-black text-xl hover:scale-105 transition-all shadow-2xl shadow-visacore-gold/30">
-                              Démarrer Mon Dossier
-                           </button>
+                        <Link
+                           href="/evaluation"
+                           className="inline-flex h-20 items-center rounded-full bg-visacore-gold px-12 text-xl font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105"
+                        >
+                           Démarrer Mon Dossier
                         </Link>
                         <div className="flex -space-x-4">
                            {[1,2,3,4].map(i => (
@@ -461,8 +464,8 @@ export default async function HomePage() {
                              </div>
                            ))}
                            <div className="pl-6 flex flex-col items-start justify-center">
-                              <span className="text-white font-black text-xl">+1,200</span>
-                              <span className="text-white/40 text-sm font-bold uppercase tracking-widest leading-none">Clients Satisfaits</span>
+                              <span className="text-white font-black text-xl">Conseil</span>
+                              <span className="text-white/40 text-sm font-bold uppercase tracking-widest leading-none">personnalisé</span>
                            </div>
                         </div>
                      </div>

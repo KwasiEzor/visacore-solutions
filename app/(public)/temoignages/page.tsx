@@ -143,11 +143,12 @@ export default async function TestimonialsPage() {
                 <p className="text-xl text-white/50 mb-12 max-w-2xl mx-auto">
                   Commencez votre parcours vers l&apos;international dès aujourd&apos;hui.
                 </p>
-                <Link href="/evaluation">
-                  <button className="h-16 px-10 rounded-full bg-visacore-gold text-white font-black text-lg hover:scale-105 transition-all shadow-2xl shadow-visacore-gold/30">
-                    Obtenir Mon Évaluation Gratuite
-                    <ArrowRight className="inline ml-3 size-5" />
-                  </button>
+                <Link
+                  href="/evaluation"
+                  className="inline-flex h-16 items-center rounded-full bg-visacore-gold px-10 text-lg font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105"
+                >
+                  Obtenir Mon Évaluation Gratuite
+                  <ArrowRight className="ml-3 size-5" />
                 </Link>
               </div>
             </div>

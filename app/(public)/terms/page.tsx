@@ -1,11 +1,15 @@
 import type { Metadata } from "next"
+import { getPublicSiteConfig, getTelHref } from "@/lib/site-config"
 
 export const metadata: Metadata = {
   title: "Mentions légales",
   description: "Mentions légales et conditions générales d'utilisation de VisaCore Solutions.",
 }
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  const siteConfig = await getPublicSiteConfig()
+  const contactPhoneHref = getTelHref(siteConfig.contactPhone)
+
   return (
     <div className="pt-40 pb-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
@@ -21,9 +25,16 @@ export default function TermsPage() {
             <h2 className="text-2xl font-bold text-visacore-navy">1. Éditeur du site</h2>
             <p>
               <strong>VisaCore Solutions</strong><br />
-              Boulevard du 13 Janvier, Lomé, Togo<br />
-              E-mail : <a href="mailto:contact@visacore-solutions.com" className="text-visacore-gold hover:underline">contact@visacore-solutions.com</a><br />
-              Téléphone : +228 90 00 00 00
+              {siteConfig.officeAddress}<br />
+              E-mail : <a href={`mailto:${siteConfig.contactEmail}`} className="text-visacore-gold hover:underline">{siteConfig.contactEmail}</a><br />
+              Téléphone :{" "}
+              {contactPhoneHref ? (
+                <a href={contactPhoneHref} className="text-visacore-gold hover:underline">
+                  {siteConfig.contactPhone}
+                </a>
+              ) : (
+                siteConfig.contactPhone
+              )}
             </p>
           </section>
 
@@ -115,9 +126,9 @@ export default function TermsPage() {
             <p>
               Pour toute question, contactez-nous :<br />
               <strong>VisaCore Solutions</strong><br />
-              Boulevard du 13 Janvier, Lomé, Togo<br />
-              <a href="mailto:contact@visacore-solutions.com" className="text-visacore-gold hover:underline">
-                contact@visacore-solutions.com
+              {siteConfig.officeAddress}<br />
+              <a href={`mailto:${siteConfig.contactEmail}`} className="text-visacore-gold hover:underline">
+                {siteConfig.contactEmail}
               </a>
             </p>
           </section>

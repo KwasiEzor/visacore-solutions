@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import { StatusBadge, ReadBadge } from "@/components/admin/status-badge"
+import { ReadBadge } from "@/components/admin/status-badge"
 import {
   MarkReadButton,
   ContactStatusSelect,

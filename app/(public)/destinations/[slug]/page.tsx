@@ -117,11 +117,12 @@ export default async function DestinationPage({
                 </p>
               )}
               <div className="mt-10">
-                <Link href="/evaluation">
-                  <button className="h-16 px-10 rounded-full bg-visacore-gold text-white font-black text-lg shadow-2xl shadow-visacore-gold/30 hover:scale-105 transition-all inline-flex items-center gap-3">
-                    Évaluer Mon Profil pour {destination.name}
-                    <ArrowRight className="size-5" />
-                  </button>
+                <Link
+                  href="/evaluation"
+                  className="inline-flex h-16 items-center gap-3 rounded-full bg-visacore-gold px-10 text-lg font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105"
+                >
+                  Évaluer Mon Profil pour {destination.name}
+                  <ArrowRight className="size-5" />
                 </Link>
               </div>
             </ScrollReveal>
@@ -259,16 +260,18 @@ export default async function DestinationPage({
                   évaluer votre profil et vous proposer la meilleure stratégie.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                  <Link href="/evaluation">
-                    <button className="h-16 px-10 rounded-full bg-visacore-gold text-white font-black hover:scale-105 transition-all shadow-2xl shadow-visacore-gold/30 inline-flex items-center gap-3">
-                      Évaluation Gratuite
-                      <ArrowRight className="size-5" />
-                    </button>
+                  <Link
+                    href="/evaluation"
+                    className="inline-flex h-16 items-center gap-3 rounded-full bg-visacore-gold px-10 font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105"
+                  >
+                    Évaluation Gratuite
+                    <ArrowRight className="size-5" />
                   </Link>
-                  <Link href="/contact">
-                    <button className="h-16 px-10 rounded-full border-2 border-white/20 text-white font-bold hover:bg-white/10 transition-all">
-                      Prendre Rendez-vous
-                    </button>
+                  <Link
+                    href="/contact"
+                    className="inline-flex h-16 items-center rounded-full border-2 border-white/20 px-10 font-bold text-white transition-all hover:bg-white/10"
+                  >
+                    Prendre Rendez-vous
                   </Link>
                 </div>
               </div>

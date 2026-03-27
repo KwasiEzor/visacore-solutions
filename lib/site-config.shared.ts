@@ -31,6 +31,11 @@ export interface PublicSiteConfig {
   instagramUrl: string
 }
 
+export interface BusinessHoursRow {
+  label: string
+  value: string
+}
+
 export const defaultPublicSiteConfig: PublicSiteConfig = {
   siteName: "VisaCore Solutions",
   siteDescription: "Experts en immigration internationale depuis Lomé, Togo",
@@ -77,4 +82,28 @@ export function getTelHref(value: string) {
 export function getWhatsAppHref(value: string) {
   const normalized = normalizePhoneNumber(value)
   return normalized ? `https://wa.me/${normalized}` : undefined
+}
+
+export function getBusinessHoursRows(value: string): BusinessHoursRow[] {
+  return value
+    .split("|")
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .map((entry) => {
+      const [rawLabel, ...rawValue] = entry.split(":")
+      const label = rawLabel?.trim()
+      const resolvedValue = rawValue.join(":").trim()
+
+      if (!label || !resolvedValue) {
+        return {
+          label: "Horaires",
+          value: entry,
+        }
+      }
+
+      return {
+        label,
+        value: resolvedValue,
+      }
+    })
 }

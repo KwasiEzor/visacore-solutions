@@ -113,16 +113,18 @@ export default async function FAQPage() {
                 Notre équipe est disponible pour répondre à toutes vos questions personnellement.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                <Link href="/contact">
-                  <button className="h-16 px-10 rounded-full bg-visacore-navy text-white font-black hover:bg-visacore-navy-light transition-all">
-                    Nous Contacter
-                  </button>
+                <Link
+                  href="/contact"
+                  className="inline-flex h-16 items-center rounded-full bg-visacore-navy px-10 font-black text-white transition-all hover:bg-visacore-navy-light"
+                >
+                  Nous Contacter
                 </Link>
-                <Link href="/evaluation">
-                  <button className="h-16 px-10 rounded-full bg-visacore-gold text-white font-black hover:scale-105 transition-all shadow-lg shadow-visacore-gold/20">
-                    Évaluation Gratuite
-                    <ArrowRight className="inline ml-2 size-5" />
-                  </button>
+                <Link
+                  href="/evaluation"
+                  className="inline-flex h-16 items-center rounded-full bg-visacore-gold px-10 font-black text-white shadow-lg shadow-visacore-gold/20 transition-all hover:scale-105"
+                >
+                  Évaluation Gratuite
+                  <ArrowRight className="ml-2 size-5" />
                 </Link>
               </div>
             </ScrollReveal>

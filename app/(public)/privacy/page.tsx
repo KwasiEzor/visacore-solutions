@@ -1,11 +1,14 @@
 import type { Metadata } from "next"
+import { getPublicSiteConfig } from "@/lib/site-config"
 
 export const metadata: Metadata = {
   title: "Politique de confidentialité",
   description: "Politique de confidentialité de VisaCore Solutions — Protection de vos données personnelles conformément au RGPD.",
 }
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const siteConfig = await getPublicSiteConfig()
+
   return (
     <div className="pt-40 pb-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
@@ -22,8 +25,8 @@ export default function PrivacyPage() {
             <p>
               VisaCore Solutions, société basée à Lomé, Togo, est responsable du traitement de vos données personnelles.
               Pour toute question relative à la protection de vos données, vous pouvez nous contacter à{" "}
-              <a href="mailto:contact@visacore-solutions.com" className="text-visacore-gold hover:underline">
-                contact@visacore-solutions.com
+              <a href={`mailto:${siteConfig.contactEmail}`} className="text-visacore-gold hover:underline">
+                {siteConfig.contactEmail}
               </a>.
             </p>
           </section>
@@ -91,8 +94,8 @@ export default function PrivacyPage() {
             </ul>
             <p className="mt-4">
               Pour exercer ces droits, contactez-nous à{" "}
-              <a href="mailto:contact@visacore-solutions.com" className="text-visacore-gold hover:underline">
-                contact@visacore-solutions.com
+              <a href={`mailto:${siteConfig.contactEmail}`} className="text-visacore-gold hover:underline">
+                {siteConfig.contactEmail}
               </a>.
             </p>
           </section>
@@ -119,9 +122,9 @@ export default function PrivacyPage() {
             <p>
               Pour toute question concernant cette politique de confidentialité, contactez-nous :<br />
               <strong>VisaCore Solutions</strong><br />
-              Boulevard du 13 Janvier, Lomé, Togo<br />
-              <a href="mailto:contact@visacore-solutions.com" className="text-visacore-gold hover:underline">
-                contact@visacore-solutions.com
+              {siteConfig.officeAddress}<br />
+              <a href={`mailto:${siteConfig.contactEmail}`} className="text-visacore-gold hover:underline">
+                {siteConfig.contactEmail}
               </a>
             </p>
           </section>
