@@ -26,7 +26,7 @@ export default async function TestimonialsPage() {
   return (
     <div className="pt-16 sm:pt-20">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-visacore-navy py-16 sm:py-20 lg:py-24">
+      <section className="relative overflow-hidden bg-visacore-navy py-14 sm:py-18 lg:py-22">
         <div className="absolute inset-0 bg-noise opacity-5" />
         <div className="absolute -bottom-48 right-0 w-96 h-96 bg-visacore-gold/20 rounded-full blur-[120px] opacity-40" />
 
@@ -42,7 +42,7 @@ export default async function TestimonialsPage() {
                 <br />
                 Leur Rêve
               </h1>
-              <p className="mx-auto max-w-2xl text-base font-medium leading-relaxed text-white/72 sm:text-lg lg:text-xl">
+              <p className="mx-auto max-w-2xl text-base font-medium leading-relaxed text-white/80 sm:text-lg lg:text-xl">
                 Découvrez les histoires de ceux qui nous ont fait confiance et ont concrétisé leur projet d&apos;immigration.
               </p>
             </ScrollReveal>
@@ -71,23 +71,23 @@ export default async function TestimonialsPage() {
       />
 
       {/* CTA */}
-      <section className="px-4 py-14 sm:py-16 lg:py-20">
-        <div className="max-w-6xl mx-auto">
+      <section className="bg-gradient-to-b from-visacore-navy via-visacore-navy/10 to-background px-4 pb-14 pt-8 sm:pb-16 sm:pt-10 lg:pb-20 lg:pt-12">
+        <div className="mx-auto max-w-5xl">
           <ScrollReveal>
-            <div className="relative overflow-hidden rounded-[32px] bg-visacore-navy p-8 text-center sm:rounded-[42px] sm:p-10 lg:rounded-[52px] lg:p-14">
+            <div className="relative overflow-hidden rounded-[32px] bg-visacore-navy p-8 text-center shadow-[0_30px_90px_-40px_rgba(10,37,64,0.8)] sm:rounded-[42px] sm:p-10 lg:rounded-[52px] lg:p-14">
               <div className="absolute inset-0 bg-noise opacity-5" />
               <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-br from-visacore-gold/20 to-transparent blur-[120px]" />
 
               <div className="relative z-10">
-                <h2 className="text-3xl font-black text-white sm:text-4xl lg:text-5xl">
+                <h2 className="text-2xl font-black text-white sm:text-4xl lg:text-5xl">
                   Rejoignez Nos Clients <span className="text-visacore-gold serif italic">Satisfaits</span>
                 </h2>
-                <p className="mx-auto mt-4 max-w-2xl text-sm text-white/68 sm:text-base lg:text-lg">
+                <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/76 sm:text-base lg:text-lg">
                   Commencez votre parcours vers l&apos;international dès aujourd&apos;hui.
                 </p>
                 <Link
                   href="/evaluation"
-                  className="mt-8 inline-flex h-14 items-center rounded-full bg-visacore-gold px-7 text-base font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105 sm:h-16 sm:px-10 sm:text-lg"
+                  className="mt-8 inline-flex h-14 items-center rounded-full bg-visacore-gold px-7 text-base font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:-translate-y-0.5 hover:scale-[1.02] sm:h-16 sm:px-10 sm:text-lg"
                 >
                   Obtenir Mon Évaluation Gratuite
                   <ArrowRight className="ml-3 size-5" />

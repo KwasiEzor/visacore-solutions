@@ -25,6 +25,39 @@ export function wrapCarouselIndex(index: number, length: number) {
   return ((index % length) + length) % length
 }
 
+export function buildVisiblePaginationIndices(
+  length: number,
+  selectedIndex: number,
+  maxVisible = 5
+) {
+  if (length <= 0 || maxVisible <= 0) {
+    return []
+  }
+
+  const safeSelectedIndex = wrapCarouselIndex(selectedIndex, length)
+  const visibleCount = Math.min(length, maxVisible)
+
+  if (visibleCount === length) {
+    return Array.from({ length }, (_, index) => index)
+  }
+
+  const halfWindow = Math.floor(visibleCount / 2)
+  let start = safeSelectedIndex - halfWindow
+  let end = start + visibleCount
+
+  if (start < 0) {
+    start = 0
+    end = visibleCount
+  }
+
+  if (end > length) {
+    end = length
+    start = length - visibleCount
+  }
+
+  return Array.from({ length: visibleCount }, (_, offset) => start + offset)
+}
+
 export function buildStoryExcerpt(
   summary?: string | null,
   content?: string | null,

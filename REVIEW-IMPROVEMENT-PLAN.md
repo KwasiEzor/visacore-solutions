@@ -426,3 +426,4 @@ If this order is followed, the project can move from “good-looking but fragile
 ## Completed Follow-Up Phases
 
 - Phase 14 completed: tightened the `/temoignages` hero and CTA, made the social-proof carousel fully readable on mobile, reduced dead vertical space, and added quote excerpt safeguards so testimonial cards stay balanced with real-world content lengths.
+- Phase 16 completed: simplified mobile carousel controls on `/temoignages`, removed side-preview clutter on small screens, improved dark-section readability, and relaxed footer density for a cleaner mobile landing flow.

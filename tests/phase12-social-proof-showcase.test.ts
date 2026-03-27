@@ -2,6 +2,7 @@ import assert from "node:assert/strict"
 import test from "node:test"
 
 import {
+  buildVisiblePaginationIndices,
   buildStoryExcerpt,
   buildStoryReadTime,
   buildTestimonialExcerpt,
@@ -13,6 +14,14 @@ test("carousel index helper wraps both forward and backward positions", () => {
   assert.equal(wrapCarouselIndex(6, 5), 1)
   assert.equal(wrapCarouselIndex(-1, 5), 4)
   assert.equal(wrapCarouselIndex(10, 0), 0)
+})
+
+test("pagination window helper keeps mobile dots focused around the active slide", () => {
+  assert.deepEqual(buildVisiblePaginationIndices(0, 0, 5), [])
+  assert.deepEqual(buildVisiblePaginationIndices(4, 1, 5), [0, 1, 2, 3])
+  assert.deepEqual(buildVisiblePaginationIndices(8, 0, 5), [0, 1, 2, 3, 4])
+  assert.deepEqual(buildVisiblePaginationIndices(8, 4, 5), [2, 3, 4, 5, 6])
+  assert.deepEqual(buildVisiblePaginationIndices(8, 7, 5), [3, 4, 5, 6, 7])
 })
 
 test("story excerpt helper prefers summary and truncates long copy", () => {

@@ -13,6 +13,7 @@ import {
   Star,
 } from "lucide-react"
 import {
+  buildVisiblePaginationIndices,
   buildStoryExcerpt,
   buildStoryReadTime,
   buildTestimonialExcerpt,
@@ -209,6 +210,11 @@ function ShowcaseTrack({
   }
 
   const progress = ((selectedIndex + 1) / items.length) * 100
+  const mobilePagination = buildVisiblePaginationIndices(
+    items.length,
+    selectedIndex,
+    5
+  )
 
   return (
     <div
@@ -236,7 +242,7 @@ function ShowcaseTrack({
                   ? "Des voix réelles, des parcours validés."
                   : "Des trajectoires détaillées, pas des promesses vagues."}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-white/68 sm:mt-4 sm:text-base md:text-lg">
+              <p className="mt-3 text-sm leading-relaxed text-white/76 sm:mt-4 sm:text-base md:text-lg">
                 {mode === "testimonials"
                   ? "Faites défiler des retours clients bruts, centrés sur la confiance, la préparation et la clarté du processus."
                   : "Chaque carte résume un parcours concret, la destination visée et la transformation obtenue avec l'accompagnement VisaCore."}
@@ -245,7 +251,7 @@ function ShowcaseTrack({
           </AnimatePresence>
         </div>
 
-        <div className="flex items-center gap-3 self-start md:self-auto">
+        <div className="hidden items-center gap-3 self-start md:flex md:self-auto">
           <button
             type="button"
             onClick={() => emblaApi?.scrollPrev()}
@@ -266,7 +272,7 @@ function ShowcaseTrack({
       </div>
 
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="-ml-3 flex sm:-ml-4 lg:-ml-6">
+        <div className="flex lg:-ml-6">
           {items.map((item, index) => {
             const distance = Math.abs(
               wrapCarouselIndex(index - selectedIndex, items.length)
@@ -278,7 +284,7 @@ function ShowcaseTrack({
             return (
               <div
                 key={item.id}
-                className="min-w-0 flex-[0_0_100%] pl-3 sm:flex-[0_0_92%] sm:pl-4 lg:flex-[0_0_72%] lg:pl-6 xl:flex-[0_0_58%]"
+                className="min-w-0 flex-[0_0_100%] lg:flex-[0_0_72%] lg:pl-6 xl:flex-[0_0_58%]"
               >
                 <div
                   className={`transition-all duration-500 ${
@@ -308,7 +314,7 @@ function ShowcaseTrack({
       </div>
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 space-y-3">
           <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
             <motion.div
               className="h-full rounded-full bg-gradient-to-r from-visacore-gold via-visacore-gold-light to-visacore-gold"
@@ -316,16 +322,52 @@ function ShowcaseTrack({
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             />
           </div>
-          <div className="mt-3 flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.24em] text-white/52 sm:text-xs">
-            <span>
+          <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.24em] text-white/58 sm:text-xs">
+            <span className="shrink-0">
               {String(selectedIndex + 1).padStart(2, "0")} /{" "}
               {String(items.length).padStart(2, "0")}
             </span>
-            <span>{isPaused ? "Pause" : "Défilement automatique"}</span>
+            <span className="hidden sm:inline">
+              {isPaused ? "Pause" : "Défilement automatique"}
+            </span>
+            <div className="flex items-center gap-2 md:hidden">
+              <button
+                type="button"
+                onClick={() => emblaApi?.scrollPrev()}
+                className="inline-flex size-10 items-center justify-center rounded-full border border-white/12 bg-white/8 text-white transition-all hover:border-visacore-gold/40 hover:bg-visacore-gold hover:text-visacore-navy"
+                aria-label="Voir l'élément précédent"
+              >
+                <ArrowLeft className="size-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => emblaApi?.scrollNext()}
+                className="inline-flex size-10 items-center justify-center rounded-full border border-white/12 bg-white/8 text-white transition-all hover:border-visacore-gold/40 hover:bg-visacore-gold hover:text-visacore-navy"
+                aria-label="Voir l'élément suivant"
+              >
+                <ArrowRight className="size-4" />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-2 md:hidden">
+            {mobilePagination.map((index) => (
+              <button
+                key={items[index]?.id ?? index}
+                type="button"
+                onClick={() => emblaApi?.scrollTo(index)}
+                className={`rounded-full transition-all ${
+                  selectedIndex === index
+                    ? "h-2.5 w-8 bg-visacore-gold"
+                    : "size-2.5 bg-white/28 hover:bg-white/50"
+                }`}
+                aria-label={`Aller à l'élément ${index + 1}`}
+              />
+            ))}
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="hidden flex-wrap items-center gap-2 md:flex">
           {items.map((item, index) => (
             <button
               key={item.id}
@@ -385,7 +427,7 @@ export function SocialProofShowcase({
             <h2 className="mt-4 text-3xl font-black leading-[0.95] sm:text-4xl lg:text-5xl">
               Des preuves <span className="serif italic text-visacore-gold">vivantes</span>, pas des slogans.
             </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/68 sm:text-base lg:text-lg">
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/78 sm:text-base lg:text-lg">
               Faites défiler les avis clients et les histoires de réussite publiées depuis le back office,
               avec une lecture claire sur mobile comme sur desktop.
             </p>
@@ -397,7 +439,7 @@ export function SocialProofShowcase({
                 key={tab.key}
                 type="button"
                 onClick={() => setMode(tab.key)}
-                className={`rounded-full px-5 py-3 text-left text-sm font-black uppercase tracking-[0.2em] transition-all sm:text-center ${
+                className={`rounded-full px-4 py-3 text-left text-[13px] font-black uppercase tracking-[0.14em] transition-all sm:px-5 sm:text-center sm:text-sm sm:tracking-[0.2em] ${
                   tab.key === mode
                     ? "bg-visacore-gold text-visacore-navy"
                     : "text-white/55 hover:bg-white/8 hover:text-white"
