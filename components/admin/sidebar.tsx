@@ -17,9 +17,12 @@ import {
   Image as ImageIcon,
   UserCog,
   Settings,
+  type LucideIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { canRenderAdminNavItem } from "@/lib/rbac"
+import type { Action } from "@/lib/rbac"
 
 interface SidebarUser {
   name?: string | null
@@ -30,7 +33,14 @@ interface AdminSidebarProps {
   user: SidebarUser
 }
 
-const navItems = [
+interface AdminNavItem {
+  label: string
+  href: string
+  icon: LucideIcon
+  requiredAction?: Action
+}
+
+const navItems: AdminNavItem[] = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Leads", href: "/admin/leads", icon: Users },
   { label: "Contacts", href: "/admin/contacts", icon: Mail },
@@ -42,9 +52,19 @@ const navItems = [
   { label: "Success Stories", href: "/admin/stories", icon: Trophy },
   { label: "Contenu", href: "/admin/content", icon: FileText },
   { label: "Medias", href: "/admin/media", icon: ImageIcon },
-  { label: "Utilisateurs", href: "/admin/users", icon: UserCog },
-  { label: "Parametres", href: "/admin/settings", icon: Settings },
-] as const
+  {
+    label: "Utilisateurs",
+    href: "/admin/users",
+    icon: UserCog,
+    requiredAction: "manage_users",
+  },
+  {
+    label: "Parametres",
+    href: "/admin/settings",
+    icon: Settings,
+    requiredAction: "manage_settings",
+  },
+]
 
 function isActive(pathname: string, href: string): boolean {
   if (href === "/admin") {
@@ -75,7 +95,11 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
       {/* Navigation */}
       <ScrollArea className="flex-1 py-4">
         <nav className="flex flex-col gap-1 px-3">
-          {navItems.map((item) => {
+          {navItems
+            .filter((item) =>
+              canRenderAdminNavItem(user.role, item.requiredAction)
+            )
+            .map((item) => {
             const active = isActive(pathname, item.href)
             const Icon = item.icon
 

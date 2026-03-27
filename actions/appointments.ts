@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { appointmentSchema, appointmentStatusSchema } from "@/lib/validations/appointment"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
+import { hasPermission } from "@/lib/rbac"
 
 export async function createAppointment(data: unknown) {
   try {
@@ -33,7 +34,9 @@ export async function createAppointment(data: unknown) {
 export async function updateAppointmentStatus(id: string, status: string) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     const parsedStatus = appointmentStatusSchema.safeParse(status)
     if (!parsedStatus.success) {
@@ -55,7 +58,9 @@ export async function updateAppointmentStatus(id: string, status: string) {
 export async function updateAppointmentNotes(id: string, notes: string) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     await prisma.appointmentRequest.update({
       where: { id },
@@ -72,7 +77,7 @@ export async function updateAppointmentNotes(id: string, notes: string) {
 export async function deleteAppointment(id: string) {
   try {
     const session = await auth()
-    if (!session || session.user.role === "EDITOR") {
+    if (!session || !hasPermission(session.user.role, "delete")) {
       return { success: false, error: "Non autorisé" }
     }
 

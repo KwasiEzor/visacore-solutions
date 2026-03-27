@@ -1,22 +1,15 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { hasPermission } from "@/lib/rbac"
 import fs from "fs/promises"
 import path from "path"
-
-const MAX_SIZE = 5 * 1024 * 1024 // 5MB
-const ALLOWED_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-  "application/pdf",
-]
+import { validateUploadFileMetadata } from "@/lib/upload-policy.shared"
 
 export async function POST(request: Request) {
   try {
     const session = await auth()
-    if (!session?.user?.id) {
+    if (!session?.user?.id || !hasPermission(session.user.role, "create")) {
       return NextResponse.json(
         { success: false, error: "Non autorise" },
         { status: 401 }
@@ -33,19 +26,15 @@ export async function POST(request: Request) {
       )
     }
 
-    if (file.size > MAX_SIZE) {
-      return NextResponse.json(
-        { success: false, error: "Le fichier depasse 5 Mo" },
-        { status: 400 }
-      )
-    }
+    const validation = validateUploadFileMetadata({
+      name: file.name,
+      type: file.type,
+      size: file.size,
+    })
 
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    if (!validation.success) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Type de fichier non autorise. Formats acceptes : JPEG, PNG, WebP, GIF, PDF",
-        },
+        { success: false, error: validation.error },
         { status: 400 }
       )
     }
@@ -53,7 +42,7 @@ export async function POST(request: Request) {
     const uploadsDir = path.join(process.cwd(), "public/uploads")
     await fs.mkdir(uploadsDir, { recursive: true })
 
-    const uniqueName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`
+    const uniqueName = `${Date.now()}-${crypto.randomUUID()}-${validation.sanitizedBase}${validation.extension}`
     const filepath = path.join(uploadsDir, uniqueName)
 
     const buffer = Buffer.from(await file.arrayBuffer())

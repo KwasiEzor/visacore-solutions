@@ -5,11 +5,12 @@ import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
 import fs from "fs/promises"
 import path from "path"
+import { hasPermission } from "@/lib/rbac"
 
 export async function deleteMedia(id: string) {
   try {
     const session = await auth()
-    if (!session || session.user.role === "EDITOR") {
+    if (!session || !hasPermission(session.user.role, "delete")) {
       return { success: false, error: "Non autorise" }
     }
 

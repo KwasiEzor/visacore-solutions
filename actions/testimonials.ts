@@ -4,11 +4,14 @@ import { prisma } from "@/lib/prisma"
 import { testimonialSchema } from "@/lib/validations/testimonial"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
+import { hasPermission } from "@/lib/rbac"
 
 export async function createTestimonial(data: unknown) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "create")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     const parsed = testimonialSchema.safeParse(data)
     if (!parsed.success) {
@@ -33,7 +36,9 @@ export async function createTestimonial(data: unknown) {
 export async function updateTestimonial(id: string, data: unknown) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     const parsed = testimonialSchema.safeParse(data)
     if (!parsed.success) {
@@ -58,7 +63,7 @@ export async function updateTestimonial(id: string, data: unknown) {
 export async function deleteTestimonial(id: string) {
   try {
     const session = await auth()
-    if (!session || session.user.role === "EDITOR") {
+    if (!session || !hasPermission(session.user.role, "delete")) {
       return { success: false, error: "Non autorisé" }
     }
 
@@ -76,7 +81,9 @@ export async function deleteTestimonial(id: string) {
 export async function toggleTestimonialPublished(id: string) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
     const t = await prisma.testimonial.findUnique({ where: { id } })
     if (!t) return { success: false, error: "Témoignage introuvable" }
     await prisma.testimonial.update({ where: { id }, data: { published: !t.published } })
@@ -93,7 +100,9 @@ export async function toggleTestimonialPublished(id: string) {
 export async function toggleTestimonialFeatured(id: string) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
     const t = await prisma.testimonial.findUnique({ where: { id } })
     if (!t) return { success: false, error: "Témoignage introuvable" }
     await prisma.testimonial.update({ where: { id }, data: { featured: !t.featured } })
@@ -110,7 +119,9 @@ export async function toggleTestimonialFeatured(id: string) {
 export async function bulkDeleteTestimonials(ids: string[]) {
   try {
     const session = await auth()
-    if (!session || session.user.role === "EDITOR") return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "delete")) {
+      return { success: false, error: "Non autorisé" }
+    }
     await prisma.testimonial.deleteMany({ where: { id: { in: ids } } })
     revalidatePath("/admin/testimonials")
     revalidatePath("/")

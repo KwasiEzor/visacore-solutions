@@ -6,13 +6,14 @@ import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
+import { hasPermission } from "@/lib/rbac"
 
 const userRoleSchema = z.enum(["SUPER_ADMIN", "ADMIN", "EDITOR"])
 
 export async function createUser(data: unknown) {
   try {
     const session = await auth()
-    if (!session || session.user.role !== "SUPER_ADMIN") {
+    if (!session || !hasPermission(session.user.role, "manage_users")) {
       return { success: false, error: "Non autorisé" }
     }
 
@@ -53,7 +54,7 @@ export async function createUser(data: unknown) {
 export async function updateUserRole(id: string, role: string) {
   try {
     const session = await auth()
-    if (!session || session.user.role !== "SUPER_ADMIN") {
+    if (!session || !hasPermission(session.user.role, "manage_users")) {
       return { success: false, error: "Non autorisé" }
     }
 
@@ -77,7 +78,7 @@ export async function updateUserRole(id: string, role: string) {
 export async function deleteUser(id: string) {
   try {
     const session = await auth()
-    if (!session || session.user.role !== "SUPER_ADMIN") {
+    if (!session || !hasPermission(session.user.role, "manage_users")) {
       return { success: false, error: "Non autorisé" }
     }
     

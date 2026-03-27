@@ -4,11 +4,14 @@ import { prisma } from "@/lib/prisma"
 import { faqSchema } from "@/lib/validations/faq"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
+import { hasPermission } from "@/lib/rbac"
 
 export async function createFAQ(data: unknown) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "create")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     const parsed = faqSchema.safeParse(data)
     if (!parsed.success) {
@@ -32,7 +35,9 @@ export async function createFAQ(data: unknown) {
 export async function updateFAQ(id: string, data: unknown) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     const parsed = faqSchema.safeParse(data)
     if (!parsed.success) {
@@ -56,7 +61,7 @@ export async function updateFAQ(id: string, data: unknown) {
 export async function deleteFAQ(id: string) {
   try {
     const session = await auth()
-    if (!session || session.user.role === "EDITOR") {
+    if (!session || !hasPermission(session.user.role, "delete")) {
       return { success: false, error: "Non autorisé" }
     }
 

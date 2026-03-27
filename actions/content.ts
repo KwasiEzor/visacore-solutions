@@ -8,11 +8,14 @@ import {
   getPageContentDefinition,
   validatePageContentInput,
 } from "@/lib/page-content.shared"
+import { hasPermission } from "@/lib/rbac"
 
 export async function upsertPageContent(data: unknown) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     const parsed = validatePageContentInput(data)
     if (!parsed.success) {
@@ -63,7 +66,7 @@ export async function upsertPageContent(data: unknown) {
 export async function deletePageContent(id: string) {
   try {
     const session = await auth()
-    if (!session || session.user.role === "EDITOR") {
+    if (!session || !hasPermission(session.user.role, "delete")) {
       return { success: false, error: "Non autorisé" }
     }
 

@@ -11,6 +11,7 @@ import {
   normalizeSubmissionPhone,
   rateLimitWindowMs,
 } from "@/lib/submission-guards.shared"
+import { hasPermission } from "@/lib/rbac"
 
 export async function createContactRequest(data: unknown) {
   try {
@@ -100,7 +101,9 @@ export async function createContactRequest(data: unknown) {
 export async function markContactAsRead(id: string) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     await prisma.contactRequest.update({
       where: { id },
@@ -117,7 +120,9 @@ export async function markContactAsRead(id: string) {
 export async function updateContactStatus(id: string, status: string) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     await prisma.contactRequest.update({
       where: { id },
@@ -134,7 +139,9 @@ export async function updateContactStatus(id: string, status: string) {
 export async function updateContactNotes(id: string, notes: string) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     await prisma.contactRequest.update({
       where: { id },
@@ -151,7 +158,7 @@ export async function updateContactNotes(id: string, notes: string) {
 export async function deleteContactRequest(id: string) {
   try {
     const session = await auth()
-    if (!session || session.user.role === "EDITOR") {
+    if (!session || !hasPermission(session.user.role, "delete")) {
       return { success: false, error: "Non autorisé" }
     }
 

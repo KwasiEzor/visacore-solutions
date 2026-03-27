@@ -15,6 +15,7 @@ import {
   normalizeSubmissionPhone,
   rateLimitWindowMs,
 } from "@/lib/submission-guards.shared"
+import { hasPermission } from "@/lib/rbac"
 
 export async function createLead(data: unknown) {
   try {
@@ -133,7 +134,9 @@ export async function createLead(data: unknown) {
 export async function updateLeadStatus(id: string, status: string) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     const parsedStatus = leadStatusSchema.safeParse(status)
     if (!parsedStatus.success) {
@@ -156,7 +159,9 @@ export async function updateLeadStatus(id: string, status: string) {
 export async function updateLeadNotes(id: string, notes: string) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     await prisma.lead.update({
       where: { id },
@@ -174,7 +179,9 @@ export async function updateLeadNotes(id: string, notes: string) {
 export async function assignLead(id: string, assignedToId: string | null) {
   try {
     const session = await auth()
-    if (!session) return { success: false, error: "Non autorisé" }
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
 
     await prisma.lead.update({
       where: { id },
@@ -192,7 +199,7 @@ export async function assignLead(id: string, assignedToId: string | null) {
 export async function deleteLead(id: string) {
   try {
     const session = await auth()
-    if (!session || session.user.role === "EDITOR") {
+    if (!session || !hasPermission(session.user.role, "delete")) {
       return { success: false, error: "Non autorisé" }
     }
 
