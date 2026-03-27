@@ -1,8 +1,10 @@
 import type { Metadata } from "next"
 import { LeadForm } from "@/components/public/lead-form"
 import { Shield, Clock, CheckCircle, Sparkles, Star, Users } from "lucide-react"
+import { PageHeroBackground } from "@/components/public/page-hero-background"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 import { getCaptchaServerConfig } from "@/lib/captcha.server"
+import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds"
 
 export const metadata: Metadata = {
   title: "Évaluation gratuite",
@@ -11,14 +13,13 @@ export const metadata: Metadata = {
 
 export default function EvaluationPage() {
   const captchaConfig = getCaptchaServerConfig()
+  const heroBackground = getStaticHeroBackground("evaluation")
 
   return (
     <div className="pt-20">
       {/* Hero */}
       <section className="relative overflow-hidden bg-visacore-navy py-24 sm:py-32">
-        <div className="absolute inset-0 bg-noise opacity-5" />
-        <div className="absolute top-0 right-0 w-2/3 h-full bg-visacore-gold/10 blur-[120px]" />
-        <div className="absolute -bottom-48 -left-24 w-96 h-96 bg-visacore-gold/20 rounded-full blur-[120px] opacity-40" />
+        <PageHeroBackground {...heroBackground} />
 
         <div className="container-custom relative z-10">
           <div className="text-center max-w-3xl mx-auto">

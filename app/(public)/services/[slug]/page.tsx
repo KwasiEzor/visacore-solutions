@@ -10,10 +10,12 @@ import {
   Handshake,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { PageHeroBackground } from "@/components/public/page-hero-background";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
 import {
   normalizeStructuredCardItems,
 } from "@/lib/content-structures";
+import { getServiceHeroBackground } from "@/lib/public-hero-backgrounds";
 import { serviceIconMap } from "@/lib/public-content";
 
 export const revalidate = 3600;
@@ -88,14 +90,13 @@ export default async function ServicePage({
 
   const Icon = serviceIconMap[service.icon || ""] || Globe;
   const benefits = normalizeStructuredCardItems(service.benefits);
+  const heroBackground = getServiceHeroBackground(service.slug)
 
   return (
     <div className="pt-20">
       {/* Hero */}
       <section className="relative overflow-hidden bg-visacore-navy py-24 sm:py-32">
-        <div className="absolute inset-0 bg-noise opacity-5" />
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-visacore-gold/10 blur-[120px]" />
-        <div className="absolute -bottom-48 -left-24 w-96 h-96 bg-visacore-gold/20 rounded-full blur-[120px] opacity-40" />
+        <PageHeroBackground {...heroBackground} />
 
         <div className="container-custom relative z-10">
           <div className="max-w-4xl mx-auto text-center">

@@ -3,7 +3,9 @@ import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { HelpCircle, ArrowRight, MessageCircle } from "lucide-react"
+import { PageHeroBackground } from "@/components/public/page-hero-background"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
+import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds"
 
 export const revalidate = 3600
 
@@ -22,6 +24,7 @@ const categoryLabels: Record<string, string> = {
 }
 
 export default async function FAQPage() {
+  const heroBackground = getStaticHeroBackground("faq")
   const faqs = await prisma.fAQ.findMany({
     where: { published: true },
     orderBy: { order: "asc" },
@@ -38,8 +41,7 @@ export default async function FAQPage() {
     <div className="pt-20">
       {/* Hero */}
       <section className="relative overflow-hidden bg-visacore-navy py-24 sm:py-32">
-        <div className="absolute inset-0 bg-noise opacity-5" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-visacore-gold/15 rounded-full blur-[120px]" />
+        <PageHeroBackground {...heroBackground} />
 
         <div className="container-custom relative z-10">
           <div className="text-center max-w-3xl mx-auto">

@@ -2,7 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Globe, ArrowRight, Sparkles } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { PageHeroBackground } from "@/components/public/page-hero-background";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
+import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds";
 import { fallbackServices, serviceIconMap } from "@/lib/public-content";
 
 export const revalidate = 3600;
@@ -15,6 +17,7 @@ export const metadata: Metadata = {
 
 export default async function ServicesPage() {
   let services = fallbackServices;
+  const heroBackground = getStaticHeroBackground("services")
 
   try {
     const dbServices = await prisma.service.findMany({
@@ -37,8 +40,7 @@ export default async function ServicesPage() {
     <div className="pt-20">
       {/* Hero */}
       <section className="relative overflow-hidden bg-visacore-navy py-24 sm:py-32">
-        <div className="absolute inset-0 bg-noise opacity-5" />
-        <div className="absolute top-0 left-0 w-1/2 h-full bg-visacore-gold/10 blur-[120px]" />
+        <PageHeroBackground {...heroBackground} />
         
         <div className="container-custom relative z-10">
           <div className="max-w-3xl">

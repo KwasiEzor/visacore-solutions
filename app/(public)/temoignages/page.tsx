@@ -2,8 +2,10 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { ArrowRight, MessageCircle } from "lucide-react"
+import { PageHeroBackground } from "@/components/public/page-hero-background"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 import { SocialProofShowcase } from "@/components/public/social-proof-showcase"
+import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds"
 
 export const revalidate = 3600
 
@@ -13,6 +15,7 @@ export const metadata: Metadata = {
 }
 
 export default async function TestimonialsPage() {
+  const heroBackground = getStaticHeroBackground("testimonials")
   const testimonials = await prisma.testimonial.findMany({
     where: { published: true },
     orderBy: { createdAt: "desc" },
@@ -27,8 +30,7 @@ export default async function TestimonialsPage() {
     <div className="pt-16 sm:pt-20">
       {/* Hero */}
       <section className="relative overflow-hidden bg-visacore-navy py-14 sm:py-18 lg:py-22">
-        <div className="absolute inset-0 bg-noise opacity-5" />
-        <div className="absolute -bottom-48 right-0 w-96 h-96 bg-visacore-gold/20 rounded-full blur-[120px] opacity-40" />
+        <PageHeroBackground {...heroBackground} />
 
         <div className="container-custom relative z-10">
           <div className="mx-auto max-w-3xl text-center">

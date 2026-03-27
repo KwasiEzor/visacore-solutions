@@ -12,6 +12,7 @@ import {
   Zap,
   HeadphonesIcon,
 } from "lucide-react"
+import { PageHeroBackground } from "@/components/public/page-hero-background"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 import {
   formatDisplayPhoneNumber,
@@ -21,6 +22,7 @@ import {
   getWhatsAppHref,
 } from "@/lib/site-config"
 import { getCaptchaServerConfig } from "@/lib/captcha.server"
+import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds"
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -59,6 +61,7 @@ const guarantees = [
 ]
 
 export default async function ContactPage() {
+  const heroBackground = getStaticHeroBackground("contact")
   const siteConfig = await getPublicSiteConfig()
   const captchaConfig = getCaptchaServerConfig()
   const businessHours = getBusinessHoursRows(siteConfig.businessHours)
@@ -101,9 +104,7 @@ export default async function ContactPage() {
     <div className="pt-20">
       {/* Hero */}
       <section className="relative overflow-hidden bg-visacore-navy py-24 sm:py-32">
-        <div className="absolute inset-0 bg-noise opacity-5" />
-        <div className="absolute -bottom-32 -right-32 size-[500px] rounded-full bg-visacore-gold/10 blur-[120px]" />
-        <div className="absolute -left-24 -top-24 size-96 rounded-full bg-blue-500/5 blur-[100px]" />
+        <PageHeroBackground {...heroBackground} />
 
         <div className="container-custom relative z-10">
           <div className="mx-auto max-w-3xl text-center">

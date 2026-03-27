@@ -1,8 +1,10 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { Target, Eye, Heart, Globe, MapPin, Users, Award, Shield } from "lucide-react"
+import { PageHeroBackground } from "@/components/public/page-hero-background"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 import { getAboutPageContent } from "@/lib/page-content"
+import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds"
 import { getPublicSiteConfig } from "@/lib/site-config"
 
 export const metadata: Metadata = {
@@ -24,13 +26,13 @@ export default async function AboutPage() {
     getAboutPageContent(),
     getPublicSiteConfig(),
   ])
+  const heroBackground = getStaticHeroBackground("about")
 
   return (
     <div className="pt-20">
       {/* Hero */}
       <section className="relative overflow-hidden bg-visacore-navy py-24 sm:py-32">
-        <div className="absolute inset-0 bg-noise opacity-5" />
-        <div className="absolute top-0 left-0 w-1/2 h-full bg-visacore-gold/10 blur-[120px]" />
+        <PageHeroBackground {...heroBackground} />
 
         <div className="container-custom relative z-10">
           <div className="max-w-3xl">
