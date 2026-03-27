@@ -661,10 +661,36 @@ async function main() {
         "Amina Diallo, major de sa promotion en biochimie à l'Université de Lomé, souhaitait poursuivre ses études en France. VisaCore l'a accompagnée dans toute la procédure Campus France, la rédaction de sa lettre de motivation, et la constitution de son dossier de visa. Nous l'avons également aidée à obtenir une bourse du gouvernement français. Aujourd'hui, Amina est en Master 2 à Paris-Saclay et envisage un doctorat.",
       published: true,
     },
+    {
+      title: "Yaw décroche un permis de travail au Québec",
+      slug: "yaw-permis-travail-quebec",
+      clientName: "Yaw Agbeko",
+      destination: "Canada",
+      summary:
+        "Après plusieurs refus informels auprès d'employeurs, Yaw a structuré son dossier avec VisaCore et obtenu un permis de travail fermé pour rejoindre une entreprise logistique au Québec.",
+      content:
+        "Yaw Agbeko travaillait déjà dans la chaîne logistique à Lomé, mais ses candidatures vers le Canada n'aboutissaient pas faute de stratégie claire. VisaCore a revu son CV au format canadien, préparé sa documentation professionnelle et coordonné les étapes liées à l'offre d'emploi et au dossier de permis de travail. Nous l'avons également préparé à l'entretien employeur et au dépôt biométrique. En moins de six mois, Yaw a obtenu son visa et a rejoint son poste au Québec avec un plan précis pour faire venir sa famille plus tard.",
+      published: true,
+    },
+    {
+      title: "Grâce trouve une voie d'installation en Belgique",
+      slug: "grace-installation-belgique",
+      clientName: "Grâce Kossivi",
+      destination: "Belgique",
+      summary:
+        "Avec un projet familial et professionnel à clarifier, Grâce a bénéficié d'un accompagnement structuré pour bâtir un dossier solide vers la Belgique.",
+      content:
+        "Grâce Kossivi hésitait entre plusieurs options européennes et ne savait pas quel parcours serait le plus cohérent avec son profil d'assistante administrative expérimentée. Après un diagnostic complet, VisaCore a retenu la Belgique comme destination cible et a réorganisé tout son dossier autour de son expérience, de ses justificatifs financiers et de son projet d'installation. Nous avons assuré les relectures, la cohérence narrative et le suivi des pièces demandées jusqu'à la décision finale. Grâce vit désormais à Bruxelles et suit un plan d'intégration progressive combinant emploi, formation linguistique et stabilité familiale.",
+      published: true,
+    },
   ]
 
   for (const story of stories) {
-    await prisma.successStory.create({ data: story })
+    await prisma.successStory.upsert({
+      where: { slug: story.slug },
+      update: story,
+      create: story,
+    })
   }
   console.log("✅ Success stories created")
 
