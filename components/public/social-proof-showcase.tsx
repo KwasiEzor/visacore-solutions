@@ -433,20 +433,28 @@ export function SocialProofShowcase({
             </p>
           </div>
 
-          <div className="grid w-full max-w-md grid-cols-1 gap-2 rounded-[28px] border border-white/10 bg-white/6 p-2 backdrop-blur-sm sm:inline-flex sm:w-auto sm:max-w-none sm:grid-cols-none sm:flex-wrap sm:rounded-full">
+          <div className="grid w-full max-w-sm grid-cols-1 gap-1.5 rounded-[24px] border border-white/10 bg-white/6 p-1.5 shadow-[0_20px_50px_-30px_rgba(10,37,64,0.75)] backdrop-blur-sm sm:max-w-none sm:grid-cols-2 sm:rounded-full">
             {availableTabs.map((tab) => (
               <button
                 key={tab.key}
                 type="button"
                 onClick={() => setMode(tab.key)}
-                className={`rounded-full px-4 py-3 text-left text-[13px] font-black uppercase tracking-[0.14em] transition-all sm:px-5 sm:text-center sm:text-sm sm:tracking-[0.2em] ${
+                className={`flex items-center justify-between gap-3 rounded-[18px] px-4 py-3 text-left transition-all sm:rounded-full sm:px-5 ${
                   tab.key === mode
-                    ? "bg-visacore-gold text-visacore-navy"
-                    : "text-white/55 hover:bg-white/8 hover:text-white"
+                    ? "bg-visacore-gold text-visacore-navy shadow-[0_16px_40px_-24px_rgba(201,162,39,0.9)]"
+                    : "text-white/72 hover:bg-white/8 hover:text-white"
                 }`}
               >
-                {tab.label}
-                <span className="ml-2 text-[10px] opacity-70">
+                <span className="text-[13px] font-black uppercase tracking-[0.12em] sm:text-sm sm:tracking-[0.16em]">
+                  {tab.label}
+                </span>
+                <span
+                  className={`inline-flex min-w-9 items-center justify-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${
+                    tab.key === mode
+                      ? "bg-visacore-navy/10 text-visacore-navy/80"
+                      : "bg-white/8 text-white/60"
+                  }`}
+                >
                   {String(tab.count).padStart(2, "0")}
                 </span>
               </button>
