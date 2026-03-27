@@ -10,12 +10,12 @@ import { auth } from "@/lib/auth"
 import {
   duplicateSubmissionWindowMs,
   evaluateSubmissionGuard,
-  normalizeOptionalSubmissionText,
   normalizeSubmissionEmail,
   normalizeSubmissionPhone,
   rateLimitWindowMs,
 } from "@/lib/submission-guards.shared"
 import { hasPermission } from "@/lib/rbac"
+import { buildLeadCreateData } from "@/lib/submission-payloads"
 
 export async function createLead(data: unknown) {
   try {
@@ -104,20 +104,7 @@ export async function createLead(data: unknown) {
       }
     }
 
-    await prisma.lead.create({
-      data: {
-        fullName: parsed.data.fullName.trim(),
-        email: normalizedEmail,
-        phone: normalizedPhone ?? parsed.data.phone.trim(),
-        country: parsed.data.country.trim(),
-        destination: parsed.data.destination.trim(),
-        situation: normalizeOptionalSubmissionText(parsed.data.situation),
-        serviceNeeded: normalizeOptionalSubmissionText(parsed.data.serviceNeeded),
-        message: normalizeOptionalSubmissionText(parsed.data.message),
-        consent: parsed.data.consent,
-        source: "public-evaluation-form",
-      },
-    })
+    await prisma.lead.create({ data: buildLeadCreateData(parsed.data) })
 
     return {
       success: true,

@@ -8,10 +8,10 @@ import {
   duplicateSubmissionWindowMs,
   evaluateSubmissionGuard,
   normalizeSubmissionEmail,
-  normalizeSubmissionPhone,
   rateLimitWindowMs,
 } from "@/lib/submission-guards.shared"
 import { hasPermission } from "@/lib/rbac"
+import { buildContactRequestCreateData } from "@/lib/submission-payloads"
 
 export async function createContactRequest(data: unknown) {
   try {
@@ -25,9 +25,7 @@ export async function createContactRequest(data: unknown) {
     }
 
     const normalizedEmail = normalizeSubmissionEmail(parsed.data.email)
-    const normalizedPhone = normalizeSubmissionPhone(parsed.data.phone)
     const normalizedSubject = parsed.data.subject.trim()
-    const normalizedMessage = parsed.data.message.trim()
     const now = Date.now()
     const duplicateWindowStart = new Date(now - duplicateSubmissionWindowMs)
     const rateLimitWindowStart = new Date(now - rateLimitWindowMs)
@@ -77,13 +75,7 @@ export async function createContactRequest(data: unknown) {
     }
 
     await prisma.contactRequest.create({
-      data: {
-        fullName: parsed.data.fullName.trim(),
-        email: normalizedEmail,
-        phone: normalizedPhone,
-        subject: normalizedSubject,
-        message: normalizedMessage,
-      },
+      data: buildContactRequestCreateData(parsed.data),
     })
 
     return {
