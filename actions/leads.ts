@@ -10,6 +10,7 @@ import { auth } from "@/lib/auth"
 import {
   duplicateSubmissionWindowMs,
   evaluateSubmissionGuard,
+  logSubmissionGuardEvent,
   normalizeSubmissionEmail,
   normalizeSubmissionPhone,
   rateLimitWindowMs,
@@ -89,6 +90,21 @@ export async function createLead(data: unknown) {
     })
 
     if (!guard.shouldPersist) {
+      logSubmissionGuardEvent({
+        channel: "lead",
+        status: guard.status,
+        email: normalizedEmail,
+        phone: normalizedPhone,
+        duplicateCount: Math.max(
+          recentEmailDuplicateCount,
+          recentPhoneDuplicateCount
+        ),
+        rateLimitCount: Math.max(
+          recentEmailSubmissionCount,
+          recentPhoneSubmissionCount
+        ),
+      })
+
       if (guard.success) {
         return {
           success: true,

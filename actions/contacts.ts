@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth"
 import {
   duplicateSubmissionWindowMs,
   evaluateSubmissionGuard,
+  logSubmissionGuardEvent,
   normalizeSubmissionEmail,
   rateLimitWindowMs,
 } from "@/lib/submission-guards.shared"
@@ -59,6 +60,15 @@ export async function createContactRequest(data: unknown) {
     })
 
     if (!guard.shouldPersist) {
+      logSubmissionGuardEvent({
+        channel: "contact",
+        status: guard.status,
+        email: normalizedEmail,
+        subject: normalizedSubject,
+        duplicateCount: recentDuplicateCount,
+        rateLimitCount: recentSubmissionCount,
+      })
+
       if (guard.success) {
         return {
           success: true,
