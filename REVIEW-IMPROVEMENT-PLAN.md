@@ -71,6 +71,7 @@ It focuses on real issues observed in the current codebase, not generic best pra
 - Phase 9 completed: smoke coverage for public CTAs, contact submission, and admin login gate
 - Phase 10 completed: redacted abuse-event logging for guarded public submissions
 - Phase 11 completed: Cloudflare Turnstile support for public lead and contact forms
+- Phase 12 completed: dynamic editorial carousel for testimonials and success stories
 
 ### Remaining implementation backlog
 
