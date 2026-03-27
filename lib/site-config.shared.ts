@@ -74,6 +74,31 @@ export function normalizePhoneNumber(value: string) {
   return value.replace(/[^\d]/g, "")
 }
 
+export function formatDisplayPhoneNumber(value: string) {
+  const normalized = normalizePhoneNumber(value)
+  const hasInternationalPrefix = value.trim().startsWith("+")
+
+  if (!normalized) {
+    return value
+  }
+
+  const formatGroupedDigits = (digits: string) =>
+    digits.match(/.{1,2}/g)?.join(" ") ?? digits
+
+  if (normalized.length <= 8) {
+    return `${hasInternationalPrefix ? "+" : ""}${formatGroupedDigits(normalized)}`
+  }
+
+  const countryCode = normalized.slice(0, normalized.length - 8)
+  const localNumber = normalized.slice(-8)
+
+  if (!countryCode) {
+    return formatGroupedDigits(localNumber)
+  }
+
+  return `${hasInternationalPrefix ? "+" : ""}${countryCode} ${formatGroupedDigits(localNumber)}`
+}
+
 export function getTelHref(value: string) {
   const normalized = normalizePhoneNumber(value)
   return normalized ? `tel:+${normalized}` : undefined

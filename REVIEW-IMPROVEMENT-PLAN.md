@@ -72,6 +72,7 @@ It focuses on real issues observed in the current codebase, not generic best pra
 - Phase 10 completed: redacted abuse-event logging for guarded public submissions
 - Phase 11 completed: Cloudflare Turnstile support for public lead and contact forms
 - Phase 12 completed: dynamic editorial carousel for testimonials and success stories
+- Phase 13 completed: content-resilient card layouts for services, evaluation highlights, and contact channels
 
 ### Remaining implementation backlog
 

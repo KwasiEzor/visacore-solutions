@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { ContactForm } from "@/components/public/contact-form"
 import {
   MapPin,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 import {
+  formatDisplayPhoneNumber,
   getBusinessHoursRows,
   getPublicSiteConfig,
   getTelHref,
@@ -60,11 +62,12 @@ export default async function ContactPage() {
   const siteConfig = await getPublicSiteConfig()
   const captchaConfig = getCaptchaServerConfig()
   const businessHours = getBusinessHoursRows(siteConfig.businessHours)
+  const whatsappHref = getWhatsAppHref(siteConfig.whatsappNumber)
   const contactChannels: ContactChannel[] = [
     {
       icon: Phone,
       label: "Appelez-nous",
-      value: siteConfig.contactPhone,
+      value: formatDisplayPhoneNumber(siteConfig.contactPhone),
       href: getTelHref(siteConfig.contactPhone),
       description: "Du lundi au vendredi, 8h-18h",
       color: "bg-blue-50 text-blue-600",
@@ -80,7 +83,7 @@ export default async function ContactPage() {
     {
       icon: MessageCircle,
       label: "WhatsApp",
-      value: siteConfig.whatsappNumber,
+      value: formatDisplayPhoneNumber(siteConfig.whatsappNumber),
       href: getWhatsAppHref(siteConfig.whatsappNumber),
       description: "Réponse instantanée",
       color: "bg-green-50 text-green-600",
@@ -127,7 +130,7 @@ export default async function ContactPage() {
       {/* Contact channels strip — overlaps hero */}
       <section className="relative z-10 -mt-10 px-4 sm:-mt-12">
         <div className="container-custom">
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:auto-rows-fr xl:grid-cols-4">
             {contactChannels.map((channel, i) => (
               <ScrollReveal key={channel.label} delay={i * 0.08}>
                 <ContactChannelCard channel={channel} />
@@ -289,21 +292,23 @@ export default async function ContactPage() {
                   les options qui s&apos;offrent à vous.
                 </p>
                 <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
-                  <a href="/evaluation">
-                    <button className="h-12 rounded-full bg-visacore-gold px-8 text-sm font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105 sm:h-16 sm:px-10 sm:text-base">
-                      Évaluation Gratuite
-                    </button>
-                  </a>
-                  <a
-                    href={getWhatsAppHref(siteConfig.whatsappNumber)}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href="/evaluation"
+                    className="inline-flex h-12 items-center rounded-full bg-visacore-gold px-8 text-sm font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105 sm:h-16 sm:px-10 sm:text-base"
                   >
-                    <button className="flex h-12 items-center gap-2 rounded-full border-2 border-white/20 px-8 text-sm font-bold text-white transition-all hover:bg-white/10 sm:h-16 sm:px-10 sm:text-base">
+                    Évaluation Gratuite
+                  </Link>
+                  {whatsappHref ? (
+                    <Link
+                      href={whatsappHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-12 items-center gap-2 rounded-full border-2 border-white/20 px-8 text-sm font-bold text-white transition-all hover:bg-white/10 sm:h-16 sm:px-10 sm:text-base"
+                    >
                       <MessageCircle className="size-5" />
                       WhatsApp
-                    </button>
-                  </a>
+                    </Link>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -333,21 +338,21 @@ function ContactChannelCard({
   return (
     <Wrapper
       {...wrapperProps}
-      className="group flex flex-col items-center gap-2 rounded-2xl border border-border bg-white p-4 text-center shadow-lg shadow-visacore-navy/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:gap-3 sm:rounded-[24px] sm:p-6"
+      className="group flex h-full min-h-[12rem] flex-col justify-between rounded-[28px] border border-border bg-white p-6 text-left shadow-lg shadow-visacore-navy/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:min-h-[13rem] sm:p-7"
     >
       <div
-        className={`flex size-10 items-center justify-center rounded-xl ${channel.color} transition-transform duration-300 group-hover:scale-110 sm:size-12`}
+        className={`flex size-12 items-center justify-center rounded-2xl ${channel.color} transition-transform duration-300 group-hover:scale-110`}
       >
-        <channel.icon className="size-4 sm:size-5" />
+        <channel.icon className="size-5" />
       </div>
-      <div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground sm:text-xs">
+      <div className="mt-6 space-y-3">
+        <p className="text-[11px] font-black uppercase tracking-[0.24em] text-muted-foreground">
           {channel.label}
         </p>
-        <p className="mt-0.5 text-xs font-bold text-visacore-navy sm:mt-1 sm:text-sm">
+        <p className="text-balance break-words text-xl font-black leading-snug text-visacore-navy">
           {channel.value}
         </p>
-        <p className="mt-0.5 hidden text-xs text-muted-foreground sm:block">
+        <p className="text-sm leading-relaxed text-muted-foreground">
           {channel.description}
         </p>
       </div>

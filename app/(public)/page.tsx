@@ -277,19 +277,26 @@ export default async function HomePage() {
             </ScrollReveal>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:auto-rows-fr md:grid-cols-2 xl:grid-cols-4">
             {services.map((service, i) => {
               const Icon = serviceIconMap[service.icon] || Globe
 
               return (
                 <ScrollReveal key={service.slug} delay={i * 0.1}>
-                  <div className="group bg-white/5 border border-white/10 p-10 rounded-3xl h-full hover:bg-visacore-gold transition-all duration-500 hover:-translate-y-2">
-                    <div className="size-16 rounded-2xl bg-visacore-gold text-white flex items-center justify-center mb-8 group-hover:bg-visacore-navy group-hover:text-visacore-gold transition-colors">
+                  <div className="group flex h-full min-h-[24rem] flex-col rounded-3xl border border-white/10 bg-white/5 p-8 transition-all duration-500 hover:-translate-y-2 hover:bg-visacore-gold md:p-10">
+                    <div className="mb-8 flex size-16 items-center justify-center rounded-2xl bg-visacore-gold text-white transition-colors group-hover:bg-visacore-navy group-hover:text-visacore-gold">
                       <Icon className="size-8" />
                     </div>
-                    <h3 className="text-2xl font-black mb-4">{service.name}</h3>
-                    <p className="text-white/50 group-hover:text-visacore-navy/80 transition-colors mb-8">{service.description}</p>
-                    <Link href={`/services/${service.slug}`} className="inline-flex items-center gap-2 font-bold group-hover:text-visacore-navy">
+                    <h3 className="min-h-[5.5rem] text-balance text-2xl font-black leading-tight md:min-h-[6rem]">
+                      {service.name}
+                    </h3>
+                    <p className="mb-8 mt-4 line-clamp-6 text-base leading-relaxed text-white/68 transition-colors group-hover:text-visacore-navy/82">
+                      {service.description}
+                    </p>
+                    <Link
+                      href={`/services/${service.slug}`}
+                      className="mt-auto inline-flex items-center gap-2 pt-2 text-base font-black group-hover:text-visacore-navy"
+                    >
                       Détails <ArrowRight className="size-4" />
                     </Link>
                   </div>

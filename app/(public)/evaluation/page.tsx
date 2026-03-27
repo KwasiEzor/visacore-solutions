@@ -74,13 +74,19 @@ export default function EvaluationPage() {
                     { number: "24h", label: "Délai de Réponse", text: "Votre profil sera analysé et vous recevrez un retour expert sous 24 heures." },
                   ].map((stat, i) => (
                     <ScrollReveal key={stat.label} delay={i * 0.1}>
-                      <div className="flex gap-6">
-                        <div className="size-16 shrink-0 rounded-2xl bg-visacore-navy flex items-center justify-center">
-                          <span className="text-xl font-black text-visacore-gold">{stat.number}</span>
+                      <div className="grid grid-cols-[minmax(5.5rem,auto)_1fr] items-start gap-5 sm:gap-6">
+                        <div className="flex min-h-16 min-w-[5.5rem] items-center justify-center rounded-[1.75rem] bg-visacore-navy px-4 py-3 text-center shadow-lg shadow-visacore-navy/10">
+                          <span className="text-[clamp(1.7rem,2.6vw,2.5rem)] font-black leading-none tracking-tight text-visacore-gold">
+                            {stat.number}
+                          </span>
                         </div>
-                        <div>
-                          <h4 className="text-lg font-black text-visacore-navy">{stat.label}</h4>
-                          <p className="text-muted-foreground text-sm mt-1">{stat.text}</p>
+                        <div className="pt-1">
+                          <h4 className="text-balance text-lg font-black text-visacore-navy sm:text-xl">
+                            {stat.label}
+                          </h4>
+                          <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                            {stat.text}
+                          </p>
                         </div>
                       </div>
                     </ScrollReveal>
