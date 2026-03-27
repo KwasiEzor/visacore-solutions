@@ -422,3 +422,7 @@ The right order is:
 6. cosmetic refinement
 
 If this order is followed, the project can move from “good-looking but fragile” to “production-ready and maintainable” without wasting effort on surface-level changes first.
+
+## Completed Follow-Up Phases
+
+- Phase 14 completed: tightened the `/temoignages` hero and CTA, made the social-proof carousel fully readable on mobile, reduced dead vertical space, and added quote excerpt safeguards so testimonial cards stay balanced with real-world content lengths.

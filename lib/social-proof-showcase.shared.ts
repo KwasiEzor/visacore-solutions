@@ -43,6 +43,16 @@ export function buildStoryExcerpt(
   return `${source.slice(0, maxLength).trimEnd()}…`
 }
 
+export function buildTestimonialExcerpt(content: string, maxLength = 240) {
+  const source = content.trim()
+
+  if (source.length <= maxLength) {
+    return source
+  }
+
+  return `${source.slice(0, maxLength).trimEnd()}…`
+}
+
 export function buildStoryReadTime(content?: string | null) {
   const words = content?.trim().split(/\s+/).filter(Boolean).length ?? 0
   const minutes = Math.max(1, Math.round(words / 160))

@@ -4,6 +4,7 @@ import test from "node:test"
 import {
   buildStoryExcerpt,
   buildStoryReadTime,
+  buildTestimonialExcerpt,
   wrapCarouselIndex,
 } from "../lib/social-proof-showcase.shared"
 
@@ -33,4 +34,13 @@ test("story excerpt helper prefers summary and truncates long copy", () => {
 test("story read time helper never drops below one minute", () => {
   assert.equal(buildStoryReadTime("Texte bref"), "1 min")
   assert.equal(buildStoryReadTime("mot ".repeat(480)), "3 min")
+})
+
+test("testimonial excerpt helper trims long quotes without breaking short ones", () => {
+  assert.equal(buildTestimonialExcerpt("Parcours clair"), "Parcours clair")
+
+  const excerpt = buildTestimonialExcerpt("B".repeat(320), 90)
+
+  assert.equal(excerpt.length, 91)
+  assert.ok(excerpt.endsWith("…"))
 })

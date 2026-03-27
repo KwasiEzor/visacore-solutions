@@ -15,6 +15,7 @@ import {
 import {
   buildStoryExcerpt,
   buildStoryReadTime,
+  buildTestimonialExcerpt,
   type ShowcaseStoryItem,
   type ShowcaseTestimonialItem,
   wrapCarouselIndex,
@@ -44,30 +45,30 @@ function TestimonialSlide({
     <motion.article
       animate={{
         opacity: isActive ? 1 : 0.44,
-        scale: isActive ? 1 : 0.92,
-        y: isActive ? 0 : 18,
+        scale: isActive ? 1 : 0.96,
+        y: isActive ? 0 : 12,
       }}
       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-      className="relative flex h-full min-h-[420px] flex-col overflow-hidden rounded-[38px] border border-white/10 bg-white/95 p-8 text-visacore-navy shadow-[0_35px_120px_-45px_rgba(10,37,64,0.65)] backdrop-blur-md md:p-10"
+      className="relative flex h-full min-h-[22rem] flex-col overflow-hidden rounded-[30px] border border-white/10 bg-white/95 p-6 text-visacore-navy shadow-[0_35px_120px_-45px_rgba(10,37,64,0.65)] backdrop-blur-md sm:min-h-[24rem] sm:p-8 lg:min-h-[26rem] lg:p-10"
     >
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-visacore-gold/70 to-transparent" />
-      <div className="mb-8 flex items-start justify-between gap-4">
-        <div className="inline-flex items-center gap-2 rounded-full bg-visacore-gold/10 px-4 py-2 text-xs font-black uppercase tracking-[0.26em] text-visacore-gold">
-          <MessageSquare className="size-4" />
+      <div className="mb-6 flex items-start justify-between gap-4 sm:mb-8">
+        <div className="inline-flex items-center gap-2 rounded-full bg-visacore-gold/10 px-3.5 py-2 text-[11px] font-black uppercase tracking-[0.24em] text-visacore-gold sm:px-4 sm:text-xs sm:tracking-[0.26em]">
+          <MessageSquare className="size-3.5 sm:size-4" />
           Témoignage
         </div>
-        <Quote className="size-10 text-visacore-gold/20" />
+        <Quote className="size-8 text-visacore-gold/20 sm:size-10" />
       </div>
 
-      <p className="flex-1 text-xl font-medium leading-relaxed text-visacore-navy/85 md:text-2xl">
-        &ldquo;{item.content}&rdquo;
+      <p className="flex-1 text-lg font-medium leading-relaxed text-visacore-navy/82 sm:text-xl lg:text-[1.6rem]">
+        &ldquo;{buildTestimonialExcerpt(item.content, 260)}&rdquo;
       </p>
 
-      <div className="mt-8 flex items-center gap-1">
+      <div className="mt-6 flex items-center gap-1 sm:mt-8">
         {Array.from({ length: 5 }).map((_, index) => (
           <Star
             key={index}
-            className={`size-5 ${
+            className={`size-4 sm:size-5 ${
               index < item.rating
                 ? "fill-visacore-gold text-visacore-gold"
                 : "text-gray-200"
@@ -76,8 +77,8 @@ function TestimonialSlide({
         ))}
       </div>
 
-      <div className="mt-8 flex items-center gap-4 border-t border-visacore-navy/10 pt-6">
-        <div className="flex size-14 items-center justify-center rounded-2xl bg-visacore-navy text-lg font-black text-visacore-gold">
+      <div className="mt-6 flex items-center gap-4 border-t border-visacore-navy/10 pt-5 sm:mt-8 sm:pt-6">
+        <div className="flex size-12 items-center justify-center rounded-2xl bg-visacore-navy text-base font-black text-visacore-gold sm:size-14 sm:text-lg">
           {item.clientName
             .split(" ")
             .map((part) => part[0])
@@ -85,8 +86,8 @@ function TestimonialSlide({
             .slice(0, 2)}
         </div>
         <div>
-          <p className="text-lg font-black text-visacore-navy">{item.clientName}</p>
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-visacore-gold">
+          <p className="text-base font-black text-visacore-navy sm:text-lg">{item.clientName}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-visacore-gold sm:text-sm">
             {item.destination || "Projet international"}
           </p>
         </div>
@@ -106,45 +107,45 @@ function StorySlide({
     <motion.article
       animate={{
         opacity: isActive ? 1 : 0.44,
-        scale: isActive ? 1 : 0.92,
-        y: isActive ? 0 : 18,
+        scale: isActive ? 1 : 0.96,
+        y: isActive ? 0 : 12,
       }}
       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-      className="relative flex h-full min-h-[420px] flex-col overflow-hidden rounded-[38px] border border-white/12 bg-gradient-to-br from-visacore-navy via-visacore-navy-light to-[#102f50] p-8 text-white shadow-[0_35px_120px_-45px_rgba(10,37,64,0.75)] md:p-10"
+      className="relative flex h-full min-h-[22rem] flex-col overflow-hidden rounded-[30px] border border-white/12 bg-gradient-to-br from-visacore-navy via-visacore-navy-light to-[#102f50] p-6 text-white shadow-[0_35px_120px_-45px_rgba(10,37,64,0.75)] sm:min-h-[24rem] sm:p-8 lg:min-h-[26rem] lg:p-10"
     >
       <div className="absolute inset-0 bg-noise opacity-[0.06]" />
       <div className="absolute -right-20 -top-20 size-56 rounded-full bg-visacore-gold/15 blur-[90px]" />
 
       <div className="relative z-10 flex h-full flex-col">
-        <div className="mb-8 flex items-start justify-between gap-4">
-          <div className="inline-flex items-center gap-2 rounded-full border border-visacore-gold/20 bg-visacore-gold/10 px-4 py-2 text-xs font-black uppercase tracking-[0.26em] text-visacore-gold">
-            <Sparkles className="size-4" />
+        <div className="mb-6 flex items-start justify-between gap-4 sm:mb-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-visacore-gold/20 bg-visacore-gold/10 px-3.5 py-2 text-[11px] font-black uppercase tracking-[0.24em] text-visacore-gold sm:px-4 sm:text-xs sm:tracking-[0.26em]">
+            <Sparkles className="size-3.5 sm:size-4" />
             Success story
           </div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/8 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-white/70">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/8 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white/70 sm:text-xs">
             <Clock3 className="size-3.5" />
             {buildStoryReadTime(item.content)}
           </div>
         </div>
 
-        <p className="text-sm font-black uppercase tracking-[0.24em] text-visacore-gold/90">
+        <p className="text-xs font-black uppercase tracking-[0.24em] text-visacore-gold/90 sm:text-sm">
           {item.destination}
         </p>
-        <h3 className="mt-4 text-3xl font-black leading-tight md:text-4xl">
+        <h3 className="mt-4 text-2xl font-black leading-tight sm:text-3xl lg:text-4xl">
           {item.title}
         </h3>
-        <p className="mt-6 flex-1 text-lg leading-relaxed text-white/72">
+        <p className="mt-5 flex-1 text-base leading-relaxed text-white/78 sm:mt-6 sm:text-lg">
           {buildStoryExcerpt(item.summary, item.content, 220)}
         </p>
 
-        <div className="mt-8 flex items-center justify-between gap-6 border-t border-white/10 pt-6">
+        <div className="mt-6 flex items-end justify-between gap-4 border-t border-white/10 pt-5 sm:mt-8 sm:gap-6 sm:pt-6">
           <div>
-            <p className="text-sm font-black uppercase tracking-[0.22em] text-white/45">
+            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-white/45 sm:text-sm">
               Client
             </p>
-            <p className="mt-2 text-xl font-black text-white">{item.clientName}</p>
+            <p className="mt-2 text-lg font-black text-white sm:text-xl">{item.clientName}</p>
           </div>
-          <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white/70">
+          <div className="rounded-full border border-white/10 bg-white/6 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-white/70 sm:px-4 sm:text-xs">
             {item.slug.replaceAll("-", " ")}
           </div>
         </div>
@@ -211,15 +212,15 @@ function ShowcaseTrack({
 
   return (
     <div
-      className="space-y-8"
+      className="space-y-6 sm:space-y-8"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocusCapture={() => setIsPaused(true)}
       onBlurCapture={() => setIsPaused(false)}
     >
-      <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-        <div className="max-w-xl">
-          <p className="text-sm font-black uppercase tracking-[0.32em] text-visacore-gold">
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="max-w-2xl">
+          <p className="text-xs font-black uppercase tracking-[0.32em] text-visacore-gold sm:text-sm">
             {mode === "testimonials" ? "Social proof" : "Narrative proof"}
           </p>
           <AnimatePresence mode="wait">
@@ -230,12 +231,12 @@ function ShowcaseTrack({
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
             >
-              <h3 className="mt-3 text-3xl font-black text-white md:text-4xl">
+              <h3 className="mt-3 text-2xl font-black leading-tight text-white sm:text-3xl md:text-4xl">
                 {mode === "testimonials"
                   ? "Des voix réelles, des parcours validés."
                   : "Des trajectoires détaillées, pas des promesses vagues."}
               </h3>
-              <p className="mt-4 text-base leading-relaxed text-white/55 md:text-lg">
+              <p className="mt-3 text-sm leading-relaxed text-white/68 sm:mt-4 sm:text-base md:text-lg">
                 {mode === "testimonials"
                   ? "Faites défiler des retours clients bruts, centrés sur la confiance, la préparation et la clarté du processus."
                   : "Chaque carte résume un parcours concret, la destination visée et la transformation obtenue avec l'accompagnement VisaCore."}
@@ -248,7 +249,7 @@ function ShowcaseTrack({
           <button
             type="button"
             onClick={() => emblaApi?.scrollPrev()}
-            className="inline-flex size-12 items-center justify-center rounded-full border border-white/12 bg-white/8 text-white transition-all hover:border-visacore-gold/40 hover:bg-visacore-gold hover:text-visacore-navy"
+            className="inline-flex size-11 items-center justify-center rounded-full border border-white/12 bg-white/8 text-white transition-all hover:border-visacore-gold/40 hover:bg-visacore-gold hover:text-visacore-navy sm:size-12"
             aria-label="Voir l'élément précédent"
           >
             <ArrowLeft className="size-5" />
@@ -256,7 +257,7 @@ function ShowcaseTrack({
           <button
             type="button"
             onClick={() => emblaApi?.scrollNext()}
-            className="inline-flex size-12 items-center justify-center rounded-full border border-white/12 bg-white/8 text-white transition-all hover:border-visacore-gold/40 hover:bg-visacore-gold hover:text-visacore-navy"
+            className="inline-flex size-11 items-center justify-center rounded-full border border-white/12 bg-white/8 text-white transition-all hover:border-visacore-gold/40 hover:bg-visacore-gold hover:text-visacore-navy sm:size-12"
             aria-label="Voir l'élément suivant"
           >
             <ArrowRight className="size-5" />
@@ -265,7 +266,7 @@ function ShowcaseTrack({
       </div>
 
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="-ml-4 flex md:-ml-6">
+        <div className="-ml-3 flex sm:-ml-4 lg:-ml-6">
           {items.map((item, index) => {
             const distance = Math.abs(
               wrapCarouselIndex(index - selectedIndex, items.length)
@@ -277,15 +278,15 @@ function ShowcaseTrack({
             return (
               <div
                 key={item.id}
-                className="min-w-0 flex-[0_0_88%] pl-4 md:flex-[0_0_70%] md:pl-6 xl:flex-[0_0_58%]"
+                className="min-w-0 flex-[0_0_100%] pl-3 sm:flex-[0_0_92%] sm:pl-4 lg:flex-[0_0_72%] lg:pl-6 xl:flex-[0_0_58%]"
               >
                 <div
                   className={`transition-all duration-500 ${
                     visualDistance === 0
                       ? "opacity-100"
                       : visualDistance === 1
-                        ? "opacity-80"
-                        : "opacity-35"
+                        ? "opacity-75"
+                        : "opacity-22"
                   }`}
                 >
                   {mode === "testimonials" ? (
@@ -306,16 +307,16 @@ function ShowcaseTrack({
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0 flex-1">
-          <div className="h-1.5 overflow-hidden rounded-full bg-white/8">
+          <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
             <motion.div
               className="h-full rounded-full bg-gradient-to-r from-visacore-gold via-visacore-gold-light to-visacore-gold"
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             />
           </div>
-          <div className="mt-3 flex items-center justify-between text-xs font-bold uppercase tracking-[0.24em] text-white/42">
+          <div className="mt-3 flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.24em] text-white/52 sm:text-xs">
             <span>
               {String(selectedIndex + 1).padStart(2, "0")} /{" "}
               {String(items.length).padStart(2, "0")}
@@ -330,10 +331,10 @@ function ShowcaseTrack({
               key={item.id}
               type="button"
               onClick={() => emblaApi?.scrollTo(index)}
-              className={`rounded-full px-3 py-2 text-[11px] font-black uppercase tracking-[0.22em] transition-all ${
+              className={`inline-flex min-w-9 items-center justify-center rounded-full px-3 py-2 text-[11px] font-black uppercase tracking-[0.22em] transition-all ${
                 selectedIndex === index
                   ? "bg-visacore-gold text-visacore-navy"
-                  : "bg-white/6 text-white/55 hover:bg-white/10 hover:text-white"
+                  : "bg-white/8 text-white/60 hover:bg-white/12 hover:text-white"
               }`}
               aria-label={`Aller à l'élément ${index + 1}`}
             >
@@ -374,29 +375,29 @@ export function SocialProofShowcase({
   }
 
   return (
-    <section className="section-padding bg-visacore-navy text-white">
+    <section className="bg-visacore-navy py-16 text-white sm:py-20 lg:py-24">
       <div className="container-custom">
-        <div className="mb-14 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mb-10 flex flex-col gap-6 lg:mb-12 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
-            <p className="text-sm font-black uppercase tracking-[0.34em] text-visacore-gold">
-              Social proof
+            <p className="text-xs font-black uppercase tracking-[0.34em] text-visacore-gold sm:text-sm">
+              Témoignages & récits
             </p>
-            <h2 className="mt-4 text-4xl font-black leading-none md:text-6xl">
+            <h2 className="mt-4 text-3xl font-black leading-[0.95] sm:text-4xl lg:text-5xl">
               Des preuves <span className="serif italic text-visacore-gold">vivantes</span>, pas des slogans.
             </h2>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/55">
-              Faites défiler les avis clients et les histoires de réussite publiées depuis le back office.
-              Le composant reste entièrement dynamique et s&apos;adapte au volume réel de contenu.
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/68 sm:text-base lg:text-lg">
+              Faites défiler les avis clients et les histoires de réussite publiées depuis le back office,
+              avec une lecture claire sur mobile comme sur desktop.
             </p>
           </div>
 
-          <div className="inline-flex flex-wrap gap-2 rounded-full border border-white/10 bg-white/6 p-2 backdrop-blur-sm">
+          <div className="grid w-full max-w-md grid-cols-1 gap-2 rounded-[28px] border border-white/10 bg-white/6 p-2 backdrop-blur-sm sm:inline-flex sm:w-auto sm:max-w-none sm:grid-cols-none sm:flex-wrap sm:rounded-full">
             {availableTabs.map((tab) => (
               <button
                 key={tab.key}
                 type="button"
                 onClick={() => setMode(tab.key)}
-                className={`rounded-full px-5 py-3 text-sm font-black uppercase tracking-[0.2em] transition-all ${
+                className={`rounded-full px-5 py-3 text-left text-sm font-black uppercase tracking-[0.2em] transition-all sm:text-center ${
                   tab.key === mode
                     ? "bg-visacore-gold text-visacore-navy"
                     : "text-white/55 hover:bg-white/8 hover:text-white"
