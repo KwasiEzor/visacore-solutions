@@ -10,6 +10,7 @@ import { chatModel } from "@/lib/ai"
 import { prisma } from "@/lib/prisma"
 import { checkRateLimit, PUBLIC_CHAT_LIMIT } from "@/lib/rate-limit"
 import { getMessageText } from "@/lib/chat-helpers"
+import { ChatChannel } from "@/lib/generated/prisma/client"
 
 const SYSTEM_PROMPT = `Tu es l'assistant virtuel de VisaCore Solutions, un cabinet de conseil en immigration basé à Lomé, au Togo. Tu réponds exclusivement en français.
 
@@ -77,7 +78,7 @@ export async function POST(request: Request) {
     request.headers.get("x-real-ip") ??
     "anonymous"
 
-  const { allowed } = checkRateLimit(`public:${ip}`, PUBLIC_CHAT_LIMIT)
+  const { allowed } = await checkRateLimit(`public:${ip}`, PUBLIC_CHAT_LIMIT)
 
   if (!allowed) {
     return new Response(
@@ -116,7 +117,7 @@ export async function POST(request: Request) {
   if (normalizedSessionId && resolvedLatestUserText) {
     const conversation =
       (await prisma.chatConversation.findFirst({
-        where: { sessionId: normalizedSessionId, channel: "public" },
+        where: { sessionId: normalizedSessionId, channel: ChatChannel.PUBLIC },
         include: {
           messages: {
             orderBy: { createdAt: "asc" },
@@ -124,7 +125,7 @@ export async function POST(request: Request) {
         },
       })) ??
       (await prisma.chatConversation.create({
-        data: { sessionId: normalizedSessionId, channel: "public" },
+        data: { sessionId: normalizedSessionId, channel: ChatChannel.PUBLIC },
         include: {
           messages: {
             orderBy: { createdAt: "asc" },

@@ -10,6 +10,7 @@ import {
   updateContactNotes,
   updateContactStatus,
 } from "@/actions/contacts"
+import { ContactRequestStatus } from "@/lib/generated/prisma/client"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
@@ -88,7 +89,7 @@ export function ContactStatusSelect({
     if (newStatus === currentStatus) return
     startTransition(async () => {
       try {
-        const result = await updateContactStatus(contactId, newStatus)
+        const result = await updateContactStatus(contactId, newStatus as ContactRequestStatus)
         if (result.success) {
           toast.success("Statut mis à jour")
           router.refresh()

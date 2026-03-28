@@ -8,6 +8,7 @@ import {
 import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
 import {
+  checkHoneypot,
   duplicateSubmissionWindowMs,
   evaluateSubmissionGuard,
   logSubmissionGuardEvent,
@@ -39,32 +40,23 @@ export async function createLead(data: unknown) {
 
     const normalizedEmail = normalizeSubmissionEmail(parsed.data.email)
     const normalizedPhone = normalizeSubmissionPhone(parsed.data.phone)
-    const filteredGuard = evaluateSubmissionGuard({
-      honeypotValue: parsed.data.website,
-      duplicateCount: 0,
-      rateLimitCount: 0,
-      duplicateMessage:
-        "Nous avons déjà reçu une demande récente avec ces coordonnées. Notre équipe revient vers vous sous 24 heures ouvrées.",
-      rateLimitedMessage:
-        "Trop de tentatives récentes ont été détectées. Merci d'attendre quelques minutes avant de réessayer.",
-      filteredMessage:
-        "Votre demande est bien reçue. Notre équipe revient vers vous sous 24 heures ouvrées.",
-    })
 
-    if (filteredGuard.status === "filtered") {
+    // Fast-path: honeypot field filled → likely a bot. Return success to
+    // avoid giving bots hints that they've been detected.
+    if (checkHoneypot(parsed.data.website)) {
       logSubmissionGuardEvent({
         channel: "lead",
-        status: filteredGuard.status,
+        status: "filtered",
         email: normalizedEmail,
         phone: normalizedPhone,
         duplicateCount: 0,
         rateLimitCount: 0,
       })
-
       return {
         success: true,
-        status: filteredGuard.status,
-        message: filteredGuard.message,
+        status: "filtered" as const,
+        message:
+          "Votre demande est bien reçue. Notre équipe revient vers vous sous 24 heures ouvrées.",
       }
     }
 

@@ -42,6 +42,14 @@ export function normalizeOptionalSubmissionText(value?: string | null) {
   return trimmed ? trimmed : undefined
 }
 
+/**
+ * Returns true when the honeypot field is filled, indicating a bot submission.
+ * Use this instead of passing duplicateCount:0/rateLimitCount:0 to evaluateSubmissionGuard.
+ */
+export function checkHoneypot(value?: string | null): boolean {
+  return Boolean(value?.trim())
+}
+
 function maskSubmissionEmail(value?: string | null) {
   const normalized = normalizeOptionalSubmissionText(value)?.toLowerCase()
   if (!normalized) {

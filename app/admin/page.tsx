@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
+import { STATUS_LABELS, STATUS_COLORS, MONTH_LABELS } from "@/lib/lead-status"
 import {
   Users,
   Mail,
@@ -18,38 +19,6 @@ import { StatsCard } from "@/components/admin/stats-card"
 import { StatusBadge } from "@/components/admin/status-badge"
 import { Button } from "@/components/ui/button"
 
-const STATUS_LABELS: Record<string, string> = {
-  NEW: "Nouveau",
-  CONTACTED: "Contacte",
-  QUALIFIED: "Qualifie",
-  IN_PROGRESS: "En cours",
-  CONVERTED: "Converti",
-  CLOSED: "Ferme",
-}
-
-const STATUS_COLORS: Record<string, string> = {
-  NEW: "bg-blue-500",
-  CONTACTED: "bg-yellow-500",
-  QUALIFIED: "bg-purple-500",
-  IN_PROGRESS: "bg-orange-500",
-  CONVERTED: "bg-emerald-500",
-  CLOSED: "bg-gray-400",
-}
-
-const MONTH_LABELS = [
-  "Jan",
-  "Fev",
-  "Mar",
-  "Avr",
-  "Mai",
-  "Juin",
-  "Juil",
-  "Aout",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-]
 
 export default async function AdminDashboardPage() {
   const [
@@ -88,9 +57,12 @@ export default async function AdminDashboardPage() {
     (() => {
       const sixMonthsAgo = new Date()
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+      // Bounded by take:500 — avoids full table scans while being more than
+      // enough for a 6-month chart even at high lead volume.
       return prisma.lead.findMany({
         where: { createdAt: { gte: sixMonthsAgo } },
         select: { createdAt: true },
+        take: 500,
       })
     })(),
   ])
@@ -128,6 +100,7 @@ export default async function AdminDashboardPage() {
     }
   })
   const maxMonthlyCount = Math.max(...monthlyData.map((d) => d.count), 1)
+
 
   return (
     <div className="space-y-8">

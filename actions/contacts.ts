@@ -18,6 +18,7 @@ import {
   logCaptchaFailureEvent,
   verifyCaptchaTokenForRequest,
 } from "@/lib/captcha.server"
+import { ContactRequestStatus } from "@/lib/generated/prisma/client"
 
 export async function createContactRequest(data: unknown) {
   try {
@@ -181,7 +182,7 @@ export async function markContactAsRead(id: string) {
   }
 }
 
-export async function updateContactStatus(id: string, status: string) {
+export async function updateContactStatus(id: string, status: ContactRequestStatus) {
   try {
     const session = await auth()
     if (!session || !hasPermission(session.user.role, "edit")) {

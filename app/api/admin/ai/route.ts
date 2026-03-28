@@ -30,10 +30,11 @@ export async function POST(request: Request) {
     )
   }
 
-  const { allowed } = checkRateLimit(
+  const { allowed } = await checkRateLimit(
     `admin:${session.user.id}`,
     ADMIN_CHAT_LIMIT
   )
+
 
   if (!allowed) {
     return new Response(

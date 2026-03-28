@@ -115,7 +115,7 @@ model ContactRequest {
   subject   String
   message   String   @db.Text
   isRead    Boolean  @default(false)
-  status    String   @default("NEW")
+  status    ContactRequestStatus @default(NEW)
   notes     String?  @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -123,6 +123,13 @@ model ContactRequest {
   @@index([isRead])
   @@index([status])
   @@index([createdAt])
+}
+
+enum ContactRequestStatus {
+  NEW
+  READ
+  REPLIED
+  ARCHIVED
 }
 
 enum AppointmentStatus {
@@ -388,10 +395,16 @@ model NotificationRecipient {
 
 // ─── AI Chat Models ─────────────────────────────────────────────
 
+enum ChatChannel {
+  PUBLIC
+  ADMIN
+}
+
 model ChatConversation {
   id        String        @id @default(cuid())
   sessionId String
-  channel   String        @default("public") // "public" or "admin"
+  channel   ChatChannel  @default(PUBLIC)
+
   userId    String?
   title     String?
   createdAt DateTime      @default(now())
@@ -413,4 +426,15 @@ model ChatMessage {
   createdAt      DateTime         @default(now())
 
   @@index([conversationId])
+}
+
+// ─── Rate Limiting ───────────────────────────────────────────────
+
+model ChatRateLimit {
+  key       String   @id
+  count     Int      @default(0)
+  resetAt   DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
 }

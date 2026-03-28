@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { ChatChannel } from "@/lib/generated/prisma/client"
 import { ConversationsClient } from "@/components/admin/conversations-client"
 
 function buildConversationTitle(
@@ -12,7 +13,8 @@ function buildConversationTitle(
 
 export default async function AdminConversationsPage() {
   const conversations = await prisma.chatConversation.findMany({
-    where: { channel: "public" },
+    where: { channel: ChatChannel.PUBLIC },
+
     orderBy: { updatedAt: "desc" },
     include: {
       messages: {

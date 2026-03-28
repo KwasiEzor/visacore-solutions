@@ -4,10 +4,11 @@ import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { hasPermission } from "@/lib/rbac"
+import { ChatChannel } from "@/lib/generated/prisma/client"
 
 export async function getOrCreateConversation(
   sessionId: string,
-  channel: "public" | "admin" = "public",
+  channel: ChatChannel = ChatChannel.PUBLIC,
   userId?: string
 ) {
   try {

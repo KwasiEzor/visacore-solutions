@@ -2,7 +2,7 @@ import { Header } from "@/components/public/header";
 import { Footer } from "@/components/public/footer";
 import { WhatsAppButton } from "@/components/public/whatsapp-button";
 import { Chatbot } from "@/components/public/chatbot";
-import { Toaster } from "@/components/ui/sonner";
+
 import { prisma } from "@/lib/prisma";
 import {
   fallbackDestinations,
@@ -79,7 +79,7 @@ export default async function PublicLayout({
       <Footer siteConfig={siteConfig} services={navigationServices.slice(0, 5)} />
       <WhatsAppButton href={getWhatsAppHref(siteConfig.whatsappNumber)} />
       <Chatbot />
-      <Toaster position="top-right" richColors closeButton />
+
     </>
   );
 }
