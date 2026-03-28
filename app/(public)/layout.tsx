@@ -4,7 +4,11 @@ import { WhatsAppButton } from "@/components/public/whatsapp-button";
 import { Chatbot } from "@/components/public/chatbot";
 import { Toaster } from "@/components/ui/sonner";
 import { prisma } from "@/lib/prisma";
-import { fallbackServices } from "@/lib/public-content";
+import {
+  fallbackDestinations,
+  fallbackServices,
+  getDestinationVisual,
+} from "@/lib/public-content";
 import { getPublicSiteConfig, getWhatsAppHref } from "@/lib/site-config";
 
 export default async function PublicLayout({
@@ -12,35 +16,67 @@ export default async function PublicLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const siteConfig = await getPublicSiteConfig()
-  let footerServices = fallbackServices.map((service) => ({
-    slug: service.slug,
-    name: service.name,
-  }))
-
-  try {
-    const services = await prisma.service.findMany({
+  const siteConfigPromise = getPublicSiteConfig()
+  const servicesPromise = prisma.service
+    .findMany({
       where: { published: true },
       orderBy: { order: "asc" },
-      take: 5,
+      take: 6,
       select: {
         slug: true,
         name: true,
       },
     })
+    .catch(() => [])
+  const destinationsPromise = prisma.destination
+    .findMany({
+      where: { published: true },
+      orderBy: { order: "asc" },
+      take: 6,
+      select: {
+        slug: true,
+        name: true,
+      },
+    })
+    .catch(() => [])
 
-    if (services.length > 0) {
-      footerServices = services
-    }
-  } catch {
-    // Fall back to static services when the database is unavailable.
+  const [siteConfig, services, destinations] = await Promise.all([
+    siteConfigPromise,
+    servicesPromise,
+    destinationsPromise,
+  ])
+
+  let navigationServices = fallbackServices.map((service) => ({
+    slug: service.slug,
+    name: service.name,
+  }))
+  let navigationDestinations = fallbackDestinations.map((destination) => ({
+    slug: destination.slug,
+    name: destination.name,
+    flag: destination.flag,
+  }))
+
+  if (services.length > 0) {
+    navigationServices = services
+  }
+
+  if (destinations.length > 0) {
+    navigationDestinations = destinations.map((destination) => ({
+      slug: destination.slug,
+      name: destination.name,
+      flag: getDestinationVisual(destination.slug).flag,
+    }))
   }
 
   return (
     <>
-      <Header />
+      <Header
+        siteConfig={siteConfig}
+        services={navigationServices}
+        destinations={navigationDestinations}
+      />
       <main className="flex-1">{children}</main>
-      <Footer siteConfig={siteConfig} services={footerServices} />
+      <Footer siteConfig={siteConfig} services={navigationServices.slice(0, 5)} />
       <WhatsAppButton href={getWhatsAppHref(siteConfig.whatsappNumber)} />
       <Chatbot />
       <Toaster position="top-right" richColors closeButton />
