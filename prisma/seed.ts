@@ -6,6 +6,7 @@ import { PrismaClient } from "../lib/generated/prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
 import pg from "pg"
 import bcrypt from "bcryptjs"
+import { normalizePostgresConnectionString } from "../lib/database-url"
 import {
   aiSiteSettingCatalog,
   chatbotSiteSettingCatalog,
@@ -13,7 +14,7 @@ import {
   publicSiteSettingCatalog,
 } from "../lib/site-config.shared"
 
-const dbUrl = (process.env.DATABASE_URL ?? "").replace(/[&?]?channel_binding=[^&]*/g, "")
+const dbUrl = normalizePostgresConnectionString(process.env.DATABASE_URL ?? "")
 const pool = new pg.Pool({ connectionString: dbUrl })
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const adapter = new PrismaPg(pool as any)

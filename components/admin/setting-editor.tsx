@@ -1,7 +1,5 @@
 "use client"
 
-import { useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
@@ -13,13 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { updateSetting } from "@/actions/settings"
-import { toast } from "sonner"
-import { Check, Loader2, RotateCcw, Trash2 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { RotateCcw, Trash2 } from "lucide-react"
 
 interface SettingEditorProps {
-  settingKey: string
   value: string
   type: "TEXT" | "IMAGE" | "JSON" | "BOOLEAN"
   placeholder?: string
@@ -29,11 +23,14 @@ interface SettingEditorProps {
   options?: readonly { value: string; label: string }[]
   secret?: boolean
   secretConfigured?: boolean
+  secretMarkedForRemoval?: boolean
+  disabled?: boolean
+  onChange: (value: string) => void
+  onToggleSecretRemoval?: () => void
 }
 
 export function SettingEditor({
-  settingKey,
-  value: initialValue,
+  value,
   type,
   placeholder,
   inputType = "text",
@@ -42,62 +39,11 @@ export function SettingEditor({
   options,
   secret = false,
   secretConfigured = false,
+  secretMarkedForRemoval = false,
+  disabled = false,
+  onChange,
+  onToggleSecretRemoval,
 }: SettingEditorProps) {
-  const router = useRouter()
-  const [value, setValue] = useState(initialValue)
-  const [savedValue, setSavedValue] = useState(initialValue)
-  const [isPending, startTransition] = useTransition()
-  const [justSaved, setJustSaved] = useState(false)
-  const [isSecretConfigured, setIsSecretConfigured] = useState(secretConfigured)
-  const isDirty = value !== savedValue
-
-  function updateDraft(nextValue: string) {
-    setValue(nextValue)
-    if (justSaved) {
-      setJustSaved(false)
-    }
-  }
-
-  function save() {
-    startTransition(async () => {
-      const result = await updateSetting(settingKey, value, type)
-      if (result.success) {
-        if (secret) {
-          setValue("")
-          setSavedValue("")
-          setIsSecretConfigured(value.trim().length > 0)
-        } else {
-          setSavedValue(value)
-        }
-        setJustSaved(true)
-        toast.success("Parametre mis a jour")
-        router.refresh()
-        setTimeout(() => setJustSaved(false), 2000)
-      } else {
-        toast.error(result.error ?? "Erreur lors de la mise a jour")
-      }
-    })
-  }
-
-  function reset() {
-    setValue(savedValue)
-  }
-
-  function clearSecret() {
-    startTransition(async () => {
-      const result = await updateSetting(settingKey, "", type)
-      if (result.success) {
-        setValue("")
-        setSavedValue("")
-        setIsSecretConfigured(false)
-        toast.success("Secret supprime")
-        router.refresh()
-      } else {
-        toast.error(result.error ?? "Erreur lors de la mise a jour")
-      }
-    })
-  }
-
   if (type === "BOOLEAN") {
     return (
       <div className="space-y-3">
@@ -105,54 +51,27 @@ export function SettingEditor({
           <Switch
             checked={value === "true"}
             onCheckedChange={(checked) => {
-              updateDraft(checked ? "true" : "false")
+              onChange(checked ? "true" : "false")
             }}
-            disabled={isPending}
+            disabled={disabled}
           />
           <span className="text-sm text-muted-foreground">
             {value === "true" ? "Actif" : "Inactif"}
           </span>
-          {savedValue !== value ? (
-            <span className="text-xs text-amber-600">
-              Changement en attente d&apos;enregistrement
-            </span>
-          ) : null}
         </div>
-        <SaveBar
-          isDirty={isDirty}
-          isPending={isPending}
-          justSaved={justSaved}
-          onSave={save}
-          onReset={reset}
-        />
-        {!isDirty ? (
-          <p className="text-xs text-muted-foreground">
-            Utilisez les boutons ci-dessous pour enregistrer ou annuler une
-            modification.
-          </p>
-        ) : null}
       </div>
     )
   }
 
   if (type === "JSON") {
     return (
-      <div className="space-y-3">
-        <Textarea
-          value={value}
-          onChange={(e) => updateDraft(e.target.value)}
-          rows={4}
-          className="font-mono text-xs"
-          disabled={isPending}
-        />
-        <SaveBar
-          isDirty={isDirty}
-          isPending={isPending}
-          justSaved={justSaved}
-          onSave={save}
-          onReset={reset}
-        />
-      </div>
+      <Textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={4}
+        className="font-mono text-xs"
+        disabled={disabled}
+      />
     )
   }
 
@@ -161,171 +80,105 @@ export function SettingEditor({
       <div className="space-y-3">
         <Input
           value={value}
-          onChange={(e) => updateDraft(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           placeholder="URL de l'image"
-          disabled={isPending}
+          disabled={disabled}
         />
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={value}
-            alt={settingKey}
+            alt={placeholder ?? "Apercu"}
             className="h-16 w-auto rounded border object-contain"
           />
         ) : null}
-        <SaveBar
-          isDirty={isDirty}
-          isPending={isPending}
-          justSaved={justSaved}
-          onSave={save}
-          onReset={reset}
-        />
       </div>
     )
   }
 
   if (secret) {
+    const hasPendingReplacement = value.trim().length > 0 && !secretMarkedForRemoval
+
     return (
       <div className="space-y-3">
         <Input
           type="password"
-          value={value}
-          onChange={(e) => updateDraft(e.target.value)}
-          disabled={isPending}
+          value={secretMarkedForRemoval ? "" : value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled || secretMarkedForRemoval}
           placeholder={
-            isSecretConfigured
+            secretConfigured
               ? "Entrez une nouvelle cle pour remplacer l'existante"
               : placeholder
           }
         />
         <p className="text-xs text-muted-foreground">
-          {isSecretConfigured
-            ? "Une cle chiffree est deja enregistree dans le dashboard."
-            : "Aucune cle chiffree enregistree dans le dashboard."}
+          {secretMarkedForRemoval
+            ? "Cette cle sera effacee quand vous enregistrerez la section."
+            : hasPendingReplacement
+              ? "Une nouvelle cle est prete a etre enregistree avec cette section."
+              : secretConfigured
+                ? "Une cle chiffree est deja enregistree dans le dashboard."
+                : "Aucune cle chiffree enregistree dans le dashboard."}
         </p>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            size="sm"
-            onClick={save}
-            disabled={isPending || value.trim().length === 0}
-          >
-            {isPending ? (
-              <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-            ) : (
-              <Check className="mr-1.5 size-3.5" />
-            )}
-            {isSecretConfigured ? "Remplacer" : "Enregistrer"}
-          </Button>
-          {isSecretConfigured ? (
+        {onToggleSecretRemoval && secretConfigured ? (
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               size="sm"
               variant="ghost"
-              onClick={clearSecret}
-              disabled={isPending}
+              onClick={onToggleSecretRemoval}
+              disabled={disabled}
               className="text-muted-foreground"
             >
-              <Trash2 className="mr-1.5 size-3.5" />
-              Effacer
+              {secretMarkedForRemoval ? (
+                <RotateCcw className="mr-1.5 size-3.5" />
+              ) : (
+                <Trash2 className="mr-1.5 size-3.5" />
+              )}
+              {secretMarkedForRemoval ? "Conserver la cle" : "Effacer la cle"}
             </Button>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </div>
     )
   }
 
-  return (
-    <div className="space-y-3">
-      {control === "textarea" ? (
-        <Textarea
-          value={value}
-          onChange={(e) => updateDraft(e.target.value)}
-          disabled={isPending}
-          placeholder={placeholder}
-          rows={rows}
-        />
-      ) : control === "select" && options ? (
-        <Select
-          value={value}
-          onValueChange={(nextValue) => updateDraft(nextValue ?? "")}
-        >
-          <SelectTrigger className="w-full" disabled={isPending}>
-            <SelectValue placeholder={placeholder ?? "Selectionner"} />
-          </SelectTrigger>
-          <SelectContent align="start">
-            {options.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      ) : (
-        <Input
-          type={inputType}
-          value={value}
-          onChange={(e) => updateDraft(e.target.value)}
-          disabled={isPending}
-          placeholder={placeholder}
-        />
-      )}
-      <SaveBar
-        isDirty={isDirty}
-        isPending={isPending}
-        justSaved={justSaved}
-        onSave={save}
-        onReset={reset}
-      />
-    </div>
-  )
-}
-
-function SaveBar({
-  isDirty,
-  isPending,
-  justSaved,
-  onSave,
-  onReset,
-}: {
-  isDirty: boolean
-  isPending: boolean
-  justSaved: boolean
-  onSave: () => void
-  onReset: () => void
-}) {
-  if (justSaved && !isDirty) {
+  if (control === "textarea") {
     return (
-      <p className="flex items-center gap-1.5 text-xs font-medium text-emerald-600">
-        <Check className="size-3.5" />
-        Enregistre
-      </p>
+      <Textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        placeholder={placeholder}
+        rows={rows}
+      />
     )
   }
 
-  if (!isDirty) return null
+  if (control === "select" && options) {
+    return (
+      <Select value={value} onValueChange={(nextValue) => onChange(nextValue ?? "")}>
+        <SelectTrigger className="w-full" disabled={disabled}>
+          <SelectValue placeholder={placeholder ?? "Selectionner"} />
+        </SelectTrigger>
+        <SelectContent align="start">
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    )
+  }
 
   return (
-    <div className="flex items-center gap-2">
-      <Button size="sm" onClick={onSave} disabled={isPending}>
-        {isPending ? (
-          <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-        ) : (
-          <Check className="mr-1.5 size-3.5" />
-        )}
-        Enregistrer
-      </Button>
-      <Button
-        size="sm"
-        variant="ghost"
-        onClick={onReset}
-        disabled={isPending}
-        className={cn("text-muted-foreground")}
-      >
-        <RotateCcw className="mr-1.5 size-3" />
-        Annuler
-      </Button>
-      <span className="text-xs text-amber-600">
-        Modifications non enregistrees
-      </span>
-    </div>
+    <Input
+      type={inputType}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      placeholder={placeholder}
+    />
   )
 }

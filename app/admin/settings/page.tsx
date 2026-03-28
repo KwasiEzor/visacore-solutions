@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { SettingEditor } from "@/components/admin/setting-editor"
+import { SettingsSectionCard } from "@/components/admin/settings-section-card"
 import {
   allSiteSettingCatalog,
   mapAiSiteConfig,
@@ -194,7 +194,7 @@ export default async function SettingsAdminPage() {
             ou stockees de maniere chiffree dans le dashboard.
           </p>
           <p className="text-xs font-medium text-muted-foreground/90">
-            Chaque modification affiche maintenant ses propres actions
+            Chaque groupe de parametres possede maintenant ses propres actions
             d&apos;enregistrement et d&apos;annulation.
           </p>
         </div>
@@ -249,64 +249,13 @@ export default async function SettingsAdminPage() {
       </div>
 
       {sectionedSettings.map((section) => (
-        <Card
+        <SettingsSectionCard
           key={section.id}
-          className="rounded-[28px] border border-visacore-navy/8 bg-white shadow-[0_24px_80px_-56px_rgba(10,37,64,0.25)]"
-        >
-          <CardHeader className="border-b border-visacore-navy/8 pb-5">
-            <CardDescription>{section.title}</CardDescription>
-            <CardTitle className="text-xl text-visacore-navy">
-              {section.title}
-            </CardTitle>
-            <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-              {section.description}
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-0 pt-0">
-            {section.settings.map((setting) => (
-              <div
-                key={setting.id}
-                className="grid gap-4 border-b border-visacore-navy/8 py-5 last:border-b-0 lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)] lg:gap-8"
-              >
-                <div className="space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-semibold text-visacore-navy">
-                      {setting.label}
-                    </p>
-                    <Badge variant="outline" className="text-[10px] uppercase tracking-[0.16em]">
-                      {setting.type}
-                    </Badge>
-                    {setting.secret ? (
-                      <Badge variant="outline" className="text-[10px] uppercase tracking-[0.16em]">
-                        Secret
-                      </Badge>
-                    ) : null}
-                  </div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {setting.description}
-                  </p>
-                  <code className="block text-xs text-muted-foreground/80">
-                    {setting.key}
-                  </code>
-                </div>
-                <div className="min-w-0">
-                  <SettingEditor
-                    settingKey={setting.key}
-                    value={setting.value}
-                    type={setting.type}
-                    placeholder={setting.placeholder}
-                    inputType={setting.inputType}
-                    control={setting.control}
-                    rows={setting.rows}
-                    options={setting.options}
-                    secret={setting.secret}
-                    secretConfigured={setting.secretConfigured}
-                  />
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+          id={section.id}
+          title={section.title}
+          description={section.description}
+          settings={section.settings}
+        />
       ))}
     </div>
   )
