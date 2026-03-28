@@ -18,7 +18,6 @@ import {
   PhoneCall,
   ShieldCheck,
 } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
@@ -271,11 +270,9 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
     matchers.some((matcher) => isRouteActive(matcher));
 
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
+    <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-500",
+        "fixed inset-x-0 top-0 z-50 animate-in slide-in-from-top-4 duration-500 transition-all",
         useSolidHeader
           ? "border-b border-visacore-navy/8 bg-white/92 py-2 shadow-[0_14px_50px_-36px_rgba(10,37,64,0.55)] backdrop-blur-xl sm:py-3"
           : "bg-transparent py-3 sm:py-5"
@@ -294,7 +291,6 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
                 ? "h-10 sm:h-11 lg:h-12 xl:h-14"
                 : "h-11 sm:h-12 lg:h-14 xl:h-16 brightness-0 invert"
             )}
-            priority
           />
         </Link>
 
@@ -380,32 +376,25 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
             })}
           </nav>
 
-          <AnimatePresence initial={false}>
-            {activeMenu ? (
-              <motion.div
-                key={activeMenu}
-                id={`desktop-panel-${activeMenu}`}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.18, ease: "easeOut" }}
-                className="absolute top-full z-30 mt-4 w-[min(72rem,calc(100vw-2.5rem))] xl:w-[min(74rem,calc(100vw-4rem))]"
-                onMouseEnter={clearCloseTimer}
-                onMouseLeave={() => scheduleClose()}
-              >
-                {renderDesktopPanel({
-                  activeMenu,
-                  aboutLinks,
-                  displayedPhone,
-                  destinationLinks: visibleDestinations,
-                  onNavigate: () => setActiveMenu(null),
-                  projectLinks,
-                  serviceLinks: visibleServices,
-                  siteConfig,
-                })}
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
+          {activeMenu ? (
+            <div
+              id={`desktop-panel-${activeMenu}`}
+              className="absolute top-full z-30 mt-4 w-[min(72rem,calc(100vw-2.5rem))] animate-in fade-in-0 slide-in-from-top-3 duration-200 xl:w-[min(74rem,calc(100vw-4rem))]"
+              onMouseEnter={clearCloseTimer}
+              onMouseLeave={() => scheduleClose()}
+            >
+              {renderDesktopPanel({
+                activeMenu,
+                aboutLinks,
+                displayedPhone,
+                destinationLinks: visibleDestinations,
+                onNavigate: () => setActiveMenu(null),
+                projectLinks,
+                serviceLinks: visibleServices,
+                siteConfig,
+              })}
+            </div>
+          ) : null}
         </div>
 
         <div className="hidden items-center gap-4 lg:flex">
@@ -579,7 +568,7 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
           </Sheet>
         </div>
       </div>
-    </motion.header>
+    </header>
   );
 }
 

@@ -1,7 +1,7 @@
 import { Header } from "@/components/public/header";
 import { Footer } from "@/components/public/footer";
 import { WhatsAppButton } from "@/components/public/whatsapp-button";
-import { Chatbot } from "@/components/public/chatbot";
+import { DeferredChatbot } from "@/components/public/deferred-chatbot";
 
 import { prisma } from "@/lib/prisma";
 import {
@@ -78,8 +78,7 @@ export default async function PublicLayout({
       <main className="flex-1 overflow-x-clip">{children}</main>
       <Footer siteConfig={siteConfig} services={navigationServices.slice(0, 5)} />
       <WhatsAppButton href={getWhatsAppHref(siteConfig.whatsappNumber)} />
-      <Chatbot />
-
+      <DeferredChatbot />
     </>
   );
 }

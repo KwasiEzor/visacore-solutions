@@ -99,17 +99,27 @@ export default async function HomePage() {
 
   return (
     <div className="relative overflow-x-clip">
-      {/* Background Noise Overlay */}
-      <div className="bg-noise fixed inset-0 z-[-1]" />
-
       <HeroSection pageContent={pageContent} />
       <TrustStripSection />
-      <DestinationsSection destinations={destinations} />
-      <ServicesSection services={services} />
-      <WhyUsSection />
-      <ProcessSection />
-      <TestimonialsSection testimonials={testimonials} />
-      <CtaSection />
+
+      <div className="deferred-section">
+        <DestinationsSection destinations={destinations} />
+      </div>
+      <div className="deferred-section">
+        <ServicesSection services={services} />
+      </div>
+      <div className="deferred-section">
+        <WhyUsSection />
+      </div>
+      <div className="deferred-section">
+        <ProcessSection />
+      </div>
+      <div className="deferred-section">
+        <TestimonialsSection testimonials={testimonials} />
+      </div>
+      <div className="deferred-section">
+        <CtaSection />
+      </div>
     </div>
   );
 }

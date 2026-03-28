@@ -1,25 +1,53 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 
-export function ScrollReveal({ 
-  children, 
+export function ScrollReveal({
+  children,
   className,
-  delay = 0 
-}: { 
-  children: React.ReactNode; 
+  delay = 0,
+}: {
+  children: React.ReactNode;
   className?: string;
   delay?: number;
 }) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      {
+        rootMargin: "0px 0px -96px 0px",
+        threshold: 0.12,
+      }
+    );
+
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
-      className={className}
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delay}s` }}
+      className={cn(
+        "transform-gpu transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.21,0.47,0.32,0.98)] motion-reduce:transform-none motion-reduce:transition-none",
+        isVisible ? "translate-y-0 opacity-100" : "translate-y-7 opacity-0",
+        className
+      )}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
