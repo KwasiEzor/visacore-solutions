@@ -10,7 +10,7 @@ import { ChatbotMessage } from "@/components/public/chatbot-message"
 const WELCOME_MESSAGE =
   "Bonjour ! Je suis l'assistant virtuel de VisaCore Solutions. Comment puis-je vous aider dans votre projet d'immigration ?"
 
-const publicTransport = new DefaultChatTransport({ api: "/api/chat" })
+const chatSessionStorageKey = "visacore-public-chat-session-id"
 const mobilePanelEdgeClass =
   "left-[max(0.75rem,env(safe-area-inset-left))] right-[max(0.75rem,env(safe-area-inset-right))] sm:left-auto sm:right-[max(1.5rem,env(safe-area-inset-right))]"
 const launcherPositionClass =
@@ -21,6 +21,16 @@ const panelPositionClass =
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const [input, setInput] = useState("")
+  const [sessionId, setSessionId] = useState<string>(() => {
+    if (typeof window === "undefined") return ""
+
+    const existingSessionId = window.localStorage.getItem(chatSessionStorageKey)
+    if (existingSessionId) return existingSessionId
+
+    const nextSessionId = window.crypto.randomUUID()
+    window.localStorage.setItem(chatSessionStorageKey, nextSessionId)
+    return nextSessionId
+  })
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const initialMessages: UIMessage[] = useMemo(() => [
@@ -31,8 +41,17 @@ export function Chatbot() {
     },
   ], [])
 
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        body: sessionId ? { sessionId } : {},
+      }),
+    [sessionId]
+  )
+
   const { messages, sendMessage, status, setMessages } = useChat({
-    transport: publicTransport,
+    transport,
     messages: initialMessages,
   })
 
@@ -48,6 +67,12 @@ export function Chatbot() {
   const handleReset = useCallback(() => {
     setMessages(initialMessages)
     setInput("")
+
+    if (typeof window !== "undefined") {
+      const nextSessionId = window.crypto.randomUUID()
+      window.localStorage.setItem(chatSessionStorageKey, nextSessionId)
+      setSessionId(nextSessionId)
+    }
   }, [setMessages, initialMessages])
 
   function handleSubmit(e: React.FormEvent) {

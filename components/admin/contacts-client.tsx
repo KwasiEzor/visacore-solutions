@@ -4,7 +4,12 @@ import { useState } from "react"
 import { type ColumnDef } from "@tanstack/react-table"
 import { Search } from "lucide-react"
 import { DataTable } from "@/components/admin/data-table"
-import { ContactStatusSelect, DeleteContactButton, MarkReadButton } from "@/components/admin/contact-actions"
+import {
+  ContactDetailsDialog,
+  ContactStatusSelect,
+  DeleteContactButton,
+  MarkReadButton,
+} from "@/components/admin/contact-actions"
 import { ReadBadge } from "@/components/admin/status-badge"
 import { Input } from "@/components/ui/input"
 import {
@@ -20,6 +25,9 @@ const columns: ColumnDef<ContactTableRow>[] = [
       <div>
         <p className="font-medium text-foreground">{row.original.fullName}</p>
         <p className="text-xs text-muted-foreground">{row.original.email}</p>
+        {row.original.phone ? (
+          <p className="text-xs text-muted-foreground">{row.original.phone}</p>
+        ) : null}
       </div>
     ),
   },
@@ -34,6 +42,11 @@ const columns: ColumnDef<ContactTableRow>[] = [
         <p className="max-w-xs truncate text-xs text-muted-foreground">
           {row.original.message}
         </p>
+        {row.original.notes ? (
+          <p className="mt-1 max-w-xs truncate text-[11px] text-visacore-gold">
+            Note interne: {row.original.notes}
+          </p>
+        ) : null}
       </div>
     ),
   },
@@ -61,6 +74,7 @@ const columns: ColumnDef<ContactTableRow>[] = [
     header: "Actions",
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
+        <ContactDetailsDialog contact={row.original} />
         <MarkReadButton contactId={row.original.id} isRead={row.original.isRead} />
         <DeleteContactButton contactId={row.original.id} />
       </div>

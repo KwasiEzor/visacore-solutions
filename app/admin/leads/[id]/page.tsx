@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
+  LeadAssigneeSelect,
   LeadStatusSelect,
   LeadNotesForm,
   DeleteLeadButton,
@@ -27,14 +28,24 @@ interface LeadDetailPageProps {
 export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
   const { id } = await params
 
-  const lead = await prisma.lead.findUnique({
-    where: { id },
-    include: {
-      assignedTo: {
-        select: { id: true, name: true, email: true },
+  const [lead, users] = await Promise.all([
+    prisma.lead.findUnique({
+      where: { id },
+      include: {
+        assignedTo: {
+          select: { id: true, name: true, email: true },
+        },
       },
-    },
-  })
+    }),
+    prisma.user.findMany({
+      orderBy: [{ role: "asc" }, { name: "asc" }],
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    }),
+  ])
 
   if (!lead) {
     notFound()
@@ -256,8 +267,14 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
               </h3>
             </div>
             <div className="p-6">
+              <LeadAssigneeSelect
+                leadId={lead.id}
+                currentAssignedToId={lead.assignedToId}
+                users={users}
+              />
+
               {lead.assignedTo ? (
-                <div className="flex items-center gap-3">
+                <div className="mt-4 flex items-center gap-3 rounded-2xl border border-border/70 bg-muted/20 p-3">
                   <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
                     {lead.assignedTo.name
                       ? lead.assignedTo.name
@@ -278,7 +295,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
                   </div>
                 </div>
               ) : (
-                <p className="text-sm italic text-muted-foreground">
+                <p className="mt-4 text-sm italic text-muted-foreground">
                   Aucun agent assigne a ce lead.
                 </p>
               )}

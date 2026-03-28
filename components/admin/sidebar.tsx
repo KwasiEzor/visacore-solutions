@@ -12,6 +12,7 @@ import {
   Briefcase,
   HelpCircle,
   MessageSquare,
+  MessagesSquare,
   Trophy,
   FileText,
   Image as ImageIcon,
@@ -51,6 +52,7 @@ const navItems: AdminNavItem[] = [
   { label: "FAQ", href: "/admin/faqs", icon: HelpCircle },
   { label: "Temoignages", href: "/admin/testimonials", icon: MessageSquare },
   { label: "Success Stories", href: "/admin/stories", icon: Trophy },
+  { label: "Conversations", href: "/admin/conversations", icon: MessagesSquare },
   { label: "Contenu", href: "/admin/content", icon: FileText },
   { label: "Medias", href: "/admin/media", icon: ImageIcon },
   {

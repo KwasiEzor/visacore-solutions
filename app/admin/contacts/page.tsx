@@ -10,8 +10,10 @@ export default async function ContactsPage() {
     id: contact.id,
     fullName: contact.fullName,
     email: contact.email,
+    phone: contact.phone,
     subject: contact.subject,
     message: contact.message,
+    notes: contact.notes,
     status: contact.status,
     isRead: contact.isRead,
     createdAtLabel: contact.createdAt.toLocaleDateString("fr-FR", {

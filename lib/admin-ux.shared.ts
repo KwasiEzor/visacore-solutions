@@ -92,8 +92,10 @@ export interface ContactTableRow {
   id: string
   fullName: string
   email: string
+  phone?: string | null
   subject: string
   message: string
+  notes?: string | null
   status: string
   isRead: boolean
   createdAtLabel: string
@@ -120,11 +122,63 @@ export function filterContactRows(
 
     const matchesQuery =
       query.length === 0 ||
-      [row.fullName, row.email, row.subject, row.message].some((value) =>
-        value.toLowerCase().includes(query)
-      )
+      [
+        row.fullName,
+        row.email,
+        row.phone ?? "",
+        row.subject,
+        row.message,
+        row.notes ?? "",
+      ].some((value) => value.toLowerCase().includes(query))
 
     return matchesStatus && matchesReadState && matchesQuery
+  })
+}
+
+export interface AppointmentTableRow {
+  id: string
+  fullName: string
+  email: string
+  phone: string
+  serviceType: string | null
+  destinationType: string | null
+  preferredDateLabel: string
+  preferredTime: string | null
+  message: string | null
+  notes: string | null
+  status: string
+  assignedToId: string | null
+  assignedToName: string | null
+  createdAtLabel: string
+}
+
+export function filterAppointmentRows(
+  rows: AppointmentTableRow[],
+  filters: {
+    query: string
+    status: string
+  }
+) {
+  const query = filters.query.trim().toLowerCase()
+
+  return rows.filter((row) => {
+    const matchesStatus =
+      filters.status === "ALL" || row.status === filters.status
+
+    const matchesQuery =
+      query.length === 0 ||
+      [
+        row.fullName,
+        row.email,
+        row.phone,
+        row.serviceType ?? "",
+        row.destinationType ?? "",
+        row.message ?? "",
+        row.notes ?? "",
+        row.assignedToName ?? "",
+      ].some((value) => value.toLowerCase().includes(query))
+
+    return matchesStatus && matchesQuery
   })
 }
 
@@ -168,5 +222,32 @@ export function filterPrivacyRequestRows(
       ].some((value) => value.toLowerCase().includes(query))
 
     return matchesType && matchesStatus && matchesQuery
+  })
+}
+
+export interface ConversationTableRow {
+  id: string
+  title: string
+  sessionId: string
+  updatedAtLabel: string
+  latestMessagePreview: string
+  messageCount: number
+}
+
+export function filterConversationRows<T extends ConversationTableRow>(
+  rows: T[],
+  query: string
+) {
+  const normalizedQuery = query.trim().toLowerCase()
+
+  return rows.filter((row) => {
+    if (normalizedQuery.length === 0) return true
+
+    return [
+      row.title,
+      row.sessionId,
+      row.latestMessagePreview,
+      String(row.messageCount),
+    ].some((value) => value.toLowerCase().includes(normalizedQuery))
   })
 }

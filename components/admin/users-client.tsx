@@ -135,6 +135,7 @@ export function UsersClient({ data, currentUserId }: UsersClientProps) {
                         <UserActions
                           userId={u.id}
                           currentRole={u.role}
+                          accessState={u.accessState}
                           isSelf={isSelf}
                         />
                       </td>

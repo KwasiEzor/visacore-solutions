@@ -1,18 +1,26 @@
 "use client"
 
 import { useTransition } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { updateUserRole, deleteUser } from "@/actions/users"
+import { deleteUser, sendUserAccessLink, updateUserRole } from "@/actions/users"
 import { toast } from "sonner"
-import { Loader2, Trash2 } from "lucide-react"
+import { KeyRound, Loader2, Mail, Trash2 } from "lucide-react"
 
 interface UserActionsProps {
   userId: string
   currentRole: string
+  accessState: "ACTIVE" | "PENDING"
   isSelf: boolean
 }
 
-export function UserActions({ userId, currentRole, isSelf }: UserActionsProps) {
+export function UserActions({
+  userId,
+  currentRole,
+  accessState,
+  isSelf,
+}: UserActionsProps) {
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
   function handleRoleChange(newRole: string) {
@@ -22,6 +30,7 @@ export function UserActions({ userId, currentRole, isSelf }: UserActionsProps) {
       const result = await updateUserRole(userId, newRole)
       if (result.success) {
         toast.success("Role mis a jour")
+        router.refresh()
       } else {
         toast.error(result.error ?? "Erreur lors de la mise a jour du role")
       }
@@ -37,8 +46,21 @@ export function UserActions({ userId, currentRole, isSelf }: UserActionsProps) {
       const result = await deleteUser(userId)
       if (result.success) {
         toast.success("Utilisateur supprime")
+        router.refresh()
       } else {
         toast.error(result.error ?? "Erreur lors de la suppression")
+      }
+    })
+  }
+
+  function handleAccessLink() {
+    startTransition(async () => {
+      const result = await sendUserAccessLink(userId)
+      if (result.success) {
+        toast.success(result.message ?? "Lien d'accès envoyé")
+        router.refresh()
+      } else {
+        toast.error(result.error ?? "Erreur lors de l'envoi du lien d'accès")
       }
     })
   }
@@ -57,19 +79,43 @@ export function UserActions({ userId, currentRole, isSelf }: UserActionsProps) {
       </select>
 
       {!isSelf && (
-        <Button
-          variant="destructive"
-          size="icon-xs"
-          onClick={handleDelete}
-          disabled={isPending}
-          title="Supprimer l'utilisateur"
-        >
-          {isPending ? (
-            <Loader2 className="size-3 animate-spin" />
-          ) : (
-            <Trash2 className="size-3" />
-          )}
-        </Button>
+        <>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleAccessLink}
+            disabled={isPending}
+            className="gap-1.5"
+            title={
+              accessState === "PENDING"
+                ? "Renvoyer l'invitation"
+                : "Envoyer un lien de réinitialisation"
+            }
+          >
+            {isPending ? (
+              <Loader2 className="size-3.5 animate-spin" />
+            ) : accessState === "PENDING" ? (
+              <Mail className="size-3.5" />
+            ) : (
+              <KeyRound className="size-3.5" />
+            )}
+            {accessState === "PENDING" ? "Invitation" : "Reset accès"}
+          </Button>
+
+          <Button
+            variant="destructive"
+            size="icon-xs"
+            onClick={handleDelete}
+            disabled={isPending}
+            title="Supprimer l'utilisateur"
+          >
+            {isPending ? (
+              <Loader2 className="size-3 animate-spin" />
+            ) : (
+              <Trash2 className="size-3" />
+            )}
+          </Button>
+        </>
       )}
     </div>
   )

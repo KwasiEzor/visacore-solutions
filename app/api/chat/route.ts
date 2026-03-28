@@ -1,8 +1,15 @@
-import { streamText, tool, stepCountIs } from "ai"
+import {
+  convertToModelMessages,
+  streamText,
+  tool,
+  stepCountIs,
+  type UIMessage,
+} from "ai"
 import { z } from "zod"
 import { chatModel } from "@/lib/ai"
 import { prisma } from "@/lib/prisma"
 import { checkRateLimit, PUBLIC_CHAT_LIMIT } from "@/lib/rate-limit"
+import { getMessageText } from "@/lib/chat-helpers"
 
 const SYSTEM_PROMPT = `Tu es l'assistant virtuel de VisaCore Solutions, un cabinet de conseil en immigration basé à Lomé, au Togo. Tu réponds exclusivement en français.
 
@@ -81,7 +88,82 @@ export async function POST(request: Request) {
     )
   }
 
-  const { messages } = await request.json()
+  const {
+    messages,
+    sessionId,
+  }: {
+    messages?: UIMessage[]
+    sessionId?: string
+  } = await request.json()
+
+  const normalizedSessionId =
+    typeof sessionId === "string" && sessionId.trim().length > 0
+      ? sessionId.trim()
+      : null
+
+  const resolvedLatestUserText = (() => {
+    const latestUserMessage = messages
+      ?.slice()
+      .reverse()
+      .find((message) => message.role === "user")
+
+    if (!latestUserMessage) return ""
+    return getMessageText(latestUserMessage).trim()
+  })()
+
+  let persistedConversationId: string | null = null
+
+  if (normalizedSessionId && resolvedLatestUserText) {
+    const conversation =
+      (await prisma.chatConversation.findFirst({
+        where: { sessionId: normalizedSessionId, channel: "public" },
+        include: {
+          messages: {
+            orderBy: { createdAt: "asc" },
+          },
+        },
+      })) ??
+      (await prisma.chatConversation.create({
+        data: { sessionId: normalizedSessionId, channel: "public" },
+        include: {
+          messages: {
+            orderBy: { createdAt: "asc" },
+          },
+        },
+      }))
+
+    persistedConversationId = conversation.id
+    const lastStoredMessage = conversation.messages.at(-1)
+
+    if (
+      !lastStoredMessage ||
+      lastStoredMessage.role !== "user" ||
+      lastStoredMessage.content !== resolvedLatestUserText
+    ) {
+      await prisma.chatMessage.create({
+        data: {
+          conversationId: conversation.id,
+          role: "user",
+          content: resolvedLatestUserText,
+        },
+      })
+
+      if (!conversation.title) {
+        await prisma.chatConversation.update({
+          where: { id: conversation.id },
+          data: {
+            title: resolvedLatestUserText.slice(0, 80),
+            updatedAt: new Date(),
+          },
+        })
+      } else {
+        await prisma.chatConversation.update({
+          where: { id: conversation.id },
+          data: { updatedAt: new Date() },
+        })
+      }
+    }
+  }
 
   const [faqContext, destinationContext] = await Promise.all([
     loadFAQContext(),
@@ -89,11 +171,12 @@ export async function POST(request: Request) {
   ])
 
   const systemPrompt = SYSTEM_PROMPT + faqContext + destinationContext
+  const modelMessages = await convertToModelMessages(messages ?? [])
 
   const result = streamText({
     model: chatModel,
     system: systemPrompt,
-    messages,
+    messages: modelMessages,
     tools: {
       bookAppointment: tool({
         description:
@@ -177,6 +260,20 @@ export async function POST(request: Request) {
       }),
     },
     stopWhen: stepCountIs(3),
+    onFinish: async ({ text }) => {
+      if (!persistedConversationId || !text.trim()) return
+      await prisma.chatMessage.create({
+        data: {
+          conversationId: persistedConversationId,
+          role: "assistant",
+          content: text.trim(),
+        },
+      })
+      await prisma.chatConversation.update({
+        where: { id: persistedConversationId },
+        data: { updatedAt: new Date() },
+      })
+    },
   })
 
   return result.toUIMessageStreamResponse()

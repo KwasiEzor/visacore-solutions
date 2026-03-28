@@ -1,8 +1,14 @@
 "use client"
 
 import { useTransition } from "react"
+import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { updateLeadStatus, updateLeadNotes, deleteLead } from "@/actions/leads"
+import {
+  assignLead,
+  deleteLead,
+  updateLeadNotes,
+  updateLeadStatus,
+} from "@/actions/leads"
 import { StatusBadge } from "@/components/admin/status-badge"
 
 const LEAD_STATUSES = [
@@ -23,6 +29,7 @@ export function LeadStatusSelect({
   leadId,
   currentStatus,
 }: LeadStatusSelectProps) {
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -33,6 +40,7 @@ export function LeadStatusSelect({
         const result = await updateLeadStatus(leadId, newStatus)
         if (result.success) {
           toast.success("Statut mis à jour")
+          router.refresh()
         } else {
           toast.error(result.error || "Erreur lors de la mise à jour")
         }
@@ -69,7 +77,20 @@ interface LeadNotesFormProps {
   currentNotes: string | null
 }
 
+interface LeadAssigneeOption {
+  id: string
+  name: string | null
+  email: string
+}
+
+interface LeadAssigneeSelectProps {
+  leadId: string
+  currentAssignedToId: string | null
+  users: LeadAssigneeOption[]
+}
+
 export function LeadNotesForm({ leadId, currentNotes }: LeadNotesFormProps) {
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
   function handleSubmit(formData: FormData) {
@@ -79,6 +100,7 @@ export function LeadNotesForm({ leadId, currentNotes }: LeadNotesFormProps) {
         const result = await updateLeadNotes(leadId, notes)
         if (result.success) {
           toast.success("Notes enregistrées")
+          router.refresh()
         } else {
           toast.error(result.error || "Erreur lors de la sauvegarde")
         }
@@ -108,11 +130,60 @@ export function LeadNotesForm({ leadId, currentNotes }: LeadNotesFormProps) {
   )
 }
 
+export function LeadAssigneeSelect({
+  leadId,
+  currentAssignedToId,
+  users,
+}: LeadAssigneeSelectProps) {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+
+  function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    const nextUserId = event.target.value
+
+    startTransition(async () => {
+      try {
+        const result = await assignLead(
+          leadId,
+          nextUserId.length > 0 ? nextUserId : null
+        )
+        if (result.success) {
+          toast.success(
+            nextUserId.length > 0 ? "Lead assigné" : "Assignation retirée"
+          )
+          router.refresh()
+        } else {
+          toast.error(result.error || "Erreur lors de l'assignation")
+        }
+      } catch {
+        toast.error("Une erreur est survenue")
+      }
+    })
+  }
+
+  return (
+    <select
+      defaultValue={currentAssignedToId ?? ""}
+      onChange={handleChange}
+      disabled={isPending}
+      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+    >
+      <option value="">Aucun agent assigné</option>
+      {users.map((user) => (
+        <option key={user.id} value={user.id}>
+          {user.name ?? user.email}
+        </option>
+      ))}
+    </select>
+  )
+}
+
 interface DeleteLeadButtonProps {
   leadId: string
 }
 
 export function DeleteLeadButton({ leadId }: DeleteLeadButtonProps) {
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
   function handleDelete() {
@@ -122,7 +193,7 @@ export function DeleteLeadButton({ leadId }: DeleteLeadButtonProps) {
         const result = await deleteLead(leadId)
         if (result.success) {
           toast.success("Lead supprimé")
-          // Redirection possible ici si nécessaire
+          router.push("/admin/leads")
         } else {
           toast.error(result.error || "Erreur lors de la suppression")
         }

@@ -6,7 +6,11 @@ import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
 import { z } from "zod"
 import { hasPermission } from "@/lib/rbac"
-import { notifyUserCreated } from "@/lib/business-notifications"
+import {
+  notifyUserCreated,
+  sendAccountInvitationEmail,
+  sendPasswordResetEmail,
+} from "@/lib/business-notifications"
 
 const userRoleSchema = z.enum(["SUPER_ADMIN", "ADMIN", "EDITOR"])
 
@@ -101,5 +105,70 @@ export async function deleteUser(id: string) {
   } catch (error) {
     console.error("[DELETE_USER_ERROR]", error)
     return { success: false, error: "Impossible de supprimer l'utilisateur" }
+  }
+}
+
+export async function sendUserAccessLink(
+  id: string,
+  mode: "invite" | "reset" | "smart" = "smart"
+) {
+  try {
+    const session = await auth()
+    if (!session || !hasPermission(session.user.role, "manage_users")) {
+      return { success: false, error: "Non autorisé" }
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        hashedPassword: true,
+      },
+    })
+
+    if (!user) {
+      return { success: false, error: "Utilisateur introuvable" }
+    }
+
+    const resolvedMode =
+      mode === "smart"
+        ? user.hashedPassword
+          ? "reset"
+          : "invite"
+        : mode
+
+    if (resolvedMode === "invite") {
+      await sendAccountInvitationEmail({
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        createdByName: session.user.name ?? session.user.email,
+      })
+    } else {
+      await sendPasswordResetEmail({
+        name: user.name,
+        email: user.email,
+      })
+    }
+
+    revalidatePath("/admin/users")
+
+    return {
+      success: true,
+      mode: resolvedMode,
+      message:
+        resolvedMode === "invite"
+          ? "Lien d'invitation renvoyé"
+          : "Lien de réinitialisation envoyé",
+    }
+  } catch (error) {
+    console.error("[SEND_USER_ACCESS_LINK_ERROR]", error)
+    return {
+      success: false,
+      error: "Impossible d'envoyer le lien d'accès",
+    }
   }
 }

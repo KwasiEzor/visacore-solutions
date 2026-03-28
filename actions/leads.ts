@@ -220,6 +220,7 @@ export async function updateLeadStatus(id: string, status: string) {
     })
     
     revalidatePath("/admin/leads")
+    revalidatePath(`/admin/leads/${id}`)
     return { success: true }
   } catch (error) {
     console.error("[UPDATE_LEAD_STATUS_ERROR]", error)
@@ -240,6 +241,7 @@ export async function updateLeadNotes(id: string, notes: string) {
     })
     
     revalidatePath("/admin/leads")
+    revalidatePath(`/admin/leads/${id}`)
     return { success: true }
   } catch (error) {
     console.error("[UPDATE_LEAD_NOTES_ERROR]", error)
@@ -266,6 +268,7 @@ export async function assignLead(id: string, assignedToId: string | null) {
     })
     
     revalidatePath("/admin/leads")
+    revalidatePath(`/admin/leads/${id}`)
 
     if (updatedLead.assignedToId) {
       await notifyLeadAssigned({

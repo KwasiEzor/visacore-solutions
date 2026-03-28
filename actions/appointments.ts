@@ -265,6 +265,32 @@ export async function updateAppointmentNotes(id: string, notes: string) {
   }
 }
 
+export async function assignAppointment(
+  id: string,
+  assignedToId: string | null
+) {
+  try {
+    const session = await auth()
+    if (!session || !hasPermission(session.user.role, "edit")) {
+      return { success: false, error: "Non autorisé" }
+    }
+
+    await prisma.appointmentRequest.update({
+      where: { id },
+      data: { assignedToId },
+    })
+
+    revalidatePath("/admin/appointments")
+    return { success: true }
+  } catch (error) {
+    console.error("[ASSIGN_APPOINTMENT_ERROR]", error)
+    return {
+      success: false,
+      error: "Impossible d'assigner le rendez-vous",
+    }
+  }
+}
+
 export async function deleteAppointment(id: string) {
   try {
     const session = await auth()

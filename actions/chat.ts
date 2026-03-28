@@ -1,6 +1,9 @@
 "use server"
 
+import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
+import { auth } from "@/lib/auth"
+import { hasPermission } from "@/lib/rbac"
 
 export async function getOrCreateConversation(
   sessionId: string,
@@ -38,9 +41,20 @@ export async function saveMessage(
     await prisma.chatMessage.create({
       data: { conversationId, role, content },
     })
+    const conversation = await prisma.chatConversation.findUnique({
+      where: { id: conversationId },
+      select: { title: true },
+    })
+
     await prisma.chatConversation.update({
       where: { id: conversationId },
-      data: { updatedAt: new Date() },
+      data: {
+        updatedAt: new Date(),
+        title:
+          !conversation?.title && role === "user"
+            ? content.trim().slice(0, 80)
+            : undefined,
+      },
     })
   } catch (error) {
     console.error("[CHAT_SAVE_MESSAGE_ERROR]", error)
@@ -49,6 +63,11 @@ export async function saveMessage(
 
 export async function getConversationMessages(conversationId: string) {
   try {
+    const session = await auth()
+    if (!session || !hasPermission(session.user.role, "view_all")) {
+      return []
+    }
+
     return await prisma.chatMessage.findMany({
       where: { conversationId },
       orderBy: { createdAt: "asc" },
@@ -61,12 +80,18 @@ export async function getConversationMessages(conversationId: string) {
 
 export async function deleteConversation(conversationId: string) {
   try {
+    const session = await auth()
+    if (!session || !hasPermission(session.user.role, "delete")) {
+      return { success: false, error: "Non autorisé" }
+    }
+
     await prisma.chatConversation.delete({
       where: { id: conversationId },
     })
+    revalidatePath("/admin/conversations")
     return { success: true }
   } catch (error) {
     console.error("[CHAT_DELETE_ERROR]", error)
-    return { success: false }
+    return { success: false, error: "Impossible de supprimer la conversation" }
   }
 }

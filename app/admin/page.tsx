@@ -12,6 +12,7 @@ import {
   Eye,
   TrendingUp,
   BarChart3,
+  MessagesSquare,
 } from "lucide-react"
 import { StatsCard } from "@/components/admin/stats-card"
 import { StatusBadge } from "@/components/admin/status-badge"
@@ -414,6 +415,15 @@ export default async function AdminDashboardPage() {
               >
                 <MessageSquare className="size-4" />
                 Moderer les temoignages
+              </Button>
+            </Link>
+            <Link href="/admin/conversations">
+              <Button
+                variant="outline"
+                className="w-full justify-start gap-2"
+              >
+                <MessagesSquare className="size-4" />
+                Relire les conversations
               </Button>
             </Link>
             <Link href="/admin/settings">

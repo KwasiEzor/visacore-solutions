@@ -592,6 +592,46 @@ export async function notifyUserCreated(user: {
   }
 }
 
+export async function sendAccountInvitationEmail(user: {
+  name?: string | null
+  email: string
+  role: Role
+  createdByName?: string | null
+}) {
+  try {
+    const runtime = await getNotificationRuntime()
+    const { rawToken, expires } = await issueAccountAccessToken(
+      user.email,
+      "invite"
+    )
+    const setupUrl = `${runtime.baseUrl}/configurer-acces?token=${rawToken}`
+
+    const roleLabels: Record<Role, string> = {
+      SUPER_ADMIN: "Super Admin",
+      ADMIN: "Administrateur",
+      EDITOR: "Editeur",
+    }
+
+    const invitationEmail = buildAccountInvitationEmail({
+      userName: user.name || user.email,
+      roleLabel: roleLabels[user.role],
+      accessUrl: setupUrl,
+      expiresLabel: formatDateTimeLabel(expires),
+      createdByName: user.createdByName,
+      siteConfig: runtime.siteConfig,
+    })
+
+    await deliverEmailWithRuntime(runtime, {
+      to: [user.email],
+      subject: invitationEmail.subject,
+      html: invitationEmail.html,
+      text: invitationEmail.text,
+    })
+  } catch (error) {
+    console.error("[SEND_ACCOUNT_INVITATION_EMAIL_ERROR]", error)
+  }
+}
+
 export async function sendPasswordResetEmail(user: {
   name?: string | null
   email: string
