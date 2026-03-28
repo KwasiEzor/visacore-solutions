@@ -17,14 +17,12 @@ interface UserCreateDialogProps {
 export function UserCreateDialog({ open, onOpenChange }: UserCreateDialogProps) {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
   const [role, setRole] = useState<"SUPER_ADMIN" | "ADMIN" | "EDITOR">("EDITOR")
   const [isPending, startTransition] = useTransition()
 
   function resetForm() {
     setName("")
     setEmail("")
-    setPassword("")
     setRole("EDITOR")
   }
 
@@ -32,10 +30,10 @@ export function UserCreateDialog({ open, onOpenChange }: UserCreateDialogProps) 
     e.preventDefault()
 
     startTransition(async () => {
-      const result = await createUser({ name, email, password, role })
+      const result = await createUser({ name, email, role })
 
       if (result.success) {
-        toast.success("Utilisateur cree avec succes")
+        toast.success("Utilisateur cree et invitation envoyee")
         resetForm()
         onOpenChange(false)
       } else {
@@ -76,19 +74,6 @@ export function UserCreateDialog({ open, onOpenChange }: UserCreateDialogProps) 
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="uc-password">Mot de passe</Label>
-            <Input
-              id="uc-password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Minimum 8 caracteres"
-              required
-              minLength={8}
-            />
-          </div>
-
-          <div className="space-y-1.5">
             <Label htmlFor="uc-role">Role</Label>
             <select
               id="uc-role"
@@ -101,6 +86,10 @@ export function UserCreateDialog({ open, onOpenChange }: UserCreateDialogProps) 
               <option value="SUPER_ADMIN">Super Admin</option>
             </select>
           </div>
+
+          <p className="rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
+            Un lien securise de configuration du mot de passe sera envoye a cet utilisateur.
+          </p>
 
           <div className="flex justify-end gap-2 pt-2">
             <Button

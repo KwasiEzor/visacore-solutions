@@ -6,6 +6,10 @@ import { PrismaClient } from "../lib/generated/prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
 import pg from "pg"
 import bcrypt from "bcryptjs"
+import {
+  notificationSiteSettingCatalog,
+  publicSiteSettingCatalog,
+} from "../lib/site-config.shared"
 
 const dbUrl = (process.env.DATABASE_URL ?? "").replace(/[&?]?channel_binding=[^&]*/g, "")
 const pool = new pg.Pool({ connectionString: dbUrl })
@@ -763,23 +767,31 @@ async function main() {
 
   // ─── Site Settings ───────────────────────────────────────
   const settings = [
-    { key: "site_name", value: "VisaCore Solutions", type: "TEXT" as const },
-    { key: "site_description", value: "Experts en immigration internationale depuis Lomé, Togo", type: "TEXT" as const },
-    { key: "contact_email", value: "contact@visacore-solutions.com", type: "TEXT" as const },
-    { key: "contact_phone", value: "+228 90 00 00 00", type: "TEXT" as const },
-    { key: "whatsapp_number", value: "+22890000000", type: "TEXT" as const },
-    { key: "office_address", value: "Boulevard du 13 Janvier, Lomé, Togo", type: "TEXT" as const },
-    { key: "business_hours", value: "Lun - Ven: 8h00 - 18h00 | Sam: 9h00 - 13h00", type: "TEXT" as const },
-    { key: "facebook_url", value: "https://facebook.com/visacoresolutions", type: "TEXT" as const },
-    { key: "linkedin_url", value: "https://linkedin.com/company/visacoresolutions", type: "TEXT" as const },
-    { key: "instagram_url", value: "https://instagram.com/visacoresolutions", type: "TEXT" as const },
-  ]
+    ...publicSiteSettingCatalog,
+    ...notificationSiteSettingCatalog,
+  ].map((setting) => ({
+    key: setting.key,
+    value: setting.defaultValue,
+    type: setting.type,
+  }))
+
+  const seededSettingOverrides = {
+    facebook_url: "https://facebook.com/visacoresolutions",
+    linkedin_url: "https://linkedin.com/company/visacoresolutions",
+    instagram_url: "https://instagram.com/visacoresolutions",
+  } as const
 
   for (const setting of settings) {
     await prisma.siteSetting.upsert({
       where: { key: setting.key },
       update: {},
-      create: setting,
+      create: {
+        ...setting,
+        value:
+          seededSettingOverrides[
+            setting.key as keyof typeof seededSettingOverrides
+          ] ?? setting.value,
+      },
     })
   }
   console.log("✅ Site settings created")

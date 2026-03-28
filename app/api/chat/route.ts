@@ -105,8 +105,8 @@ export async function POST(request: Request) {
         }),
         execute: async ({ reason }) => {
           return {
-            message: `Pour prendre rendez-vous concernant "${reason}", veuillez visiter notre page de contact ou appeler le +228 90 00 00 00.`,
-            link: "/contact",
+            message: `Pour prendre rendez-vous concernant "${reason}", veuillez utiliser notre formulaire de rendez-vous ou appeler le +228 90 00 00 00.`,
+            link: "/rendez-vous",
           }
         },
       }),

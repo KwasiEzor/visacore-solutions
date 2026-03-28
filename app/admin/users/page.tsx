@@ -13,6 +13,9 @@ export default async function UsersAdminPage() {
     name: u.name,
     email: u.email,
     role: u.role,
+    accessState: (u.hashedPassword ? "ACTIVE" : "PENDING") as
+      | "ACTIVE"
+      | "PENDING",
     createdAt: u.createdAt.toLocaleDateString("fr-FR"),
   }))
 

@@ -13,6 +13,7 @@ import {
 } from "@/lib/submission-guards.shared"
 import { hasPermission } from "@/lib/rbac"
 import { buildContactRequestCreateData } from "@/lib/submission-payloads"
+import { notifyContactCreated } from "@/lib/business-notifications"
 import {
   logCaptchaFailureEvent,
   verifyCaptchaTokenForRequest,
@@ -136,9 +137,18 @@ export async function createContactRequest(data: unknown) {
       }
     }
 
-    await prisma.contactRequest.create({
+    const contactRequest = await prisma.contactRequest.create({
       data: buildContactRequestCreateData(parsed.data),
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        subject: true,
+      },
     })
+
+    await notifyContactCreated(contactRequest)
 
     return {
       success: true,

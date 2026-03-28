@@ -7,6 +7,7 @@ import { getTelHref } from "@/lib/site-config";
 const quickLinks = [
   { href: "/", label: "Accueil" },
   { href: "/destinations", label: "Destinations" },
+  { href: "/rendez-vous", label: "Rendez-vous" },
   { href: "/a-propos", label: "À propos" },
   { href: "/temoignages", label: "Témoignages" },
   { href: "/faq", label: "FAQ" },

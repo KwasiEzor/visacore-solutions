@@ -1,24 +1,37 @@
 import { prisma } from "@/lib/prisma"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { SettingEditor } from "@/components/admin/setting-editor"
+import {
+  notificationSiteSettingCatalog,
+  publicSiteSettingCatalog,
+} from "@/lib/site-config"
 
 export default async function SettingsAdminPage() {
   const settings = await prisma.siteSetting.findMany({
     orderBy: { key: "asc" },
   })
 
-  const settingLabels: Record<string, string> = {
-    site_name: "Nom du site",
-    site_description: "Description du site",
-    contact_email: "Email de contact",
-    contact_phone: "Telephone",
-    whatsapp_number: "Numero WhatsApp",
-    office_address: "Adresse du bureau",
-    business_hours: "Horaires d'ouverture",
-    facebook_url: "Facebook",
-    linkedin_url: "LinkedIn",
-    instagram_url: "Instagram",
-  }
+  const settingCatalog = [
+    ...publicSiteSettingCatalog,
+    ...notificationSiteSettingCatalog,
+  ]
+
+  const settingsMap = new Map(settings.map((setting) => [setting.key, setting]))
+
+  const resolvedSettings = settingCatalog.map((catalogEntry) => ({
+    id: settingsMap.get(catalogEntry.key)?.id ?? catalogEntry.key,
+    key: catalogEntry.key,
+    value:
+      settingsMap.get(catalogEntry.key)?.value ?? catalogEntry.defaultValue,
+    type:
+      (settingsMap.get(catalogEntry.key)?.type as
+        | "TEXT"
+        | "IMAGE"
+        | "JSON"
+        | "BOOLEAN"
+        | undefined) ?? catalogEntry.type,
+    label: catalogEntry.label,
+  }))
 
   const typeColors: Record<string, string> = {
     TEXT: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
@@ -37,11 +50,11 @@ export default async function SettingsAdminPage() {
         </CardHeader>
         <CardContent>
           <div className="divide-y">
-            {settings.map((setting) => (
+            {resolvedSettings.map((setting) => (
               <div key={setting.id} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-start sm:gap-6">
                 <div className="flex shrink-0 flex-col gap-1 sm:w-48">
                   <p className="text-sm font-medium">
-                    {settingLabels[setting.key] ?? setting.key}
+                    {setting.label}
                   </p>
                   <div className="flex items-center gap-2">
                     <code className="text-xs text-muted-foreground">
@@ -60,13 +73,13 @@ export default async function SettingsAdminPage() {
                   <SettingEditor
                     settingKey={setting.key}
                     value={setting.value}
-                    type={setting.type as "TEXT" | "IMAGE" | "JSON" | "BOOLEAN"}
+                    type={setting.type}
                   />
                 </div>
               </div>
             ))}
           </div>
-          {settings.length === 0 && (
+          {resolvedSettings.length === 0 && (
             <p className="py-8 text-center text-muted-foreground">
               Aucun parametre configure. Executez le seed pour initialiser.
             </p>

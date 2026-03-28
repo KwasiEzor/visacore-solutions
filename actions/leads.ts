@@ -18,6 +18,10 @@ import {
 import { hasPermission } from "@/lib/rbac"
 import { buildLeadCreateData } from "@/lib/submission-payloads"
 import {
+  notifyLeadAssigned,
+  notifyLeadCreated,
+} from "@/lib/business-notifications"
+import {
   logCaptchaFailureEvent,
   verifyCaptchaTokenForRequest,
 } from "@/lib/captcha.server"
@@ -172,7 +176,19 @@ export async function createLead(data: unknown) {
       }
     }
 
-    await prisma.lead.create({ data: buildLeadCreateData(parsed.data) })
+    const createdLead = await prisma.lead.create({
+      data: buildLeadCreateData(parsed.data),
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        destination: true,
+        serviceNeeded: true,
+      },
+    })
+
+    await notifyLeadCreated(createdLead)
 
     return {
       success: true,
@@ -238,12 +254,28 @@ export async function assignLead(id: string, assignedToId: string | null) {
       return { success: false, error: "Non autorisé" }
     }
 
-    await prisma.lead.update({
+    const updatedLead = await prisma.lead.update({
       where: { id },
       data: { assignedToId },
+      select: {
+        id: true,
+        fullName: true,
+        destination: true,
+        assignedToId: true,
+      },
     })
     
     revalidatePath("/admin/leads")
+
+    if (updatedLead.assignedToId) {
+      await notifyLeadAssigned({
+        leadId: updatedLead.id,
+        leadName: updatedLead.fullName,
+        destination: updatedLead.destination,
+        assignedToId: updatedLead.assignedToId,
+      })
+    }
+
     return { success: true }
   } catch (error) {
     console.error("[ASSIGN_LEAD_ERROR]", error)

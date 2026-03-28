@@ -13,6 +13,7 @@ interface UserItem {
   name: string | null
   email: string
   role: string
+  accessState: "ACTIVE" | "PENDING"
   createdAt: string
 }
 
@@ -33,11 +34,21 @@ const roleVariant: Record<string, "gold" | "blue" | "gray"> = {
   EDITOR: "gray",
 }
 
+const accessLabels: Record<UserItem["accessState"], string> = {
+  ACTIVE: "Actif",
+  PENDING: "Invitation en attente",
+}
+
+const accessVariant: Record<UserItem["accessState"], "green" | "gold"> = {
+  ACTIVE: "green",
+  PENDING: "gold",
+}
+
 function exportCSV(data: UserItem[]) {
-  const header = "Nom,Email,Role,Date de creation"
+  const header = "Nom,Email,Role,Acces,Date de creation"
   const rows = data.map(
     (u) =>
-      `"${u.name ?? ""}","${u.email}","${roleLabels[u.role] ?? u.role}","${u.createdAt}"`
+      `"${u.name ?? ""}","${u.email}","${roleLabels[u.role] ?? u.role}","${accessLabels[u.accessState]}","${u.createdAt}"`
   )
   const csv = [header, ...rows].join("\n")
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
@@ -80,6 +91,7 @@ export function UsersClient({ data, currentUserId }: UsersClientProps) {
                   <th className="pb-3 pr-4 font-medium text-muted-foreground">Nom</th>
                   <th className="pb-3 pr-4 font-medium text-muted-foreground">Email</th>
                   <th className="pb-3 pr-4 font-medium text-muted-foreground">Role</th>
+                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Acces</th>
                   <th className="pb-3 pr-4 font-medium text-muted-foreground">Inscrit le</th>
                   <th className="pb-3 font-medium text-muted-foreground">Actions</th>
                 </tr>
@@ -110,6 +122,12 @@ export function UsersClient({ data, currentUserId }: UsersClientProps) {
                         <StatusBadge
                           status={roleLabels[u.role] ?? u.role}
                           variant={roleVariant[u.role] ?? "gray"}
+                        />
+                      </td>
+                      <td className="py-3 pr-4">
+                        <StatusBadge
+                          status={accessLabels[u.accessState]}
+                          variant={accessVariant[u.accessState]}
                         />
                       </td>
                       <td className="py-3 pr-4 text-muted-foreground">{u.createdAt}</td>

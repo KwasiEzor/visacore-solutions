@@ -1,5 +1,9 @@
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
+import {
+  getNotificationFeedForUser,
+  getUnreadNotificationCountForUser,
+} from "@/lib/admin-notifications"
 import { AdminSidebar } from "@/components/admin/sidebar"
 import { AdminTopbar } from "@/components/admin/topbar"
 
@@ -22,6 +26,11 @@ export default async function AdminLayout({
     image: session.user.image ?? null,
   }
 
+  const [notifications, unreadCount] = await Promise.all([
+    getNotificationFeedForUser(session.user.id),
+    getUnreadNotificationCountForUser(session.user.id),
+  ])
+
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Desktop sidebar - hidden on mobile */}
@@ -31,7 +40,11 @@ export default async function AdminLayout({
 
       {/* Main content area */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <AdminTopbar user={user} />
+        <AdminTopbar
+          user={user}
+          notifications={notifications}
+          unreadCount={unreadCount}
+        />
 
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
           {children}

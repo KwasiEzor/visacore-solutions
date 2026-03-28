@@ -31,6 +31,7 @@ model User {
   assignedLeads        Lead[]              @relation("AssignedLeads")
   assignedAppointments AppointmentRequest[] @relation("AssignedAppointments")
   uploadedMedia        MediaAsset[]
+  notificationRecipients NotificationRecipient[]
 }
 
 model Account {
@@ -128,6 +129,17 @@ enum AppointmentStatus {
   APPROVED
   CANCELLED
   COMPLETED
+}
+
+enum AdminNotificationType {
+  LEAD_CREATED
+  CONTACT_CREATED
+  APPOINTMENT_CREATED
+  APPOINTMENT_APPROVED
+  APPOINTMENT_CANCELLED
+  APPOINTMENT_COMPLETED
+  LEAD_ASSIGNED
+  USER_CREATED
 }
 
 model AppointmentRequest {
@@ -300,6 +312,38 @@ model MediaAsset {
   updatedAt    DateTime @updatedAt
 
   @@index([createdAt])
+}
+
+model AdminNotification {
+  id         String                @id @default(cuid())
+  type       AdminNotificationType
+  title      String
+  message    String                @db.Text
+  entityType String?
+  entityId   String?
+  actionUrl  String?
+  metadata   Json?
+  createdAt  DateTime              @default(now())
+
+  recipients NotificationRecipient[]
+
+  @@index([createdAt])
+  @@index([type, createdAt])
+}
+
+model NotificationRecipient {
+  id             String            @id @default(cuid())
+  notificationId String
+  userId         String
+  readAt         DateTime?
+  createdAt      DateTime          @default(now())
+
+  notification AdminNotification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, userId])
+  @@index([userId, readAt, createdAt])
+  @@index([notificationId])
 }
 
 // ─── AI Chat Models ─────────────────────────────────────────────

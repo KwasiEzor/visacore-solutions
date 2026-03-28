@@ -7,8 +7,10 @@ import { usePathname } from "next/navigation"
 import { LogOut, Menu, ExternalLink, Shield, User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { logoutAction } from "@/actions/auth"
+import type { NotificationFeedItem } from "@/lib/admin-notifications"
 import { Button } from "@/components/ui/button"
 import { AICopilotTrigger } from "@/components/admin/ai-copilot"
+import { NotificationCenter } from "@/components/admin/notification-center"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Sheet,
@@ -28,6 +30,8 @@ interface TopbarUser {
 
 interface AdminTopbarProps {
   user: TopbarUser
+  notifications: NotificationFeedItem[]
+  unreadCount: number
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -80,7 +84,11 @@ function getUserInitials(name: string | null | undefined): string {
     .slice(0, 2)
 }
 
-export function AdminTopbar({ user }: AdminTopbarProps) {
+export function AdminTopbar({
+  user,
+  notifications,
+  unreadCount,
+}: AdminTopbarProps) {
   const pathname = usePathname()
   const [sheetOpen, setSheetOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
@@ -144,6 +152,11 @@ export function AdminTopbar({ user }: AdminTopbarProps) {
 
         {/* AI Copilot trigger */}
         <AICopilotTrigger />
+
+        <NotificationCenter
+          notifications={notifications}
+          unreadCount={unreadCount}
+        />
 
         {/* User profile button */}
         <div ref={profileRef} className="relative">

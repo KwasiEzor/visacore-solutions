@@ -1,6 +1,7 @@
 "use client"
 
 import { useActionState } from "react"
+import Link from "next/link"
 import { loginAction } from "@/actions/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -63,6 +64,17 @@ export default function LoginPage() {
               "Se connecter"
             )}
           </Button>
+          <div className="space-y-2 pt-2 text-center text-sm text-muted-foreground">
+            <p>
+              Première connexion ou mot de passe oublié ?
+            </p>
+            <Link
+              href="/recuperer-acces"
+              className="font-medium text-[#0A2540] underline"
+            >
+              Demander un lien sécurisé
+            </Link>
+          </div>
         </form>
       </CardContent>
     </Card>

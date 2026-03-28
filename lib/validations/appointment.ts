@@ -13,6 +13,15 @@ export const appointmentSchema = z.object({
 
 export type AppointmentFormData = z.infer<typeof appointmentSchema>
 
+export const appointmentSubmissionSchema = appointmentSchema.extend({
+  website: z.string().optional(),
+  captchaToken: z.string().optional(),
+})
+
+export type AppointmentSubmissionData = z.infer<
+  typeof appointmentSubmissionSchema
+>
+
 export const appointmentStatusSchema = z.enum([
   "PENDING",
   "APPROVED",

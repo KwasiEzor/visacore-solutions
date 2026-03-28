@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma"
 import { createUserSchema } from "@/lib/validations/auth"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/lib/auth"
-import bcrypt from "bcryptjs"
 import { z } from "zod"
 import { hasPermission } from "@/lib/rbac"
+import { notifyUserCreated } from "@/lib/business-notifications"
 
 const userRoleSchema = z.enum(["SUPER_ADMIN", "ADMIN", "EDITOR"])
 
@@ -33,16 +33,25 @@ export async function createUser(data: unknown) {
       return { success: false, error: "Cet email est déjà utilisé" }
     }
 
-    const hashedPassword = await bcrypt.hash(parsed.data.password, 12)
-
-    await prisma.user.create({
+    const createdUser = await prisma.user.create({
       data: {
         name: parsed.data.name,
         email: parsed.data.email,
-        hashedPassword,
         role: parsed.data.role as "SUPER_ADMIN" | "ADMIN" | "EDITOR",
       },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+      },
     })
+
+    await notifyUserCreated({
+      ...createdUser,
+      createdByName: session.user.name ?? session.user.email,
+    })
+
     revalidatePath("/admin/users")
     return { success: true }
   } catch (error) {
