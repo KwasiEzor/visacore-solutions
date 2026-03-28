@@ -32,6 +32,10 @@ export function canAccessAdminPath(
     return hasPermission(role, "manage_settings")
   }
 
+  if (pathname.startsWith("/admin/privacy-requests")) {
+    return hasPermission(role, "manage_settings")
+  }
+
   return true
 }
 

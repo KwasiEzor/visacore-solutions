@@ -13,7 +13,11 @@ export type SubmissionGuardAuditedStatus = Exclude<
   "accepted"
 >
 
-export type SubmissionGuardChannel = "lead" | "contact" | "appointment"
+export type SubmissionGuardChannel =
+  | "lead"
+  | "contact"
+  | "appointment"
+  | "privacy_request"
 
 interface SubmissionGuardOptions {
   honeypotValue?: string | null

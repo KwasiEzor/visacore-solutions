@@ -8,6 +8,7 @@ import { LogOut, Menu, ExternalLink, Shield, User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { logoutAction } from "@/actions/auth"
 import type { NotificationFeedItem } from "@/lib/admin-notifications"
+import { canRenderAdminNavItem } from "@/lib/rbac"
 import { Button } from "@/components/ui/button"
 import { AICopilotTrigger } from "@/components/admin/ai-copilot"
 import { NotificationCenter } from "@/components/admin/notification-center"
@@ -58,6 +59,7 @@ const pageTitles: Record<string, string> = {
   "/admin/stories": "Success Stories",
   "/admin/content": "Contenu",
   "/admin/media": "Medias",
+  "/admin/privacy-requests": "Demandes RGPD",
   "/admin/users": "Utilisateurs",
   "/admin/settings": "Parametres",
 }
@@ -286,7 +288,11 @@ export function AdminTopbar({
 
           <ScrollArea className="flex-1 py-4">
             <nav className="flex flex-col gap-1 px-3">
-              {navItems.map((item) => {
+              {navItems
+                .filter((item) =>
+                  canRenderAdminNavItem(user.role, item.requiredAction)
+                )
+                .map((item) => {
                 const active = isActive(pathname, item.href)
                 const Icon = item.icon
 

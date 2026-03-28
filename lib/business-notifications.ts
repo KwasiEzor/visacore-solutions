@@ -17,7 +17,10 @@ import {
   buildLeadAdminAlertEmail,
   buildLeadAssignmentEmail,
   buildPasswordResetEmail,
+  buildPrivacyRequestAcknowledgementEmail,
+  buildPrivacyRequestAdminAlertEmail,
 } from "@/lib/email-templates"
+import { formatDataPrivacyRequestType } from "@/lib/privacy-requests.shared"
 import {
   formatDisplayPhoneNumber,
   getNotificationSiteConfig,
@@ -258,6 +261,70 @@ export async function notifyContactCreated(contact: {
     ])
   } catch (error) {
     console.error("[NOTIFY_CONTACT_CREATED_ERROR]", error)
+  }
+}
+
+export async function notifyPrivacyRequestCreated(request: {
+  id: string
+  fullName: string
+  email: string
+  phone?: string | null
+  requestType: string
+}) {
+  try {
+    const runtime = await getNotificationRuntime()
+    const adminPath = "/admin/privacy-requests"
+    const adminUrl = `${runtime.baseUrl}${adminPath}`
+    const requestTypeLabel = formatDataPrivacyRequestType(request.requestType)
+
+    await createAdminNotification({
+      type: "PRIVACY_REQUEST_CREATED",
+      title: `Nouvelle demande RGPD: ${request.fullName}`,
+      message: `${requestTypeLabel}. Verification d'identite et traitement a enclencher dans le delai RGPD.`,
+      entityType: "data_privacy_request",
+      entityId: request.id,
+      actionUrl: adminPath,
+      metadata: {
+        email: request.email,
+        requestType: request.requestType,
+      },
+    })
+
+    const userEmail = buildPrivacyRequestAcknowledgementEmail({
+      fullName: request.fullName,
+      requestTypeLabel,
+      siteConfig: runtime.siteConfig,
+    })
+
+    const adminEmail = buildPrivacyRequestAdminAlertEmail({
+      fullName: request.fullName,
+      email: request.email,
+      phone: request.phone,
+      requestTypeLabel,
+      adminUrl,
+      siteConfig: runtime.siteConfig,
+    })
+
+    const adminRecipients = await getAdminEmailRecipients(
+      runtime.notificationConfig.adminEmails
+    )
+
+    await Promise.all([
+      deliverEmailWithRuntime(runtime, {
+        to: [request.email],
+        subject: userEmail.subject,
+        html: userEmail.html,
+        text: userEmail.text,
+      }),
+      deliverEmailWithRuntime(runtime, {
+        to: adminRecipients,
+        subject: adminEmail.subject,
+        html: adminEmail.html,
+        text: adminEmail.text,
+      }),
+    ])
+  } catch (error) {
+    console.error("[NOTIFY_PRIVACY_REQUEST_CREATED_ERROR]", error)
   }
 }
 

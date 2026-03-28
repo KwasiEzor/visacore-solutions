@@ -13,6 +13,11 @@ type StatusVariant =
   | "COMPLETED"
   | "REPLIED"
   | "ARCHIVED"
+  | "RECEIVED"
+  | "IDENTITY_PENDING"
+  | "IN_REVIEW"
+  | "FULFILLED"
+  | "REJECTED"
   | "default"
 
 const statusStyles: Record<StatusVariant, string> = {
@@ -36,6 +41,15 @@ const statusStyles: Record<StatusVariant, string> = {
   REPLIED:
     "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400",
   ARCHIVED: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
+  RECEIVED:
+    "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+  IDENTITY_PENDING:
+    "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400",
+  IN_REVIEW:
+    "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
+  FULFILLED:
+    "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+  REJECTED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
   default: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
 }
 
@@ -52,6 +66,11 @@ const statusLabels: Record<string, string> = {
   COMPLETED: "Termine",
   REPLIED: "Repondu",
   ARCHIVED: "Archive",
+  RECEIVED: "Recue",
+  IDENTITY_PENDING: "Verification d'identite",
+  IN_REVIEW: "En cours d'analyse",
+  FULFILLED: "Traitee",
+  REJECTED: "Refusee",
 }
 
 type ColorVariant = "green" | "red" | "blue" | "yellow" | "gray" | "gold" | "orange" | "emerald" | "indigo"

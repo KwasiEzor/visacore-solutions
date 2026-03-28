@@ -127,3 +127,46 @@ export function filterContactRows(
     return matchesStatus && matchesReadState && matchesQuery
   })
 }
+
+export interface PrivacyRequestTableRow {
+  id: string
+  fullName: string
+  email: string
+  phone: string | null
+  requestType: string
+  status: string
+  resolutionNotes: string | null
+  createdAtLabel: string
+}
+
+export function filterPrivacyRequestRows(
+  rows: PrivacyRequestTableRow[],
+  filters: {
+    query: string
+    requestType: string
+    status: string
+  }
+) {
+  const query = filters.query.trim().toLowerCase()
+
+  return rows.filter((row) => {
+    const matchesType =
+      filters.requestType === "ALL" ||
+      row.requestType === filters.requestType
+
+    const matchesStatus =
+      filters.status === "ALL" || row.status === filters.status
+
+    const matchesQuery =
+      query.length === 0 ||
+      [
+        row.fullName,
+        row.email,
+        row.phone ?? "",
+        row.requestType,
+        row.resolutionNotes ?? "",
+      ].some((value) => value.toLowerCase().includes(query))
+
+    return matchesType && matchesStatus && matchesQuery
+  })
+}

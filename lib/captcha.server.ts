@@ -22,7 +22,7 @@ interface VerifyCaptchaTokenOptions {
 }
 
 interface CaptchaFailureAuditOptions {
-  channel: "lead" | "contact" | "appointment"
+  channel: "lead" | "contact" | "appointment" | "privacy_request"
   errorCodes: string[]
 }
 

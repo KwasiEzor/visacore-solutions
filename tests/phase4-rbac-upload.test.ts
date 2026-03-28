@@ -15,6 +15,11 @@ test("rbac helper keeps users/settings restricted while leaving normal admin pat
   assert.equal(canAccessAdminPath("/admin", "EDITOR"), true)
   assert.equal(canAccessAdminPath("/admin/users", "EDITOR"), false)
   assert.equal(canAccessAdminPath("/admin/settings", "ADMIN"), false)
+  assert.equal(canAccessAdminPath("/admin/privacy-requests", "ADMIN"), false)
+  assert.equal(
+    canAccessAdminPath("/admin/privacy-requests", "SUPER_ADMIN"),
+    true
+  )
   assert.equal(canAccessAdminPath("/admin/users", "SUPER_ADMIN"), true)
   assert.equal(canRenderAdminNavItem("EDITOR", "manage_users"), false)
   assert.equal(canRenderAdminNavItem("SUPER_ADMIN", "manage_settings"), true)

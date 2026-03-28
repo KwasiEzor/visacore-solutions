@@ -638,3 +638,79 @@ export function buildPasswordResetEmail({
     subject: "Reinitialisation de votre acces VisaCore Solutions",
   } satisfies EmailTemplate
 }
+
+export function buildPrivacyRequestAcknowledgementEmail({
+  fullName,
+  requestTypeLabel,
+  siteConfig,
+}: {
+  fullName: string
+  requestTypeLabel: string
+  siteConfig: PublicSiteConfig
+}) {
+  return {
+    ...renderShell({
+      previewText: "Votre demande RGPD a bien ete recue.",
+      eyebrow: "Protection des donnees",
+      title: "Votre demande RGPD est enregistree",
+      intro: `Bonjour ${fullName}, nous accusons reception de votre demande relative a vos donnees personnelles. Notre equipe l'examinera conformement au RGPD.`,
+      summary: [{ label: "Type de demande", value: requestTypeLabel }],
+      bulletPoints: [
+        "Nous pouvons vous demander un element complementaire pour verifier votre identite avant execution.",
+        "Une reponse vous sera apportee sans retard injustifie et au plus tard dans un delai d'un mois.",
+        "Si la demande est complexe ou multiple, ce delai peut etre prolonge jusqu'a deux mois supplementaires avec information motivee.",
+      ],
+      action: {
+        label: "Contacter notre equipe",
+        href: `mailto:${siteConfig.contactEmail}`,
+      },
+      trustNote:
+        "Conservez cet email comme preuve de reception de votre demande.",
+      siteConfig,
+    }),
+    subject: "Accuse de reception de votre demande RGPD - VisaCore Solutions",
+  } satisfies EmailTemplate
+}
+
+export function buildPrivacyRequestAdminAlertEmail({
+  fullName,
+  email,
+  phone,
+  requestTypeLabel,
+  adminUrl,
+  siteConfig,
+}: {
+  fullName: string
+  email: string
+  phone?: string | null
+  requestTypeLabel: string
+  adminUrl: string
+  siteConfig: PublicSiteConfig
+}) {
+  return {
+    ...renderShell({
+      previewText: "Une nouvelle demande RGPD attend un traitement.",
+      eyebrow: "Alerte conformite",
+      title: "Nouvelle demande RGPD",
+      intro: `Une nouvelle demande relative aux donnees personnelles a ete soumise sur ${siteConfig.siteName}.`,
+      summary: [
+        { label: "Nom", value: fullName },
+        { label: "Email", value: email },
+        { label: "Telephone", value: phone || "Non renseigne" },
+        { label: "Type", value: requestTypeLabel },
+      ],
+      bulletPoints: [
+        "Verifier l'identite du demandeur avant toute exportation ou effacement si necessaire.",
+        "Consigner les actions de traitement et respecter le delai RGPD d'un mois.",
+      ],
+      action: {
+        label: "Ouvrir la demande",
+        href: adminUrl,
+      },
+      secondaryNote:
+        "Ce message a ete genere automatiquement a la creation de la demande RGPD.",
+      siteConfig,
+    }),
+    subject: `Nouvelle demande RGPD - ${fullName}`,
+  } satisfies EmailTemplate
+}

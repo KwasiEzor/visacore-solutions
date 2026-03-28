@@ -17,6 +17,7 @@ import {
   Image as ImageIcon,
   UserCog,
   Settings,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -52,6 +53,12 @@ const navItems: AdminNavItem[] = [
   { label: "Success Stories", href: "/admin/stories", icon: Trophy },
   { label: "Contenu", href: "/admin/content", icon: FileText },
   { label: "Medias", href: "/admin/media", icon: ImageIcon },
+  {
+    label: "Demandes RGPD",
+    href: "/admin/privacy-requests",
+    icon: ShieldCheck,
+    requiredAction: "manage_settings",
+  },
   {
     label: "Utilisateurs",
     href: "/admin/users",
