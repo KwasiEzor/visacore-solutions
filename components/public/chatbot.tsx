@@ -11,6 +11,8 @@ const WELCOME_MESSAGE =
   "Bonjour ! Je suis l'assistant virtuel de VisaCore Solutions. Comment puis-je vous aider dans votre projet d'immigration ?"
 
 const publicTransport = new DefaultChatTransport({ api: "/api/chat" })
+const launcherPositionClass = "bottom-24 right-4 sm:right-6"
+const panelPositionClass = "bottom-40 right-4 sm:bottom-24 sm:right-6"
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -55,7 +57,12 @@ export function Chatbot() {
     <>
       {/* Chat panel */}
       {isOpen && (
-        <div className="fixed bottom-20 right-4 z-50 flex h-[500px] w-[370px] flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-2xl sm:right-6">
+        <div
+          className={cn(
+            "fixed z-50 flex h-[min(500px,calc(100vh-11rem))] w-[min(calc(100vw-2rem),370px)] flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-2xl",
+            panelPositionClass
+          )}
+        >
           {/* Header */}
           <div className="flex items-center justify-between bg-[#0A2540] px-4 py-3">
             <div className="flex items-center gap-2">
@@ -144,25 +151,19 @@ export function Chatbot() {
       )}
 
       {/* Floating button */}
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full px-5 py-3 shadow-lg transition-all hover:scale-105 sm:right-6",
-          isOpen
-            ? "bg-gray-700 text-white"
-            : "bg-[#0A2540] text-white"
-        )}
-      >
-        {isOpen ? (
-          <X className="size-5" />
-        ) : (
-          <>
-            <MessageCircle className="size-5" />
-            <span className="text-sm font-medium">Chat</span>
-          </>
-        )}
-      </button>
+      {!isOpen && (
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className={cn(
+            "fixed z-50 flex items-center gap-2 rounded-full bg-[#0A2540] px-5 py-3 text-white shadow-lg transition-all hover:scale-105",
+            launcherPositionClass
+          )}
+        >
+          <MessageCircle className="size-5" />
+          <span className="text-sm font-medium">Chat</span>
+        </button>
+      )}
     </>
   )
 }
