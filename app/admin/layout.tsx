@@ -4,6 +4,7 @@ import {
   getNotificationFeedForUser,
   getUnreadNotificationCountForUser,
 } from "@/lib/admin-notifications"
+import { getAdminAiSiteConfig } from "@/lib/site-config"
 import { AdminSidebar } from "@/components/admin/sidebar"
 import { AdminTopbar } from "@/components/admin/topbar"
 
@@ -26,9 +27,10 @@ export default async function AdminLayout({
     image: session.user.image ?? null,
   }
 
-  const [notifications, unreadCount] = await Promise.all([
+  const [notifications, unreadCount, adminAiConfig] = await Promise.all([
     getNotificationFeedForUser(session.user.id),
     getUnreadNotificationCountForUser(session.user.id),
+    getAdminAiSiteConfig(),
   ])
 
   return (
@@ -44,6 +46,9 @@ export default async function AdminLayout({
           user={user}
           notifications={notifications}
           unreadCount={unreadCount}
+          adminAiEnabled={adminAiConfig.enabled}
+          adminAiWelcomeMessage={adminAiConfig.welcomeMessage}
+          adminAiQuickActions={adminAiConfig.quickActions}
         />
 
         <main className="flex-1 overflow-y-auto px-4 pb-6 pt-4 sm:px-5 lg:px-6 lg:pb-8 lg:pt-6">

@@ -7,9 +7,6 @@ import { MessageCircle, X, Send, RotateCcw } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ChatbotMessage } from "@/components/public/chatbot-message"
 
-const WELCOME_MESSAGE =
-  "Bonjour ! Je suis l'assistant virtuel de VisaCore Solutions. Comment puis-je vous aider dans votre projet d'immigration ?"
-
 const chatSessionStorageKey = "visacore-public-chat-session-id"
 const mobilePanelEdgeClass =
   "left-[max(0.75rem,env(safe-area-inset-left))] right-[max(0.75rem,env(safe-area-inset-right))] sm:left-auto sm:right-[max(1.5rem,env(safe-area-inset-right))]"
@@ -18,7 +15,19 @@ const launcherPositionClass =
 const panelPositionClass =
   "bottom-[calc(env(safe-area-inset-bottom)+5rem)] sm:bottom-[calc(env(safe-area-inset-bottom)+7rem)]"
 
-export function Chatbot() {
+interface ChatbotProps {
+  title: string
+  launcherLabel: string
+  welcomeMessage: string
+  inputPlaceholder: string
+}
+
+export function Chatbot({
+  title,
+  launcherLabel,
+  welcomeMessage,
+  inputPlaceholder,
+}: ChatbotProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [input, setInput] = useState("")
   const [sessionId, setSessionId] = useState<string>(() => {
@@ -37,9 +46,9 @@ export function Chatbot() {
     {
       id: "welcome",
       role: "assistant",
-      parts: [{ type: "text", text: WELCOME_MESSAGE }],
+      parts: [{ type: "text", text: welcomeMessage }],
     },
-  ], [])
+  ], [welcomeMessage])
 
   const transport = useMemo(
     () =>
@@ -101,7 +110,7 @@ export function Chatbot() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-white">
-                  VisaCore Assistant
+                  {title}
                 </p>
                 <p className="text-[11px] text-white/60">
                   En ligne
@@ -160,7 +169,7 @@ export function Chatbot() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Posez votre question..."
+              placeholder={inputPlaceholder}
               className="flex-1 rounded-xl border border-border bg-gray-50 px-4 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-[#0A2540] focus:ring-1 focus:ring-[#0A2540]"
               disabled={isLoading}
             />
@@ -193,7 +202,9 @@ export function Chatbot() {
           aria-label="Ouvrir le chat VisaCore"
         >
           <MessageCircle className="size-5" />
-          <span className="hidden text-sm font-medium sm:inline">Chat</span>
+          <span className="hidden text-sm font-medium sm:inline">
+            {launcherLabel}
+          </span>
         </button>
       )}
     </>

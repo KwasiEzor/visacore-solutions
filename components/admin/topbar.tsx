@@ -33,6 +33,9 @@ interface AdminTopbarProps {
   user: TopbarUser
   notifications: NotificationFeedItem[]
   unreadCount: number
+  adminAiEnabled: boolean
+  adminAiWelcomeMessage: string
+  adminAiQuickActions: string[]
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -91,6 +94,9 @@ export function AdminTopbar({
   user,
   notifications,
   unreadCount,
+  adminAiEnabled,
+  adminAiWelcomeMessage,
+  adminAiQuickActions,
 }: AdminTopbarProps) {
   const pathname = usePathname()
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -156,8 +162,12 @@ export function AdminTopbar({
           </h1>
         </div>
 
-        {/* AI Copilot trigger */}
-        <AICopilotTrigger />
+        {adminAiEnabled ? (
+          <AICopilotTrigger
+            welcomeMessage={adminAiWelcomeMessage}
+            quickActions={adminAiQuickActions}
+          />
+        ) : null}
 
         <NotificationCenter
           notifications={notifications}

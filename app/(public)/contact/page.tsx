@@ -65,7 +65,12 @@ export default async function ContactPage() {
   const siteConfig = await getPublicSiteConfig()
   const captchaConfig = getCaptchaServerConfig()
   const businessHours = getBusinessHoursRows(siteConfig.businessHours)
-  const whatsappHref = getWhatsAppHref(siteConfig.whatsappNumber)
+  const whatsappHref = siteConfig.whatsappEnabled
+    ? getWhatsAppHref(
+        siteConfig.whatsappNumber,
+        siteConfig.whatsappPrefillMessage
+      )
+    : undefined
   const contactChannels: ContactChannel[] = [
     {
       icon: Phone,
@@ -84,14 +89,6 @@ export default async function ContactPage() {
       color: "bg-emerald-50 text-emerald-600",
     },
     {
-      icon: MessageCircle,
-      label: "WhatsApp",
-      value: formatDisplayPhoneNumber(siteConfig.whatsappNumber),
-      href: getWhatsAppHref(siteConfig.whatsappNumber),
-      description: "Réponse instantanée",
-      color: "bg-green-50 text-green-600",
-    },
-    {
       icon: MapPin,
       label: "Visitez-nous",
       value: siteConfig.officeAddress,
@@ -99,6 +96,17 @@ export default async function ContactPage() {
       color: "bg-amber-50 text-amber-600",
     },
   ]
+
+  if (siteConfig.whatsappEnabled) {
+    contactChannels.splice(2, 0, {
+      icon: MessageCircle,
+      label: siteConfig.whatsappLabel,
+      value: formatDisplayPhoneNumber(siteConfig.whatsappNumber),
+      href: whatsappHref,
+      description: "Réponse instantanée",
+      color: "bg-green-50 text-green-600",
+    })
+  }
 
   return (
     <div className="pt-20">

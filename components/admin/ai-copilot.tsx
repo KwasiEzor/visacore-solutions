@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport, type UIMessage } from "ai"
 import { Bot, X, Send, RotateCcw, Sparkles } from "lucide-react"
@@ -10,9 +10,15 @@ import { getMessageText } from "@/lib/chat-helpers"
 
 const adminTransport = new DefaultChatTransport({ api: "/api/admin/ai" })
 
-const WELCOME = "Bonjour ! Je suis votre copilote IA. Je peux vous aider à analyser des leads, rédiger des réponses, ou répondre à vos questions sur les procédures d'immigration. Comment puis-je vous assister ?"
+interface AICopilotTriggerProps {
+  welcomeMessage: string
+  quickActions: string[]
+}
 
-export function AICopilotTrigger() {
+export function AICopilotTrigger({
+  welcomeMessage,
+  quickActions,
+}: AICopilotTriggerProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -27,22 +33,39 @@ export function AICopilotTrigger() {
         <Sparkles className="size-5" />
       </Button>
 
-      {isOpen && <AICopilotPanel onClose={() => setIsOpen(false)} />}
+      {isOpen && (
+        <AICopilotPanel
+          onClose={() => setIsOpen(false)}
+          welcomeMessage={welcomeMessage}
+          quickActions={quickActions}
+        />
+      )}
     </>
   )
 }
 
-function AICopilotPanel({ onClose }: { onClose: () => void }) {
+function AICopilotPanel({
+  onClose,
+  welcomeMessage,
+  quickActions,
+}: {
+  onClose: () => void
+  welcomeMessage: string
+  quickActions: string[]
+}) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [input, setInput] = useState("")
 
-  const initialMessages: UIMessage[] = [
-    {
-      id: "welcome",
-      role: "assistant",
-      parts: [{ type: "text", text: WELCOME }],
-    },
-  ]
+  const initialMessages: UIMessage[] = useMemo(
+    () => [
+      {
+        id: "welcome",
+        role: "assistant",
+        parts: [{ type: "text", text: welcomeMessage }],
+      },
+    ],
+    [welcomeMessage]
+  )
 
   const { messages, sendMessage, status, setMessages } = useChat({
     transport: adminTransport,
@@ -173,18 +196,13 @@ function AICopilotPanel({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Quick actions */}
-        {messages.length <= 1 && (
+        {messages.length <= 1 && quickActions.length > 0 && (
           <div className="border-t border-border px-4 py-3">
             <p className="mb-2 text-xs font-medium text-muted-foreground">
               Actions rapides
             </p>
             <div className="flex flex-wrap gap-1.5">
-              {[
-                "Analyser un lead",
-                "Rédiger un email",
-                "Procédure visa Canada",
-                "Checklist documents",
-              ].map((action) => (
+              {quickActions.map((action) => (
                 <button
                   key={action}
                   type="button"

@@ -11,26 +11,51 @@ import { prisma } from "@/lib/prisma"
 import { checkRateLimit, PUBLIC_CHAT_LIMIT } from "@/lib/rate-limit"
 import { getMessageText } from "@/lib/chat-helpers"
 import { ChatChannel } from "@/lib/generated/prisma/client"
+import {
+  formatDisplayPhoneNumber,
+  getPublicChatbotSiteConfig,
+  getPublicSiteConfig,
+} from "@/lib/site-config"
 
-const SYSTEM_PROMPT = `Tu es l'assistant virtuel de VisaCore Solutions, un cabinet de conseil en immigration basé à Lomé, au Togo. Tu réponds exclusivement en français.
+function buildPublicSystemPrompt({
+  siteName,
+  contactPhone,
+  whatsappPhone,
+  contactEmail,
+  officeAddress,
+  promptAddendum,
+}: {
+  siteName: string
+  contactPhone: string
+  whatsappPhone: string
+  contactEmail: string
+  officeAddress: string
+  promptAddendum: string
+}) {
+  return `Tu es l'assistant virtuel de ${siteName}, un cabinet de conseil en immigration base a Lome, au Togo. Tu reponds exclusivement en francais.
 
-Ton rôle :
-- Répondre aux questions sur les services d'immigration (visa, permis de travail, regroupement familial, études à l'étranger)
+Ton role :
+- Repondre aux questions sur les services d'immigration (visa, permis de travail, regroupement familial, etudes a l'etranger)
 - Orienter les visiteurs vers les bons services
-- Fournir des informations générales sur les destinations (Canada, USA, Europe)
-- Encourager les visiteurs à prendre rendez-vous ou soumettre une demande d'évaluation
+- Fournir des informations generales sur les destinations (Canada, USA, Europe)
+- Encourager les visiteurs a prendre rendez-vous ou soumettre une demande d'evaluation
 
-Règles :
+Regles :
 - Sois professionnel, chaleureux et rassurant
-- Ne donne JAMAIS de conseils juridiques spécifiques — recommande toujours une consultation
-- Si tu ne connais pas la réponse, dis-le honnêtement et suggère de contacter l'équipe
-- Mentionne que VisaCore Solutions accompagne ses clients à chaque étape
-- Utilise les FAQ ci-dessous pour répondre aux questions fréquentes
+- Ne donne JAMAIS de conseils juridiques specifiques ; recommande toujours une consultation
+- Si tu ne connais pas la reponse, dis-le honnetement et suggere de contacter l'equipe
+- Mentionne que ${siteName} accompagne ses clients a chaque etape
+- Utilise les FAQ ci-dessous pour repondre aux questions frequentes
 
-Contact VisaCore Solutions :
-- WhatsApp / Téléphone : +228 90 00 00 00
-- Email : contact@visacore-solutions.com
-- Adresse : Lomé, Togo`
+Contact ${siteName} :
+- WhatsApp / Telephone : ${whatsappPhone || contactPhone}
+- Email : ${contactEmail}
+- Adresse : ${officeAddress}${
+    promptAddendum.trim()
+      ? `\n\nConsignes metier additionnelles :\n${promptAddendum.trim()}`
+      : ""
+  }`
+}
 
 async function loadFAQContext(): Promise<string> {
   try {
@@ -73,12 +98,29 @@ async function loadDestinations(): Promise<string> {
 }
 
 export async function POST(request: Request) {
+  const [chatbotConfig, siteConfig] = await Promise.all([
+    getPublicChatbotSiteConfig(),
+    getPublicSiteConfig(),
+  ])
+
+  if (!chatbotConfig.enabled) {
+    return new Response(
+      JSON.stringify({
+        error: "Le chatbot public est actuellement indisponible.",
+      }),
+      { status: 403, headers: { "Content-Type": "application/json" } }
+    )
+  }
+
   const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
     request.headers.get("x-real-ip") ??
     "anonymous"
 
-  const { allowed } = await checkRateLimit(`public:${ip}`, PUBLIC_CHAT_LIMIT)
+  const { allowed } = await checkRateLimit(`public:${ip}`, {
+    maxRequests:
+      chatbotConfig.rateLimitPerHour || PUBLIC_CHAT_LIMIT.maxRequests,
+  })
 
   if (!allowed) {
     return new Response(
@@ -171,7 +213,19 @@ export async function POST(request: Request) {
     loadDestinations(),
   ])
 
-  const systemPrompt = SYSTEM_PROMPT + faqContext + destinationContext
+  const systemPrompt =
+    buildPublicSystemPrompt({
+      siteName: siteConfig.siteName,
+      contactPhone: formatDisplayPhoneNumber(siteConfig.contactPhone),
+      whatsappPhone: siteConfig.whatsappEnabled
+        ? formatDisplayPhoneNumber(siteConfig.whatsappNumber)
+        : formatDisplayPhoneNumber(siteConfig.contactPhone),
+      contactEmail: siteConfig.contactEmail,
+      officeAddress: siteConfig.officeAddress,
+      promptAddendum: chatbotConfig.promptAddendum,
+    }) +
+    faqContext +
+    destinationContext
   const modelMessages = await convertToModelMessages(messages ?? [])
 
   const result = streamText({
@@ -189,7 +243,7 @@ export async function POST(request: Request) {
         }),
         execute: async ({ reason }) => {
           return {
-            message: `Pour prendre rendez-vous concernant "${reason}", veuillez utiliser notre formulaire de rendez-vous ou appeler le +228 90 00 00 00.`,
+            message: `Pour prendre rendez-vous concernant "${reason}", veuillez utiliser notre formulaire de rendez-vous ou appeler le ${formatDisplayPhoneNumber(siteConfig.contactPhone)}.`,
             link: "/rendez-vous",
           }
         },

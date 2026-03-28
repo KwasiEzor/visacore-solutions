@@ -7,6 +7,7 @@ import { PrismaPg } from "@prisma/adapter-pg"
 import pg from "pg"
 import bcrypt from "bcryptjs"
 import {
+  chatbotSiteSettingCatalog,
   notificationSiteSettingCatalog,
   publicSiteSettingCatalog,
 } from "../lib/site-config.shared"
@@ -768,6 +769,7 @@ async function main() {
   // ─── Site Settings ───────────────────────────────────────
   const settings = [
     ...publicSiteSettingCatalog,
+    ...chatbotSiteSettingCatalog,
     ...notificationSiteSettingCatalog,
   ].map((setting) => ({
     key: setting.key,

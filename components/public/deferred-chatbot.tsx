@@ -8,7 +8,19 @@ const Chatbot = dynamic(
   { ssr: false }
 );
 
-export function DeferredChatbot() {
+interface DeferredChatbotProps {
+  title: string;
+  launcherLabel: string;
+  welcomeMessage: string;
+  inputPlaceholder: string;
+}
+
+export function DeferredChatbot({
+  title,
+  launcherLabel,
+  welcomeMessage,
+  inputPlaceholder,
+}: DeferredChatbotProps) {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
@@ -24,5 +36,12 @@ export function DeferredChatbot() {
     return () => win.clearTimeout(timeoutId);
   }, []);
 
-  return enabled ? <Chatbot /> : null;
+  return enabled ? (
+    <Chatbot
+      title={title}
+      launcherLabel={launcherLabel}
+      welcomeMessage={welcomeMessage}
+      inputPlaceholder={inputPlaceholder}
+    />
+  ) : null;
 }

@@ -9,7 +9,11 @@ import {
   fallbackServices,
   getDestinationVisual,
 } from "@/lib/public-content";
-import { getPublicSiteConfig, getWhatsAppHref } from "@/lib/site-config";
+import {
+  getPublicChatbotSiteConfig,
+  getPublicSiteConfig,
+  getWhatsAppHref,
+} from "@/lib/site-config";
 
 export default async function PublicLayout({
   children,
@@ -17,6 +21,7 @@ export default async function PublicLayout({
   children: React.ReactNode;
 }>) {
   const siteConfigPromise = getPublicSiteConfig()
+  const chatbotConfigPromise = getPublicChatbotSiteConfig()
   const servicesPromise = prisma.service
     .findMany({
       where: { published: true },
@@ -40,8 +45,9 @@ export default async function PublicLayout({
     })
     .catch(() => [])
 
-  const [siteConfig, services, destinations] = await Promise.all([
+  const [siteConfig, chatbotConfig, services, destinations] = await Promise.all([
     siteConfigPromise,
+    chatbotConfigPromise,
     servicesPromise,
     destinationsPromise,
   ])
@@ -77,8 +83,25 @@ export default async function PublicLayout({
       />
       <main className="flex-1 overflow-x-clip">{children}</main>
       <Footer siteConfig={siteConfig} services={navigationServices.slice(0, 5)} />
-      <WhatsAppButton href={getWhatsAppHref(siteConfig.whatsappNumber)} />
-      <DeferredChatbot />
+      <WhatsAppButton
+        href={
+          siteConfig.whatsappEnabled
+            ? getWhatsAppHref(
+                siteConfig.whatsappNumber,
+                siteConfig.whatsappPrefillMessage
+              )
+            : undefined
+        }
+        label={siteConfig.whatsappLabel}
+      />
+      {chatbotConfig.enabled ? (
+        <DeferredChatbot
+          title={chatbotConfig.title}
+          launcherLabel={chatbotConfig.launcherLabel}
+          welcomeMessage={chatbotConfig.welcomeMessage}
+          inputPlaceholder={chatbotConfig.inputPlaceholder}
+        />
+      ) : null}
     </>
   );
 }

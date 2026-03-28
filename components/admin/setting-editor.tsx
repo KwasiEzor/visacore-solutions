@@ -14,9 +14,21 @@ interface SettingEditorProps {
   settingKey: string
   value: string
   type: "TEXT" | "IMAGE" | "JSON" | "BOOLEAN"
+  placeholder?: string
+  inputType?: "text" | "email" | "tel" | "url" | "number"
+  control?: "input" | "textarea"
+  rows?: number
 }
 
-export function SettingEditor({ settingKey, value: initialValue, type }: SettingEditorProps) {
+export function SettingEditor({
+  settingKey,
+  value: initialValue,
+  type,
+  placeholder,
+  inputType = "text",
+  control = "input",
+  rows = 4,
+}: SettingEditorProps) {
   const [value, setValue] = useState(initialValue)
   const [savedValue, setSavedValue] = useState(initialValue)
   const [isPending, startTransition] = useTransition()
@@ -121,11 +133,23 @@ export function SettingEditor({ settingKey, value: initialValue, type }: Setting
   // TEXT (default)
   return (
     <div className="space-y-3">
-      <Input
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        disabled={isPending}
-      />
+      {control === "textarea" ? (
+        <Textarea
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          disabled={isPending}
+          placeholder={placeholder}
+          rows={rows}
+        />
+      ) : (
+        <Input
+          type={inputType}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          disabled={isPending}
+          placeholder={placeholder}
+        />
+      )}
       <SaveBar
         isDirty={isDirty}
         isPending={isPending}
