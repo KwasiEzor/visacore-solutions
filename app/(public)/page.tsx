@@ -131,14 +131,14 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative overflow-x-clip">
       {/* Background Noise Overlay */}
       <div className="bg-noise fixed inset-0 z-[-1]" />
 
       {/* ═══════════════════════════════════════════
           HERO SECTION (Full-bleed Cinematic)
           ═══════════════════════════════════════════ */}
-      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+      <section className="relative flex min-h-[92svh] items-center overflow-hidden pb-14 pt-24 sm:min-h-screen sm:pb-16 sm:pt-28">
         {/* Full-bleed Background Image */}
         <div className="absolute inset-0 z-0">
           <div
@@ -160,36 +160,36 @@ export default async function HomePage() {
         <div className="container-custom relative z-10">
           <div className="max-w-4xl">
             <ScrollReveal>
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-visacore-gold text-sm font-bold uppercase tracking-widest mb-8">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.24em] text-visacore-gold backdrop-blur-sm sm:mb-8 sm:px-5 sm:py-2.5 sm:text-sm sm:tracking-widest">
                 <Globe className="size-4" />
                 <span>{pageContent.hero.content.eyebrow}</span>
               </div>
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] mb-8 max-w-5xl">
+              <h1 className="mb-6 max-w-5xl text-[2.9rem] font-black leading-[0.94] text-white sm:mb-8 sm:text-5xl md:text-7xl lg:text-8xl">
                 {pageContent.hero.title}
               </h1>
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
-              <p className="text-xl md:text-2xl text-white/70 max-w-2xl leading-relaxed mb-12">
+              <p className="mb-10 max-w-xl text-base leading-relaxed text-white/72 sm:mb-12 sm:max-w-2xl sm:text-xl md:text-2xl">
                 {pageContent.hero.subtitle}
               </p>
             </ScrollReveal>
 
             <ScrollReveal delay={0.3}>
-              <div className="flex flex-col sm:flex-row gap-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
                 <Link
                   href="/evaluation"
-                  className="inline-flex h-16 items-center gap-3 rounded-full bg-visacore-gold px-10 text-lg font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105 hover:bg-visacore-gold-dark"
+                  className="inline-flex h-14 items-center justify-center gap-3 rounded-full bg-visacore-gold px-7 text-base font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105 hover:bg-visacore-gold-dark sm:h-16 sm:px-10 sm:text-lg"
                 >
                   {pageContent.hero.content.primaryCta}
                   <ArrowRight className="size-6" />
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex h-16 items-center rounded-full border border-white/30 bg-white/10 px-10 text-lg font-bold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+                  className="inline-flex h-14 items-center justify-center rounded-full border border-white/30 bg-white/10 px-7 text-base font-bold text-white backdrop-blur-sm transition-all hover:bg-white/20 sm:h-16 sm:px-10 sm:text-lg"
                 >
                   {pageContent.hero.content.secondaryCta}
                 </Link>
@@ -198,22 +198,22 @@ export default async function HomePage() {
 
             {/* Trust badges inline */}
             <ScrollReveal delay={0.4}>
-              <div className="mt-16 space-y-4">
+              <div className="mt-12 space-y-4 sm:mt-16">
                 <div>
-                  <p className="text-sm font-black text-white/40 uppercase tracking-[0.3em]">
+                  <p className="text-[11px] font-black uppercase tracking-[0.26em] text-white/40 sm:text-sm sm:tracking-[0.3em]">
                     {pageContent.trust.title}
                   </p>
                   {pageContent.trust.subtitle && (
-                    <p className="mt-2 text-sm text-white/50">
+                    <p className="mt-2 max-w-xl text-sm text-white/50">
                       {pageContent.trust.subtitle}
                     </p>
                   )}
                 </div>
-                <div className="flex flex-wrap items-center gap-8">
+                <div className="grid grid-cols-2 gap-x-5 gap-y-4 sm:flex sm:flex-wrap sm:items-center sm:gap-8">
                   {pageContent.trust.content.stats.map((stat) => (
-                    <div key={`${stat.value}-${stat.label}`} className="flex items-center gap-3">
-                      <span className="text-3xl font-black text-visacore-gold">{stat.value}</span>
-                      <span className="text-sm font-bold text-white/50 uppercase tracking-widest">{stat.label}</span>
+                    <div key={`${stat.value}-${stat.label}`} className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-3">
+                      <span className="text-2xl font-black text-visacore-gold sm:text-3xl">{stat.value}</span>
+                      <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/55 sm:text-sm sm:tracking-widest">{stat.label}</span>
                     </div>
                   ))}
                 </div>
@@ -234,25 +234,25 @@ export default async function HomePage() {
       {/* ═══════════════════════════════════════════
           TRUST STRIP
           ═══════════════════════════════════════════ */}
-      <section className="border-b border-border bg-[linear-gradient(180deg,#ffffff_0%,#f7f8fb_100%)] py-12 md:py-16">
+      <section className="border-b border-border bg-[linear-gradient(180deg,#ffffff_0%,#f7f8fb_100%)] py-10 md:py-16">
         <div className="container-custom">
-          <div className="overflow-hidden rounded-[36px] border border-visacore-navy/8 bg-white shadow-[0_25px_80px_-50px_rgba(10,37,64,0.28)]">
+          <div className="overflow-hidden rounded-[28px] border border-visacore-navy/8 bg-white shadow-[0_25px_80px_-50px_rgba(10,37,64,0.28)] sm:rounded-[36px]">
             <div className="grid grid-cols-1 gap-0 lg:grid-cols-[0.95fr_1.45fr]">
-              <div className="relative border-b border-border/70 p-8 sm:p-10 lg:border-b-0 lg:border-r">
+              <div className="relative border-b border-border/70 p-6 sm:p-10 lg:border-b-0 lg:border-r">
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-visacore-gold/45 to-transparent" />
                 <ScrollReveal>
                   <p className="text-xs font-black uppercase tracking-[0.32em] text-visacore-gold">
                     Notre méthode
                   </p>
-                  <h2 className="mt-4 max-w-sm text-3xl font-black leading-[0.95] text-visacore-navy sm:text-4xl">
+                  <h2 className="mt-4 max-w-sm text-[2rem] font-black leading-[0.95] text-visacore-navy sm:text-4xl">
                     Un pilotage <span className="serif italic text-visacore-gold">premium</span>, de l&apos;analyse au dépôt.
                   </h2>
-                  <p className="mt-5 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground sm:mt-5 sm:text-base">
                     Nous ne vendons pas une simple checklist. Nous cadrons votre projet,
                     hiérarchisons les preuves et sécurisons chaque étape pour que le dossier
                     tienne autant sur le fond que sur la forme.
                   </p>
-                  <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-visacore-navy/10 bg-visacore-navy/4 px-4 py-3">
+                  <div className="mt-7 inline-flex items-center gap-3 rounded-full border border-visacore-navy/10 bg-visacore-navy/4 px-4 py-3">
                     <div className="flex size-10 items-center justify-center rounded-full bg-visacore-navy text-visacore-gold">
                       <Users className="size-5" />
                     </div>
@@ -272,7 +272,7 @@ export default async function HomePage() {
                 {trustCapabilities.map((item, index) => (
                   <ScrollReveal key={item.title} delay={index * 0.06}>
                     <div
-                      className={`group relative flex h-full min-h-[12rem] flex-col justify-between border-border/70 p-7 transition-colors duration-300 hover:bg-visacore-navy hover:text-white sm:p-8 ${
+                      className={`group relative flex h-full min-h-[10.5rem] flex-col justify-between border-border/70 p-6 transition-colors duration-300 hover:bg-visacore-navy hover:text-white sm:min-h-[12rem] sm:p-8 ${
                         index % 2 === 0 ? "sm:border-r" : ""
                       } ${
                         index < trustCapabilities.length - 2 ? "border-b" : ""
@@ -290,11 +290,11 @@ export default async function HomePage() {
                         </span>
                       </div>
 
-                      <div className="mt-8">
-                        <h3 className="text-xl font-black tracking-tight text-visacore-navy transition-colors duration-300 group-hover:text-white">
+                      <div className="mt-6 sm:mt-8">
+                        <h3 className="text-lg font-black tracking-tight text-visacore-navy transition-colors duration-300 group-hover:text-white sm:text-xl">
                           {item.title}
                         </h3>
-                        <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground transition-colors duration-300 group-hover:text-white/70">
+                        <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground transition-colors duration-300 group-hover:text-white/70 sm:mt-3">
                           {item.detail}
                         </p>
                       </div>
@@ -312,13 +312,13 @@ export default async function HomePage() {
           ═══════════════════════════════════════════ */}
       <section className="section-padding bg-background">
         <div className="container-custom">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div className="mb-12 flex flex-col gap-5 md:mb-16 md:flex-row md:items-end md:justify-between md:gap-6">
             <div className="max-w-2xl">
               <ScrollReveal>
-                <h2 className="text-4xl md:text-6xl font-black text-visacore-navy mb-6">
+                <h2 className="mb-4 text-3xl font-black text-visacore-navy sm:text-4xl md:mb-6 md:text-6xl">
                   Nos <span className="text-visacore-gold italic serif">Destinations</span> PHARES
                 </h2>
-                <p className="text-xl text-muted-foreground leading-relaxed">
+                <p className="text-base leading-relaxed text-muted-foreground sm:text-xl">
                   Nous maîtrisons les rouages complexes des systèmes d&apos;immigration les plus prisés au monde.
                 </p>
               </ScrollReveal>
@@ -330,19 +330,19 @@ export default async function HomePage() {
             </ScrollReveal>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
             {destinations.map((dest, i) => (
               <ScrollReveal key={dest.slug} delay={i * 0.1}>
-                <Link href={`/destinations/${dest.slug}`} className="group block relative overflow-hidden rounded-3xl h-[500px]">
+                <Link href={`/destinations/${dest.slug}`} className="group relative block h-[380px] overflow-hidden rounded-[28px] sm:h-[440px] md:h-[500px] md:rounded-3xl">
                   <div 
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                     style={{ backgroundImage: `url(${dest.image})` }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-visacore-navy via-visacore-navy/20 to-transparent" />
-                  <div className="absolute bottom-0 left-0 p-8 w-full">
+                  <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8">
                     <span className="text-4xl mb-4 block">{dest.flag}</span>
-                    <h3 className="text-3xl font-black text-white mb-2">{dest.name}</h3>
-                    <p className="text-white/70 line-clamp-2 mb-6 group-hover:text-visacore-gold transition-colors">{dest.heroTitle}</p>
+                    <h3 className="mb-2 text-[1.8rem] font-black text-white sm:text-3xl">{dest.name}</h3>
+                    <p className="mb-5 line-clamp-2 text-sm text-white/70 transition-colors group-hover:text-visacore-gold sm:mb-6 sm:text-base">{dest.heroTitle}</p>
                     <div className="h-12 w-12 rounded-full bg-visacore-gold text-white flex items-center justify-center -translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
                       <ArrowRight className="size-6" />
                     </div>
@@ -361,10 +361,10 @@ export default async function HomePage() {
         <div className="absolute top-0 right-0 w-1/3 h-full bg-visacore-gold/5 blur-[120px]" />
         
         <div className="container-custom relative z-10">
-          <div className="text-center max-w-3xl mx-auto mb-20">
+          <div className="mx-auto mb-12 max-w-3xl text-center sm:mb-20">
             <ScrollReveal>
-              <h2 className="text-4xl md:text-6xl font-black mb-6">Un Accompagnement <br /><span className="text-visacore-gold serif italic">Intégral</span></h2>
-              <p className="text-lg text-white/50">De l&apos;évaluation de votre éligibilité jusqu&apos;à votre accueil à destination.</p>
+              <h2 className="mb-5 text-3xl font-black sm:text-4xl md:text-6xl">Un Accompagnement <br /><span className="text-visacore-gold serif italic">Intégral</span></h2>
+              <p className="text-base text-white/58 sm:text-lg">De l&apos;évaluation de votre éligibilité jusqu&apos;à votre accueil à destination.</p>
             </ScrollReveal>
           </div>
 
@@ -374,14 +374,14 @@ export default async function HomePage() {
 
               return (
                 <ScrollReveal key={service.slug} delay={i * 0.1}>
-                  <div className="group flex h-full min-h-[24rem] flex-col rounded-3xl border border-white/10 bg-white/5 p-8 transition-all duration-500 hover:-translate-y-2 hover:bg-visacore-gold md:p-10">
+                  <div className="group flex h-full min-h-[21rem] flex-col rounded-[28px] border border-white/10 bg-white/5 p-6 transition-all duration-500 hover:-translate-y-2 hover:bg-visacore-gold sm:min-h-[23rem] sm:p-8 md:min-h-[24rem] md:rounded-3xl md:p-10">
                     <div className="mb-8 flex size-16 items-center justify-center rounded-2xl bg-visacore-gold text-white transition-colors group-hover:bg-visacore-navy group-hover:text-visacore-gold">
                       <Icon className="size-8" />
                     </div>
-                    <h3 className="min-h-[5.5rem] text-balance text-2xl font-black leading-tight md:min-h-[6rem]">
+                    <h3 className="min-h-[4.5rem] text-balance text-xl font-black leading-tight sm:text-2xl md:min-h-[6rem]">
                       {service.name}
                     </h3>
-                    <p className="mb-8 mt-4 line-clamp-6 text-base leading-relaxed text-white/68 transition-colors group-hover:text-visacore-navy/82">
+                    <p className="mb-7 mt-4 line-clamp-6 text-sm leading-relaxed text-white/68 transition-colors group-hover:text-visacore-navy/82 sm:mb-8 sm:text-base">
                       {service.description}
                     </p>
                     <Link
@@ -403,24 +403,24 @@ export default async function HomePage() {
           ═══════════════════════════════════════════ */}
       <section className="section-padding bg-background">
         <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-8">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
+            <div className="space-y-6 lg:col-span-2 lg:space-y-8">
               <ScrollReveal>
-                <h2 className="text-4xl md:text-7xl font-black text-visacore-navy">Pourquoi Faire <span className="text-visacore-gold italic serif">Confiance</span> à VisaCore ?</h2>
+                <h2 className="text-3xl font-black text-visacore-navy sm:text-4xl md:text-6xl lg:text-7xl">Pourquoi Faire <span className="text-visacore-gold italic serif">Confiance</span> à VisaCore ?</h2>
               </ScrollReveal>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
                 {[
                   { icon: Shield, title: "Sécurité & Éthique", text: "Nous traitons vos données et votre dossier avec la plus grande rigueur éthique." },
                   { icon: UserCheck, title: "Suivi Personnalisé", text: "Chaque client bénéficie d'un consultant dédié pour un accompagnement serein." }
                 ].map((item, i) => (
                   <ScrollReveal key={item.title} delay={i * 0.1}>
-                    <div className="flex gap-6">
+                    <div className="flex gap-4 sm:gap-6">
                       <div className="size-14 shrink-0 rounded-2xl bg-visacore-gold/10 text-visacore-gold flex items-center justify-center">
                         <item.icon className="size-7" />
                       </div>
                       <div>
-                        <h4 className="text-xl font-black text-visacore-navy mb-2">{item.title}</h4>
+                        <h4 className="mb-2 text-lg font-black text-visacore-navy sm:text-xl">{item.title}</h4>
                         <p className="text-muted-foreground">{item.text}</p>
                       </div>
                     </div>
@@ -430,22 +430,22 @@ export default async function HomePage() {
             </div>
 
             <ScrollReveal delay={0.3} className="h-full">
-              <div className="bg-visacore-gold rounded-[40px] p-12 text-white h-full relative overflow-hidden group">
+              <div className="group relative h-full overflow-hidden rounded-[32px] bg-visacore-gold p-8 text-white sm:rounded-[40px] sm:p-12">
                  <div className="absolute top-0 right-0 size-40 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl group-hover:scale-150 transition-transform duration-700" />
-                 <h3 className="text-4xl font-black mb-8 leading-tight">Votre Succès est Notre Seule <span className="underline decoration-visacore-navy decoration-4 underline-offset-8">Priorité</span>.</h3>
-                 <div className="space-y-6">
+                 <h3 className="mb-6 text-3xl font-black leading-tight sm:mb-8 sm:text-4xl">Votre Succès est Notre Seule <span className="underline decoration-visacore-navy decoration-4 underline-offset-8">Priorité</span>.</h3>
+                 <div className="space-y-5 sm:space-y-6">
                     <div className="flex items-center gap-4">
-                       <span className="text-5xl font-black text-visacore-navy">Clair</span>
+                       <span className="text-4xl font-black text-visacore-navy sm:text-5xl">Clair</span>
                        <span className="font-bold leading-tight opacity-80">Un cadre de <br /> décision lisible</span>
                     </div>
                     <div className="flex items-center gap-4">
-                       <span className="text-5xl font-black text-visacore-navy">Suivi</span>
+                       <span className="text-4xl font-black text-visacore-navy sm:text-5xl">Suivi</span>
                        <span className="font-bold leading-tight opacity-80">Un accompagnement <br /> à chaque étape</span>
                     </div>
                  </div>
                  <Link
                     href="/evaluation"
-                    className="mt-12 inline-flex h-14 items-center rounded-full bg-visacore-navy px-8 font-bold text-white transition-all hover:bg-visacore-navy-light"
+                    className="mt-10 inline-flex h-14 items-center rounded-full bg-visacore-navy px-8 text-sm font-bold text-white transition-all hover:bg-visacore-navy-light sm:mt-12 sm:text-base"
                  >
                     Commencer l&apos;Évaluation
                  </Link>
@@ -460,14 +460,14 @@ export default async function HomePage() {
           ═══════════════════════════════════════════ */}
       <section className="section-padding bg-gray-50 border-y border-border">
          <div className="container-custom">
-            <div className="text-center mb-20">
+            <div className="mb-12 text-center sm:mb-20">
                <ScrollReveal>
-                  <h2 className="text-4xl md:text-6xl font-black text-visacore-navy mb-6">Un Parcours <span className="text-visacore-gold italic serif">Serein</span></h2>
+                  <h2 className="mb-5 text-3xl font-black text-visacore-navy sm:text-4xl md:mb-6 md:text-6xl">Un Parcours <span className="text-visacore-gold italic serif">Serein</span></h2>
                   <p className="text-lg text-muted-foreground">Une méthodologie rigoureuse en 4 étapes clés.</p>
                </ScrollReveal>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
+            <div className="relative grid grid-cols-1 gap-10 md:grid-cols-4 md:gap-12">
                {/* Connecting Line (Desktop) */}
                <div className="absolute top-12 left-0 w-full h-px bg-visacore-gold/20 hidden md:block" />
                
@@ -479,10 +479,10 @@ export default async function HomePage() {
                ].map((item, i) => (
                  <ScrollReveal key={item.step} delay={i * 0.1}>
                     <div className="relative z-10">
-                       <div className="size-24 rounded-full bg-white border-2 border-visacore-gold flex items-center justify-center text-3xl font-black text-visacore-navy mb-8 mx-auto shadow-xl shadow-visacore-gold/5">
+                       <div className="mx-auto mb-6 flex size-20 items-center justify-center rounded-full border-2 border-visacore-gold bg-white text-2xl font-black text-visacore-navy shadow-xl shadow-visacore-gold/5 sm:mb-8 sm:size-24 sm:text-3xl">
                           {item.step}
                        </div>
-                       <h3 className="text-2xl font-black text-visacore-navy text-center mb-4">{item.title}</h3>
+                       <h3 className="mb-3 text-center text-xl font-black text-visacore-navy sm:mb-4 sm:text-2xl">{item.title}</h3>
                        <p className="text-muted-foreground text-center text-sm leading-relaxed">{item.text}</p>
                     </div>
                  </ScrollReveal>
@@ -496,27 +496,27 @@ export default async function HomePage() {
           ═══════════════════════════════════════════ */}
       <section className="section-padding bg-background overflow-hidden">
          <div className="container-custom">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:items-center lg:gap-20">
                <div>
                   <ScrollReveal>
-                    <div className="text-visacore-gold font-black tracking-widest uppercase mb-4">Paroles de Clients</div>
-                    <h2 className="text-5xl md:text-7xl font-black text-visacore-navy mb-10 leading-none">Ils ont <br /><span className="text-visacore-gold italic serif">Ouvert</span> une nouvelle porte.</h2>
-                    <Link href="/temoignages" className="group inline-flex items-center gap-3 text-xl font-black text-visacore-navy">
+                    <div className="mb-4 text-[11px] font-black uppercase tracking-[0.24em] text-visacore-gold sm:text-sm sm:tracking-widest">Paroles de Clients</div>
+                    <h2 className="mb-8 text-4xl font-black leading-none text-visacore-navy sm:text-5xl md:mb-10 md:text-7xl">Ils ont <br /><span className="text-visacore-gold italic serif">Ouvert</span> une nouvelle porte.</h2>
+                    <Link href="/temoignages" className="group inline-flex items-center gap-3 text-lg font-black text-visacore-navy sm:text-xl">
                        Voir tous les récits <ChevronRight className="size-6 group-hover:translate-x-2 transition-transform" />
                     </Link>
                   </ScrollReveal>
                </div>
                
-               <div className="space-y-8">
+               <div className="space-y-6 sm:space-y-8">
                   {testimonials.map((t, i) => (
                     <ScrollReveal key={t.id} delay={i * 0.2}>
-                       <div className="bg-white p-12 rounded-[40px] shadow-2xl shadow-visacore-navy/5 border border-border/50 relative">
-                          <Quote className="absolute -top-6 -left-6 size-12 text-visacore-gold fill-visacore-gold" />
-                          <p className="text-xl italic text-visacore-navy mb-8 leading-relaxed">
+                       <div className="relative rounded-[30px] border border-border/50 bg-white p-7 shadow-2xl shadow-visacore-navy/5 sm:rounded-[40px] sm:p-12">
+                          <Quote className="absolute -left-3 -top-3 size-9 fill-visacore-gold text-visacore-gold sm:-left-6 sm:-top-6 sm:size-12" />
+                          <p className="mb-6 text-lg italic leading-relaxed text-visacore-navy sm:mb-8 sm:text-xl">
                              &ldquo;{t.content}&rdquo;
                           </p>
                           <div className="flex items-center gap-4">
-                             <div className="size-14 rounded-2xl bg-visacore-navy flex items-center justify-center text-visacore-gold text-xl font-black">
+                             <div className="flex size-12 items-center justify-center rounded-2xl bg-visacore-navy text-lg font-black text-visacore-gold sm:size-14 sm:text-xl">
                                 {t.clientName.split(' ').map(n => n[0]).join('')}
                              </div>
                              <div>
@@ -538,31 +538,33 @@ export default async function HomePage() {
       <section className="section-padding px-4">
          <div className="max-w-6xl mx-auto">
             <ScrollReveal>
-               <div className="bg-visacore-navy rounded-[60px] p-12 md:p-24 text-center relative overflow-hidden">
+               <div className="relative overflow-hidden rounded-[34px] bg-visacore-navy p-7 text-center sm:rounded-[48px] sm:p-10 md:rounded-[60px] md:p-24">
                   <div className="absolute inset-0 bg-noise opacity-5" />
                   <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-visacore-gold/20 to-transparent blur-[120px]" />
                   
                   <div className="relative z-10">
-                     <h2 className="text-4xl md:text-8xl font-black text-white mb-10 leading-[0.9]">Prêt pour le <br /><span className="text-visacore-gold italic serif">Grand</span> Saut ?</h2>
-                     <p className="text-xl md:text-2xl text-white/50 mb-16 max-w-2xl mx-auto">
+                     <h2 className="mb-6 text-3xl font-black leading-[0.92] text-white sm:mb-8 sm:text-5xl md:mb-10 md:text-8xl">Prêt pour le <br /><span className="text-visacore-gold italic serif">Grand</span> Saut ?</h2>
+                     <p className="mx-auto mb-10 max-w-2xl text-base text-white/58 sm:mb-12 sm:text-xl md:mb-16 md:text-2xl">
                         Votre évaluation est le premier pas. Rapide, gratuite et sans engagement.
                      </p>
                      
-                     <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+                     <div className="flex flex-col items-center justify-center gap-8 md:flex-row">
                         <Link
                            href="/evaluation"
-                           className="inline-flex h-20 items-center rounded-full bg-visacore-gold px-12 text-xl font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105"
+                           className="inline-flex h-14 items-center rounded-full bg-visacore-gold px-8 text-base font-black text-white shadow-2xl shadow-visacore-gold/30 transition-all hover:scale-105 sm:h-16 sm:px-10 sm:text-lg md:h-20 md:px-12 md:text-xl"
                         >
                            Démarrer Mon Dossier
                         </Link>
-                        <div className="flex -space-x-4">
+                        <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-0">
+                           <div className="flex -space-x-4">
                            {[1,2,3,4].map(i => (
                              <div key={i} className="size-14 rounded-full border-4 border-visacore-navy bg-visacore-gold/20 backdrop-blur-sm flex items-center justify-center text-visacore-gold font-black">
                                 <Users className="size-6" />
                              </div>
                            ))}
-                           <div className="pl-6 flex flex-col items-start justify-center">
-                              <span className="text-white font-black text-xl">Conseil</span>
+                           </div>
+                           <div className="flex flex-col items-center justify-center sm:pl-6 sm:items-start">
+                              <span className="text-xl font-black text-white">Conseil</span>
                               <span className="text-white/40 text-sm font-bold uppercase tracking-widest leading-none">personnalisé</span>
                            </div>
                         </div>

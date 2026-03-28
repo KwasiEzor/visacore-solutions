@@ -75,7 +75,7 @@ export default async function PublicLayout({
         services={navigationServices}
         destinations={navigationDestinations}
       />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 overflow-x-clip">{children}</main>
       <Footer siteConfig={siteConfig} services={navigationServices.slice(0, 5)} />
       <WhatsAppButton href={getWhatsAppHref(siteConfig.whatsappNumber)} />
       <Chatbot />

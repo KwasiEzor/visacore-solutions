@@ -63,13 +63,13 @@ export function Footer({ siteConfig, services }: FooterProps) {
   ].filter((socialLink) => socialLink.href)
 
   return (
-    <footer className="relative overflow-hidden bg-visacore-navy pb-10 pt-16 text-white sm:pb-12 sm:pt-20">
+    <footer className="relative overflow-hidden bg-visacore-navy pb-10 pt-14 text-white sm:pb-12 sm:pt-20">
       {/* Background patterns */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-visacore-gold/30 to-transparent" />
       <div className="absolute -bottom-24 -right-24 size-96 bg-visacore-gold/5 rounded-full blur-[100px]" />
 
       <div className="container-custom relative z-10">
-        <div className="grid grid-cols-1 gap-10 sm:gap-12 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+        <div className="grid grid-cols-1 gap-8 sm:gap-12 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {/* Company info */}
           <div className="lg:pr-8">
             <Link href="/" className="inline-block transition-transform hover:scale-105">
@@ -81,12 +81,12 @@ export function Footer({ siteConfig, services }: FooterProps) {
                 className="h-16 w-auto brightness-0 invert sm:h-20"
               />
             </Link>
-            <p className="mt-6 text-base font-medium leading-relaxed text-white/70 sm:mt-8 sm:text-lg">
+            <p className="mt-5 max-w-sm text-sm font-medium leading-relaxed text-white/70 sm:mt-8 sm:text-lg">
               Votre pont vers l&apos;international. Expertise, transparence et succès pour vos projets d&apos;immigration à Lomé.
             </p>
             {/* Social links */}
             {socialLinks.length > 0 && (
-              <div className="mt-8 flex items-center gap-3 sm:mt-10 sm:gap-4">
+              <div className="mt-6 flex items-center gap-3 sm:mt-10 sm:gap-4">
                 {socialLinks.map((socialLink) => (
                   <a
                     key={socialLink.label}
@@ -105,8 +105,8 @@ export function Footer({ siteConfig, services }: FooterProps) {
 
           {/* Quick links */}
           <div>
-            <h3 className="mb-6 text-lg font-black italic text-visacore-gold serif sm:mb-8 sm:text-xl">Navigation</h3>
-            <ul className="space-y-4">
+            <h3 className="mb-5 text-lg font-black italic text-visacore-gold serif sm:mb-8 sm:text-xl">Navigation</h3>
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-1 sm:space-y-4 sm:gap-y-0">
               {quickLinks.map((link) => (
                 <li key={link.href}>
                   <Link
@@ -123,8 +123,8 @@ export function Footer({ siteConfig, services }: FooterProps) {
 
           {/* Services */}
           <div>
-            <h3 className="mb-6 text-lg font-black italic text-visacore-gold serif sm:mb-8 sm:text-xl">Expertises</h3>
-            <ul className="space-y-4">
+            <h3 className="mb-5 text-lg font-black italic text-visacore-gold serif sm:mb-8 sm:text-xl">Expertises</h3>
+            <ul className="grid grid-cols-1 gap-y-3 sm:space-y-4 sm:gap-y-0">
               {serviceLinks.map((link) => (
                 <li key={link.href}>
                   <Link
@@ -141,22 +141,22 @@ export function Footer({ siteConfig, services }: FooterProps) {
 
           {/* Contact info */}
           <div>
-            <h3 className="mb-6 text-lg font-black italic text-visacore-gold serif sm:mb-8 sm:text-xl">Contact</h3>
-            <ul className="space-y-6">
-              <li className="flex items-start gap-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/5">
+            <h3 className="mb-5 text-lg font-black italic text-visacore-gold serif sm:mb-8 sm:text-xl">Contact</h3>
+            <ul className="space-y-4 sm:space-y-6">
+              <li className="flex items-start gap-3 sm:gap-4">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/5 sm:size-10">
                   <MapPin className="size-5 text-visacore-gold" />
                 </div>
-                <span className="pt-1 text-sm font-medium text-white/72 sm:text-base">
+                <span className="pt-0.5 text-sm font-medium leading-relaxed text-white/72 sm:pt-1 sm:text-base">
                   {siteConfig.officeAddress}
                 </span>
               </li>
               <li>
                 <a
                   href={getTelHref(siteConfig.contactPhone)}
-                  className="group flex items-center gap-4 text-sm text-white/72 transition-colors hover:text-visacore-gold sm:text-base"
+                  className="group flex items-center gap-3 text-sm text-white/72 transition-colors hover:text-visacore-gold sm:gap-4 sm:text-base"
                 >
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/5 transition-colors group-hover:bg-visacore-gold/20">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/5 transition-colors group-hover:bg-visacore-gold/20 sm:size-10">
                     <Phone className="size-5 text-visacore-gold" />
                   </div>
                   <span className="font-bold">{siteConfig.contactPhone}</span>
@@ -165,9 +165,9 @@ export function Footer({ siteConfig, services }: FooterProps) {
               <li>
                 <a
                   href={`mailto:${siteConfig.contactEmail}`}
-                  className="group flex items-center gap-4 text-sm text-white/72 transition-colors hover:text-visacore-gold sm:text-base"
+                  className="group flex items-center gap-3 text-sm text-white/72 transition-colors hover:text-visacore-gold sm:gap-4 sm:text-base"
                 >
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/5 transition-colors group-hover:bg-visacore-gold/20">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/5 transition-colors group-hover:bg-visacore-gold/20 sm:size-10">
                     <Mail className="size-5 text-visacore-gold" />
                   </div>
                   <span className="font-bold truncate">{siteConfig.contactEmail}</span>
@@ -178,11 +178,11 @@ export function Footer({ siteConfig, services }: FooterProps) {
         </div>
 
         {/* Divider & copyright */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-white/10 pt-6 md:mt-20 md:flex-row md:pt-8">
-          <p className="text-center text-[10px] font-bold uppercase tracking-[0.24em] text-white/34 sm:text-sm sm:tracking-widest md:text-left">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 md:mt-20 md:flex-row md:gap-6 md:pt-8">
+          <p className="text-center text-[10px] font-bold uppercase tracking-[0.2em] text-white/34 sm:text-sm sm:tracking-widest md:text-left">
             &copy; {currentYear} VisaCore Solutions. Designed for Excellence.
           </p>
-          <div className="flex gap-6 text-[10px] font-black uppercase tracking-[0.24em] text-white/24 sm:gap-8 sm:text-xs sm:tracking-widest">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/24 sm:gap-8 sm:text-xs sm:tracking-widest">
              <Link href="/privacy" className="hover:text-visacore-gold transition-colors">Confidentialité</Link>
              <Link href="/terms" className="hover:text-visacore-gold transition-colors">Mentions Légales</Link>
           </div>

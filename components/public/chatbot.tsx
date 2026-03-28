@@ -11,8 +11,12 @@ const WELCOME_MESSAGE =
   "Bonjour ! Je suis l'assistant virtuel de VisaCore Solutions. Comment puis-je vous aider dans votre projet d'immigration ?"
 
 const publicTransport = new DefaultChatTransport({ api: "/api/chat" })
-const launcherPositionClass = "bottom-24 right-4 sm:right-6"
-const panelPositionClass = "bottom-40 right-4 sm:bottom-24 sm:right-6"
+const floatingEdgeClass =
+  "right-[max(0.75rem,env(safe-area-inset-right))] sm:right-[max(1.5rem,env(safe-area-inset-right))]"
+const launcherPositionClass =
+  "bottom-[calc(env(safe-area-inset-bottom)+5.75rem)] sm:bottom-[calc(env(safe-area-inset-bottom)+6.5rem)]"
+const panelPositionClass =
+  "bottom-[calc(env(safe-area-inset-bottom)+7.5rem)] sm:bottom-[calc(env(safe-area-inset-bottom)+7rem)]"
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -59,7 +63,8 @@ export function Chatbot() {
       {isOpen && (
         <div
           className={cn(
-            "fixed z-50 flex h-[min(500px,calc(100vh-11rem))] w-[min(calc(100vw-2rem),370px)] flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-2xl",
+            "fixed z-50 flex h-[min(500px,calc(100vh-9.75rem))] w-[min(calc(100vw-1.25rem),370px)] max-w-[calc(100vw-1.25rem)] flex-col overflow-hidden rounded-[26px] border border-border bg-white shadow-[0_24px_70px_-34px_rgba(10,37,64,0.45)] sm:h-[min(500px,calc(100vh-11rem))] sm:w-[min(calc(100vw-2rem),370px)] sm:max-w-[calc(100vw-2rem)]",
+            floatingEdgeClass,
             panelPositionClass
           )}
         >
@@ -156,12 +161,15 @@ export function Chatbot() {
           type="button"
           onClick={() => setIsOpen(true)}
           className={cn(
-            "fixed z-50 flex items-center gap-2 rounded-full bg-[#0A2540] px-5 py-3 text-white shadow-lg transition-all hover:scale-105",
+            "fixed z-50 inline-flex items-center justify-center rounded-full bg-[#0A2540] text-white shadow-[0_18px_44px_-24px_rgba(10,37,64,0.65)] transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A227]/45 focus-visible:ring-offset-2",
+            "size-14 px-0 sm:size-auto sm:gap-2 sm:px-5 sm:py-3",
+            floatingEdgeClass,
             launcherPositionClass
           )}
+          aria-label="Ouvrir le chat VisaCore"
         >
           <MessageCircle className="size-5" />
-          <span className="text-sm font-medium">Chat</span>
+          <span className="hidden text-sm font-medium sm:inline">Chat</span>
         </button>
       )}
     </>

@@ -109,7 +109,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground selection:bg-visacore-gold/30 selection:text-visacore-navy;
+    @apply overflow-x-clip bg-background text-foreground selection:bg-visacore-gold/30 selection:text-visacore-navy;
   }
   html {
     @apply font-sans scroll-smooth antialiased;
@@ -134,7 +134,7 @@
   }
 
   .section-padding {
-    @apply py-24 md:py-32;
+    @apply py-18 sm:py-24 md:py-32;
   }
 
   .container-custom {
