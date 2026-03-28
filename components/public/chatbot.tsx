@@ -11,12 +11,12 @@ const WELCOME_MESSAGE =
   "Bonjour ! Je suis l'assistant virtuel de VisaCore Solutions. Comment puis-je vous aider dans votre projet d'immigration ?"
 
 const publicTransport = new DefaultChatTransport({ api: "/api/chat" })
-const floatingEdgeClass =
-  "right-[max(0.75rem,env(safe-area-inset-right))] sm:right-[max(1.5rem,env(safe-area-inset-right))]"
+const mobilePanelEdgeClass =
+  "left-[max(0.75rem,env(safe-area-inset-left))] right-[max(0.75rem,env(safe-area-inset-right))] sm:left-auto sm:right-[max(1.5rem,env(safe-area-inset-right))]"
 const launcherPositionClass =
-  "bottom-[calc(env(safe-area-inset-bottom)+5.75rem)] sm:bottom-[calc(env(safe-area-inset-bottom)+6.5rem)]"
+  "bottom-[max(0.875rem,calc(env(safe-area-inset-bottom)+0.5rem))] left-[max(0.75rem,env(safe-area-inset-left))] sm:bottom-[calc(env(safe-area-inset-bottom)+6.5rem)] sm:left-auto sm:right-[max(1.5rem,env(safe-area-inset-right))]"
 const panelPositionClass =
-  "bottom-[calc(env(safe-area-inset-bottom)+7.5rem)] sm:bottom-[calc(env(safe-area-inset-bottom)+7rem)]"
+  "bottom-[calc(env(safe-area-inset-bottom)+5rem)] sm:bottom-[calc(env(safe-area-inset-bottom)+7rem)]"
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -63,8 +63,8 @@ export function Chatbot() {
       {isOpen && (
         <div
           className={cn(
-            "fixed z-50 flex h-[min(500px,calc(100vh-9.75rem))] w-[min(calc(100vw-1.25rem),370px)] max-w-[calc(100vw-1.25rem)] flex-col overflow-hidden rounded-[26px] border border-border bg-white shadow-[0_24px_70px_-34px_rgba(10,37,64,0.45)] sm:h-[min(500px,calc(100vh-11rem))] sm:w-[min(calc(100vw-2rem),370px)] sm:max-w-[calc(100vw-2rem)]",
-            floatingEdgeClass,
+            "fixed z-50 flex h-[min(500px,calc(100vh-7.75rem))] w-auto max-w-[calc(100vw-1.5rem)] flex-col overflow-hidden rounded-[26px] border border-border bg-white shadow-[0_24px_70px_-34px_rgba(10,37,64,0.45)] sm:h-[min(500px,calc(100vh-11rem))] sm:w-[min(calc(100vw-2rem),370px)] sm:max-w-[calc(100vw-2rem)]",
+            mobilePanelEdgeClass,
             panelPositionClass
           )}
         >
@@ -160,12 +160,11 @@ export function Chatbot() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className={cn(
-            "fixed z-50 inline-flex items-center justify-center rounded-full bg-[#0A2540] text-white shadow-[0_18px_44px_-24px_rgba(10,37,64,0.65)] transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A227]/45 focus-visible:ring-offset-2",
-            "size-14 px-0 sm:size-auto sm:gap-2 sm:px-5 sm:py-3",
-            floatingEdgeClass,
-            launcherPositionClass
-          )}
+            className={cn(
+              "fixed z-50 inline-flex items-center justify-center rounded-full bg-[#0A2540] text-white shadow-[0_18px_44px_-24px_rgba(10,37,64,0.65)] transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A227]/45 focus-visible:ring-offset-2",
+              "size-12 px-0 sm:size-auto sm:gap-2 sm:px-5 sm:py-3",
+              launcherPositionClass
+            )}
           aria-label="Ouvrir le chat VisaCore"
         >
           <MessageCircle className="size-5" />
