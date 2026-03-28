@@ -55,8 +55,11 @@ export default async function AboutPage() {
       {/* Story Section */}
       <section className="section-padding bg-background">
         <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+          <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2 lg:gap-18">
             <ScrollReveal>
+              <p className="text-xs font-black uppercase tracking-[0.28em] text-visacore-gold">
+                Notre trajectoire
+              </p>
               <h2 className="text-4xl md:text-6xl font-black text-visacore-navy leading-tight">
                 {pageContent.story.title}
               </h2>
@@ -65,26 +68,26 @@ export default async function AboutPage() {
                   {pageContent.story.subtitle}
                 </p>
               )}
-              <p className="mt-8 text-lg text-muted-foreground leading-relaxed font-medium">
+              <p className="mt-8 max-w-2xl text-lg text-muted-foreground leading-relaxed font-medium">
                 {pageContent.story.content.text}
               </p>
-              <p className="mt-6 text-lg text-muted-foreground leading-relaxed font-medium">
+              <p className="mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed font-medium">
                 Nous accompagnons chaque projet avec une approche structurée, un suivi humain et une préparation
                 documentaire rigoureuse pour les destinations que nous couvrons.
               </p>
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-5">
                 {[
                   { number: "Humain", label: "Accompagnement" },
                   { number: "Clair", label: "Processus" },
                   { number: "Multi", label: "Destinations" },
                   { number: "Local", label: "Présence à Lomé" },
                 ].map((stat) => (
-                  <div key={stat.label} className="bg-white border border-border rounded-[30px] p-8 text-center shadow-sm hover:shadow-xl transition-shadow duration-500">
+                  <div key={stat.label} className="rounded-[28px] border border-visacore-navy/8 bg-[linear-gradient(180deg,#ffffff_0%,#f8f9fc_100%)] p-7 text-center shadow-[0_18px_50px_-42px_rgba(10,37,64,0.22)] transition-shadow duration-500 hover:shadow-xl">
                     <div className="text-4xl font-black text-visacore-gold">{stat.number}</div>
-                    <div className="mt-2 text-sm font-bold text-visacore-navy uppercase tracking-widest">{stat.label}</div>
+                    <div className="mt-2 text-sm font-bold uppercase tracking-widest text-visacore-navy">{stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -136,6 +139,9 @@ export default async function AboutPage() {
         <div className="container-custom">
           <div className="text-center mb-20">
             <ScrollReveal>
+              <p className="text-xs font-black uppercase tracking-[0.28em] text-visacore-gold">
+                Principes
+              </p>
               <h2 className="text-4xl md:text-6xl font-black text-visacore-navy mb-6">
                 Nos <span className="text-visacore-gold italic serif">Valeurs</span>
               </h2>

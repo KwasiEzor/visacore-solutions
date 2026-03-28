@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { LegalPageShell } from "@/components/public/legal-page-shell"
 import { getPublicSiteConfig, getTelHref } from "@/lib/site-config"
 
 export const metadata: Metadata = {
@@ -11,18 +12,60 @@ export default async function TermsPage() {
   const contactPhoneHref = getTelHref(siteConfig.contactPhone)
 
   return (
-    <div className="pt-40 pb-20">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-black text-visacore-navy mb-4">
-          Mentions légales &amp; Conditions d&apos;utilisation
-        </h1>
-        <p className="text-visacore-navy/50 mb-12">
-          Dernière mise à jour : Mars 2026
-        </p>
+    <LegalPageShell
+      eyebrow="Informations legales"
+      title="Mentions legales & conditions d'utilisation"
+      updatedAt="Derniere mise a jour : mars 2026"
+      description="Cette page precise l'editeur du site, les conditions generales d'utilisation, les limites de responsabilite et le cadre applicable aux services de VisaCore Solutions."
+      aside={
+        <div className="space-y-5">
+          <div className="rounded-[30px] border border-visacore-gold/20 bg-[#F7F2E8] p-6 shadow-sm">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-visacore-gold">
+              Coordonnees
+            </p>
+            <h2 className="mt-3 text-2xl font-black text-visacore-navy">
+              VisaCore Solutions
+            </h2>
+            <div className="mt-4 space-y-2 text-sm leading-6 text-visacore-navy/74">
+              <p>{siteConfig.officeAddress}</p>
+              <p>
+                <a
+                  href={`mailto:${siteConfig.contactEmail}`}
+                  className="font-semibold text-visacore-gold hover:underline"
+                >
+                  {siteConfig.contactEmail}
+                </a>
+              </p>
+              <p>
+                {contactPhoneHref ? (
+                  <a
+                    href={contactPhoneHref}
+                    className="font-semibold text-visacore-gold hover:underline"
+                  >
+                    {siteConfig.contactPhone}
+                  </a>
+                ) : (
+                  siteConfig.contactPhone
+                )}
+              </p>
+            </div>
+          </div>
 
-        <div className="prose prose-lg max-w-none text-visacore-navy/80 space-y-8">
-          <section>
-            <h2 className="text-2xl font-bold text-visacore-navy">1. Éditeur du site</h2>
+          <div className="rounded-[30px] border border-visacore-navy/10 bg-white p-6 shadow-sm">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-visacore-gold">
+              A retenir
+            </p>
+            <ul className="mt-4 space-y-3 text-sm leading-6 text-visacore-navy/72">
+              <li>Le site presente des services de conseil et d&apos;accompagnement, pas un conseil juridique automatique.</li>
+              <li>Les frais de visa officiels restent distincts des honoraires de consultation.</li>
+              <li>Le droit applicable mentionne la competence des juridictions de Lome.</li>
+            </ul>
+          </div>
+        </div>
+      }
+    >
+      <section className="rounded-[30px] border border-visacore-navy/10 bg-white p-7 text-visacore-navy/80 shadow-sm sm:p-8 [&_p]:leading-8 [&_ul]:text-visacore-navy/80">
+        <h2 className="text-2xl font-bold text-visacore-navy">1. Éditeur du site</h2>
             <p>
               <strong>VisaCore Solutions</strong><br />
               {siteConfig.officeAddress}<br />
@@ -36,33 +79,33 @@ export default async function TermsPage() {
                 siteConfig.contactPhone
               )}
             </p>
-          </section>
+      </section>
 
-          <section>
+      <section className="rounded-[30px] border border-visacore-navy/10 bg-white p-7 text-visacore-navy/80 shadow-sm sm:p-8 [&_p]:leading-8 [&_ul]:text-visacore-navy/80">
             <h2 className="text-2xl font-bold text-visacore-navy">2. Hébergement</h2>
             <p>
               Ce site est hébergé par Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789, États-Unis.
             </p>
-          </section>
+      </section>
 
-          <section>
+      <section className="rounded-[30px] border border-visacore-navy/10 bg-white p-7 text-visacore-navy/80 shadow-sm sm:p-8 [&_p]:leading-8 [&_ul]:text-visacore-navy/80">
             <h2 className="text-2xl font-bold text-visacore-navy">3. Objet du site</h2>
             <p>
               Le site visacore-solutions.com a pour objet de présenter les services de consultation en immigration
               proposés par VisaCore Solutions et de permettre aux utilisateurs de prendre contact avec nos consultants.
             </p>
-          </section>
+      </section>
 
-          <section>
+      <section className="rounded-[30px] border border-visacore-navy/10 bg-white p-7 text-visacore-navy/80 shadow-sm sm:p-8 [&_p]:leading-8 [&_ul]:text-visacore-navy/80">
             <h2 className="text-2xl font-bold text-visacore-navy">4. Propriété intellectuelle</h2>
             <p>
               L&apos;ensemble du contenu de ce site (textes, images, logos, graphismes, icônes) est la propriété exclusive
               de VisaCore Solutions ou de ses partenaires. Toute reproduction, représentation, modification ou exploitation
               de tout ou partie de ce contenu, par quelque procédé que ce soit, est interdite sans autorisation préalable écrite.
             </p>
-          </section>
+      </section>
 
-          <section>
+      <section className="rounded-[30px] border border-visacore-navy/10 bg-white p-7 text-visacore-navy/80 shadow-sm sm:p-8 [&_p]:leading-8 [&_ul]:text-visacore-navy/80">
             <h2 className="text-2xl font-bold text-visacore-navy">5. Limitation de responsabilité</h2>
             <p>
               Les informations fournies sur ce site sont à titre indicatif et ne constituent pas un conseil juridique.
@@ -73,9 +116,9 @@ export default async function TermsPage() {
               Les résultats des demandes de visa et d&apos;immigration dépendent des autorités compétentes de chaque pays.
               VisaCore Solutions ne peut garantir l&apos;issue favorable d&apos;une demande.
             </p>
-          </section>
+      </section>
 
-          <section>
+      <section className="rounded-[30px] border border-visacore-navy/10 bg-white p-7 text-visacore-navy/80 shadow-sm sm:p-8 [&_p]:leading-8 [&_ul]:text-visacore-navy/80">
             <h2 className="text-2xl font-bold text-visacore-navy">6. Services de consultation</h2>
             <p>
               Nos services de consultation comprennent :
@@ -90,9 +133,9 @@ export default async function TermsPage() {
               Les frais de consultation sont communiqués préalablement à tout engagement.
               Ils sont distincts des frais officiels de visa et d&apos;immigration.
             </p>
-          </section>
+      </section>
 
-          <section>
+      <section className="rounded-[30px] border border-visacore-navy/10 bg-white p-7 text-visacore-navy/80 shadow-sm sm:p-8 [&_p]:leading-8 [&_ul]:text-visacore-navy/80">
             <h2 className="text-2xl font-bold text-visacore-navy">7. Utilisation du site</h2>
             <p>
               L&apos;utilisateur s&apos;engage à utiliser le site conformément à sa destination et à ne pas :
@@ -103,25 +146,25 @@ export default async function TermsPage() {
               <li>Utiliser le site à des fins illicites ou non autorisées</li>
               <li>Perturber le fonctionnement normal du site</li>
             </ul>
-          </section>
+      </section>
 
-          <section>
+      <section className="rounded-[30px] border border-visacore-navy/10 bg-white p-7 text-visacore-navy/80 shadow-sm sm:p-8 [&_p]:leading-8 [&_ul]:text-visacore-navy/80">
             <h2 className="text-2xl font-bold text-visacore-navy">8. Liens externes</h2>
             <p>
               Ce site peut contenir des liens vers des sites tiers. VisaCore Solutions n&apos;exerce aucun contrôle
               sur le contenu de ces sites et décline toute responsabilité quant à leur contenu.
             </p>
-          </section>
+      </section>
 
-          <section>
+      <section className="rounded-[30px] border border-visacore-navy/10 bg-white p-7 text-visacore-navy/80 shadow-sm sm:p-8 [&_p]:leading-8 [&_ul]:text-visacore-navy/80">
             <h2 className="text-2xl font-bold text-visacore-navy">9. Droit applicable</h2>
             <p>
               Les présentes mentions légales sont régies par le droit togolais.
               Tout litige relatif à l&apos;utilisation de ce site sera soumis aux tribunaux compétents de Lomé, Togo.
             </p>
-          </section>
+      </section>
 
-          <section>
+      <section className="rounded-[30px] border border-visacore-navy/10 bg-white p-7 text-visacore-navy/80 shadow-sm sm:p-8 [&_p]:leading-8 [&_ul]:text-visacore-navy/80">
             <h2 className="text-2xl font-bold text-visacore-navy">10. Contact</h2>
             <p>
               Pour toute question, contactez-nous :<br />
@@ -131,9 +174,7 @@ export default async function TermsPage() {
                 {siteConfig.contactEmail}
               </a>
             </p>
-          </section>
-        </div>
-      </div>
-    </div>
+      </section>
+    </LegalPageShell>
   )
 }

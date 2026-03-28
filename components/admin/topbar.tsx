@@ -133,7 +133,7 @@ export function AdminTopbar({
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center border-b border-border bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:h-16 sm:px-4 lg:px-6">
+      <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center rounded-[28px] border border-visacore-navy/8 bg-white/86 px-3 shadow-[0_18px_60px_-42px_rgba(10,37,64,0.24)] backdrop-blur supports-[backdrop-filter]:bg-white/72 sm:px-4 lg:px-5">
         {/* Mobile menu trigger */}
         <Button
           variant="ghost"
@@ -146,7 +146,10 @@ export function AdminTopbar({
         </Button>
 
         {/* Page title */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
+          <p className="hidden text-[11px] font-black uppercase tracking-[0.24em] text-visacore-gold sm:block">
+            Administration
+          </p>
           <h1 className="truncate text-base font-semibold text-foreground sm:text-lg">
             {pageTitle}
           </h1>
@@ -166,9 +169,9 @@ export function AdminTopbar({
             type="button"
             onClick={() => setProfileOpen((v) => !v)}
             className={cn(
-              "flex items-center gap-2 rounded-full px-1.5 py-1 text-sm outline-none transition-all",
-              "hover:bg-muted/80 focus-visible:ring-2 focus-visible:ring-ring",
-              profileOpen && "bg-muted"
+              "flex items-center gap-2 rounded-full border border-transparent px-1.5 py-1 text-sm outline-none transition-all",
+              "hover:border-border hover:bg-muted/80 focus-visible:ring-2 focus-visible:ring-ring",
+              profileOpen && "border-border bg-muted"
             )}
           >
             <Avatar>

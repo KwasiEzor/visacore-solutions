@@ -148,7 +148,10 @@ export default async function ContactPage() {
             {/* Sidebar info */}
             <div className="order-2 lg:order-1 lg:col-span-2">
               <ScrollReveal>
-                <h2 className="mb-4 text-3xl font-black text-visacore-navy sm:text-4xl">
+                <p className="text-xs font-black uppercase tracking-[0.24em] text-visacore-gold">
+                  Coordonnees utiles
+                </p>
+                <h2 className="mb-4 mt-4 text-3xl font-black text-visacore-navy sm:text-4xl">
                   Nos{" "}
                   <span className="serif italic text-visacore-gold">
                     Coordonnées
@@ -160,7 +163,7 @@ export default async function ContactPage() {
                 </p>
 
                 {/* Business hours card */}
-                <div className="mb-8 rounded-[30px] border border-border bg-gray-50 p-6 sm:p-8">
+                <div className="mb-8 rounded-[30px] border border-visacore-navy/8 bg-[linear-gradient(180deg,#f7f8fb_0%,#ffffff_100%)] p-6 shadow-[0_24px_70px_-52px_rgba(10,37,64,0.28)] sm:p-8">
                   <div className="mb-5 flex items-center gap-3">
                     <div className="flex size-11 items-center justify-center rounded-xl bg-visacore-navy text-visacore-gold">
                       <Clock className="size-5" />
@@ -187,7 +190,7 @@ export default async function ContactPage() {
                 </div>
 
                 {/* Map card */}
-                <div className="group relative overflow-hidden rounded-[30px] border border-border">
+                <div className="group relative overflow-hidden rounded-[30px] border border-visacore-navy/8 shadow-[0_24px_70px_-54px_rgba(10,37,64,0.22)]">
                   <div className="relative h-48 bg-visacore-navy sm:h-56">
                     <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&q=80&w=800')] bg-cover bg-center opacity-30 grayscale transition-all duration-700 group-hover:scale-110 group-hover:opacity-50 group-hover:grayscale-0" />
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -213,15 +216,18 @@ export default async function ContactPage() {
             {/* Form */}
             <div className="order-1 lg:order-2 lg:col-span-3">
               <ScrollReveal delay={0.1}>
-                <div className="rounded-3xl border border-border bg-white p-6 shadow-2xl shadow-visacore-navy/5 sm:rounded-[40px] sm:p-10 md:p-14">
+                <div className="rounded-3xl border border-visacore-navy/8 bg-white p-6 shadow-[0_28px_90px_-56px_rgba(10,37,64,0.3)] sm:rounded-[40px] sm:p-10 md:p-14">
                   <div className="mb-8 text-center sm:mb-10">
-                    <h2 className="text-2xl font-black text-visacore-navy sm:text-3xl md:text-4xl">
+                    <p className="text-xs font-black uppercase tracking-[0.24em] text-visacore-gold">
+                      Message
+                    </p>
+                    <h2 className="mt-4 text-2xl font-black text-visacore-navy sm:text-3xl md:text-4xl">
                       Envoyez-nous un{" "}
                       <span className="serif italic text-visacore-gold">
                         Message
                       </span>
                     </h2>
-                    <p className="mt-2 text-sm text-muted-foreground sm:mt-3 sm:text-base">
+                    <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
                       Remplissez le formulaire ci-dessous et nous vous
                       répondrons dans les plus brefs délais.
                     </p>

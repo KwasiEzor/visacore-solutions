@@ -86,6 +86,11 @@ const desktopMenus: Array<{ id: MenuId; label: string; matchers: string[] }> = [
 
 const desktopDirectLinks = [
   {
+    href: "/",
+    label: "Accueil",
+    matchers: ["/"],
+  },
+  {
     href: "/contact",
     label: "Contact",
     matchers: ["/contact"],
@@ -276,7 +281,7 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
           : "bg-transparent py-3 sm:py-5"
       )}
     >
-      <div className="mx-auto flex max-w-[92rem] items-center justify-between gap-3 px-4 sm:px-6 xl:px-8">
+      <div className="mx-auto flex max-w-[96rem] items-center justify-between gap-3 px-4 sm:px-6 xl:px-8">
         <Link href="/" className="relative z-10 shrink-0 transition-transform duration-300 hover:scale-[1.02]">
           <Image
             src="/images/visacore_solution_logo.png"
@@ -286,8 +291,8 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
             className={cn(
               "w-auto transition-all duration-500",
               useSolidHeader
-                ? "h-10 sm:h-12 xl:h-14"
-                : "h-12 sm:h-14 xl:h-16 brightness-0 invert"
+                ? "h-10 sm:h-11 lg:h-12 xl:h-14"
+                : "h-11 sm:h-12 lg:h-14 xl:h-16 brightness-0 invert"
             )}
             priority
           />
@@ -295,7 +300,7 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
 
         <div
           ref={desktopNavRef}
-          className="relative hidden flex-1 items-center justify-center xl:flex"
+          className="relative hidden flex-1 items-center justify-center lg:flex"
           onMouseEnter={clearCloseTimer}
           onMouseLeave={() => scheduleClose()}
           onBlur={(event) => {
@@ -324,7 +329,7 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
                   aria-expanded={activeMenu === menu.id}
                   aria-controls={`desktop-panel-${menu.id}`}
                   className={cn(
-                    "group relative inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-black transition-all duration-200",
+                    "group relative inline-flex items-center gap-2 rounded-full px-3.5 py-2.5 text-[13px] font-black transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-visacore-gold/35 xl:px-4 xl:text-sm",
                     isActive
                       ? "bg-visacore-gold/12 text-visacore-gold"
                       : useSolidHeader
@@ -358,7 +363,7 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
                   href={link.href}
                   onClick={() => setActiveMenu(null)}
                   className={cn(
-                    "relative rounded-full px-4 py-2.5 text-sm font-black transition-all duration-200",
+                    "relative rounded-full px-3.5 py-2.5 text-[13px] font-black transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-visacore-gold/35 xl:px-4 xl:text-sm",
                     isActive
                       ? "bg-visacore-gold/12 text-visacore-gold"
                       : useSolidHeader
@@ -384,7 +389,7 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.18, ease: "easeOut" }}
-                className="absolute top-full z-30 mt-4 w-[min(74rem,calc(100vw-4rem))]"
+                className="absolute top-full z-30 mt-4 w-[min(72rem,calc(100vw-2.5rem))] xl:w-[min(74rem,calc(100vw-4rem))]"
                 onMouseEnter={clearCloseTimer}
                 onMouseLeave={() => scheduleClose()}
               >
@@ -403,26 +408,11 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
           </AnimatePresence>
         </div>
 
-        <div className="hidden items-center gap-3 md:flex xl:hidden">
+        <div className="hidden items-center gap-4 lg:flex">
           <Link
             href="/evaluation"
             className={cn(
-              "inline-flex items-center rounded-full px-4 py-3 text-sm font-black transition-all duration-300 shadow-lg",
-              useSolidHeader
-                ? "bg-visacore-gold text-white hover:bg-visacore-gold-dark"
-                : "bg-white text-visacore-navy hover:bg-visacore-gold hover:text-white"
-            )}
-          >
-            Évaluation
-            <ArrowRight className="ml-2 size-4" />
-          </Link>
-        </div>
-
-        <div className="hidden items-center gap-4 xl:flex">
-          <Link
-            href="/evaluation"
-            className={cn(
-              "inline-flex items-center rounded-full px-6 py-4 font-black transition-all duration-300 shadow-lg",
+              "inline-flex items-center rounded-full px-4 py-3 text-sm font-black transition-all duration-300 shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-visacore-gold/35 xl:px-6 xl:py-4",
               useSolidHeader
                 ? "bg-visacore-gold text-white hover:bg-visacore-gold-dark hover:shadow-visacore-gold/20"
                 : "bg-white text-visacore-navy hover:bg-visacore-gold hover:text-white"
@@ -433,7 +423,7 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
           </Link>
         </div>
 
-        <div className="xl:hidden">
+        <div className="lg:hidden">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger
               render={
@@ -615,7 +605,7 @@ function renderDesktopPanel({
   if (activeMenu === "destinations") {
     return (
       <DesktopPanelFrame>
-        <div className="grid gap-6 lg:grid-cols-[1.15fr_1.45fr_1fr]">
+        <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-[1.15fr_1.45fr_1fr]">
           <DesktopFeatureCard
             icon={Globe}
             onNavigate={onNavigate}
@@ -652,7 +642,7 @@ function renderDesktopPanel({
   if (activeMenu === "services") {
     return (
       <DesktopPanelFrame>
-        <div className="grid gap-6 lg:grid-cols-[1.1fr_1.5fr_1fr]">
+        <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-[1.1fr_1.5fr_1fr]">
           <DesktopFeatureCard
             icon={Briefcase}
             onNavigate={onNavigate}
@@ -689,7 +679,7 @@ function renderDesktopPanel({
   if (activeMenu === "project") {
     return (
       <DesktopPanelFrame>
-        <div className="grid gap-6 lg:grid-cols-[1.05fr_1.45fr_1fr]">
+        <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-[1.05fr_1.45fr_1fr]">
           <DesktopFeatureCard
             icon={Calendar}
             onNavigate={onNavigate}
@@ -719,7 +709,7 @@ function renderDesktopPanel({
 
   return (
     <DesktopPanelFrame>
-      <div className="grid gap-6 lg:grid-cols-[1.05fr_1.45fr_1fr]">
+      <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-[1.05fr_1.45fr_1fr]">
         <DesktopFeatureCard
           icon={ShieldCheck}
           onNavigate={onNavigate}
@@ -754,7 +744,7 @@ function renderDesktopPanel({
 
 function DesktopPanelFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative overflow-hidden rounded-[36px] border border-visacore-navy/10 bg-white p-6 shadow-[0_30px_120px_-48px_rgba(10,37,64,0.55)]">
+    <div className="relative overflow-hidden rounded-[32px] border border-visacore-navy/10 bg-white p-5 shadow-[0_30px_120px_-48px_rgba(10,37,64,0.55)] xl:rounded-[36px] xl:p-6">
       <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-visacore-gold/45 to-transparent" />
       {children}
     </div>
@@ -783,7 +773,7 @@ function DesktopFeatureCard({
   title: string;
 }) {
   return (
-    <div className="rounded-[28px] bg-gradient-to-br from-visacore-navy via-visacore-navy-light to-[#0f3558] p-6 text-white">
+    <div className="rounded-[26px] bg-gradient-to-br from-visacore-navy via-visacore-navy-light to-[#0f3558] p-5 text-white xl:rounded-[28px] xl:p-6">
       <div className="flex size-12 items-center justify-center rounded-2xl bg-white/10 text-visacore-gold">
         <Icon className="size-6" />
       </div>
@@ -823,7 +813,7 @@ function DesktopLinkGrid({
   title: string;
 }) {
   return (
-    <div className="rounded-[28px] border border-visacore-navy/8 bg-visacore-navy/[0.03] p-5">
+    <div className="rounded-[26px] border border-visacore-navy/8 bg-visacore-navy/[0.03] p-5 xl:rounded-[28px]">
       <p className="text-xs font-black uppercase tracking-[0.22em] text-visacore-gold">{title}</p>
       <p className="mt-3 max-w-xl text-sm leading-6 text-visacore-navy/72">{description}</p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -843,7 +833,7 @@ function DesktopActionGrid({
   onNavigate: () => void;
 }) {
   return (
-    <div className="grid gap-3 rounded-[28px] border border-visacore-navy/8 bg-visacore-navy/[0.03] p-5">
+    <div className="grid gap-3 rounded-[26px] border border-visacore-navy/8 bg-visacore-navy/[0.03] p-5 xl:rounded-[28px]">
       {links.map((link, index) => {
         const icons = [FileText, Calendar, MessageSquare, ShieldCheck];
         const Icon = icons[index] ?? FileText;
@@ -891,7 +881,7 @@ function DesktopInfoCard({
   title: string;
 }) {
   return (
-    <div className="rounded-[28px] border border-visacore-gold/18 bg-visacore-gold/[0.08] p-5">
+    <div className="rounded-[26px] border border-visacore-gold/18 bg-visacore-gold/[0.08] p-5 xl:rounded-[28px]">
       <p className="text-xs font-black uppercase tracking-[0.22em] text-visacore-gold">{eyebrow}</p>
       <h3 className="mt-3 text-xl font-black leading-tight text-visacore-navy">{title}</h3>
       <p className="mt-3 text-sm leading-6 text-visacore-navy/72">{description}</p>
@@ -929,7 +919,7 @@ function DesktopTrustCard({
   title: string;
 }) {
   return (
-    <div className="rounded-[28px] border border-visacore-navy/8 bg-white p-5 shadow-[0_24px_50px_-40px_rgba(10,37,64,0.45)]">
+    <div className="rounded-[26px] border border-visacore-navy/8 bg-white p-5 shadow-[0_24px_50px_-40px_rgba(10,37,64,0.45)] xl:rounded-[28px]">
       <p className="text-xs font-black uppercase tracking-[0.22em] text-visacore-gold">{eyebrow}</p>
       <h3 className="mt-3 text-xl font-black leading-tight text-visacore-navy">{title}</h3>
       <div className="mt-5 space-y-3">

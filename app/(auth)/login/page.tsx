@@ -18,17 +18,22 @@ export default function LoginPage() {
   )
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold">Connexion</CardTitle>
+    <Card className="w-full max-w-md rounded-[28px] border-visacore-navy/8 shadow-none">
+      <CardHeader className="space-y-3 px-6 pb-2 pt-6 sm:px-8 sm:pt-8">
+        <p className="text-xs font-black uppercase tracking-[0.24em] text-visacore-gold">
+          Connexion
+        </p>
+        <CardTitle className="text-3xl font-black text-visacore-navy">
+          Acceder a l&apos;administration
+        </CardTitle>
         <CardDescription>
-          Connectez-vous à votre espace d&apos;administration
+          Connectez-vous a votre espace d&apos;administration pour suivre les demandes et piloter le contenu.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <form action={formAction} className="space-y-4">
+      <CardContent className="px-6 pb-6 pt-4 sm:px-8 sm:pb-8">
+        <form action={formAction} className="space-y-5">
           {state?.error && (
-            <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md">
+            <div className="rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
               {state.error}
             </div>
           )}
@@ -54,7 +59,7 @@ export default function LoginPage() {
               disabled={isPending}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button type="submit" className="mt-2 h-12 w-full rounded-full bg-[#0A2540] text-white hover:bg-[#163C61]" disabled={isPending}>
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -64,15 +69,15 @@ export default function LoginPage() {
               "Se connecter"
             )}
           </Button>
-          <div className="space-y-2 pt-2 text-center text-sm text-muted-foreground">
+          <div className="space-y-2 rounded-[22px] border border-visacore-navy/8 bg-[#F7F8FB] px-4 py-4 text-center text-sm text-muted-foreground">
             <p>
-              Première connexion ou mot de passe oublié ?
+              Premiere connexion ou mot de passe oublie ?
             </p>
             <Link
               href="/recuperer-acces"
-              className="font-medium text-[#0A2540] underline"
+              className="font-semibold text-[#0A2540] underline underline-offset-4"
             >
-              Demander un lien sécurisé
+              Demander un lien securise
             </Link>
           </div>
         </form>

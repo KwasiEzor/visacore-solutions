@@ -32,7 +32,7 @@ export default async function AdminLayout({
   ])
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-[linear-gradient(180deg,#f7f8fb_0%,#ffffff_100%)]">
       {/* Desktop sidebar - hidden on mobile */}
       <div className="hidden lg:flex lg:shrink-0">
         <AdminSidebar user={user} />
@@ -46,8 +46,10 @@ export default async function AdminLayout({
           unreadCount={unreadCount}
         />
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-          {children}
+        <main className="flex-1 overflow-y-auto px-4 pb-6 pt-4 sm:px-5 lg:px-6 lg:pb-8 lg:pt-6">
+          <div className="mx-auto w-full max-w-[92rem]">
+            {children}
+          </div>
         </main>
       </div>
     </div>

@@ -84,24 +84,31 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
   const pathname = usePathname()
 
   return (
-    <aside className="flex h-full w-64 flex-col bg-[#0A2540]">
+    <aside className="flex h-full w-[17.5rem] flex-col border-r border-white/6 bg-[linear-gradient(180deg,#0A2540_0%,#0E2C49_100%)]">
       {/* Logo */}
-      <div className="flex h-16 shrink-0 items-center gap-3 border-b border-white/10 px-6">
-        <Image
-          src="/images/visacore_solutions_globe_logo.png"
-          alt="VisaCore Solutions"
-          width={640}
-          height={525}
-          className="size-8 rounded brightness-0 invert"
-        />
-        <span className="text-lg font-semibold tracking-tight text-white">
-          VisaCore Solutions
-        </span>
+      <div className="border-b border-white/10 px-6 py-5">
+        <div className="flex items-center gap-3">
+          <Image
+            src="/images/visacore_solutions_globe_logo.png"
+            alt="VisaCore Solutions"
+            width={640}
+            height={525}
+            className="size-9 rounded brightness-0 invert"
+          />
+          <div>
+            <span className="block text-base font-semibold tracking-tight text-white">
+              VisaCore Solutions
+            </span>
+            <span className="text-[11px] font-black uppercase tracking-[0.22em] text-white/38">
+              Admin console
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 py-4">
-        <nav className="flex flex-col gap-1 px-3">
+      <ScrollArea className="flex-1 py-5">
+        <nav className="flex flex-col gap-1.5 px-3">
           {navItems
             .filter((item) =>
               canRenderAdminNavItem(user.role, item.requiredAction)
@@ -115,10 +122,10 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  "group flex items-center gap-3 rounded-2xl px-3.5 py-3 text-sm font-medium transition-colors",
                   active
-                    ? "bg-white/10 text-[#C9A227]"
-                    : "text-white/70 hover:bg-white/5 hover:text-white"
+                    ? "bg-white/10 text-[#C9A227] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                    : "text-white/70 hover:bg-white/6 hover:text-white"
                 )}
               >
                 <Icon
@@ -137,7 +144,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
       </ScrollArea>
 
       {/* User info at bottom */}
-      <div className="shrink-0 border-t border-white/10 px-6 py-4">
+      <div className="shrink-0 border-t border-white/10 px-6 py-5">
         <div className="flex items-center gap-3">
           <div className="flex size-9 items-center justify-center rounded-full bg-[#C9A227] text-sm font-semibold text-[#0A2540]">
             {user.name
