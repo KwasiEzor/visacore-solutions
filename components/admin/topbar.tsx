@@ -61,6 +61,7 @@ const pageTitles: Record<string, string> = {
   "/admin/testimonials": "Temoignages",
   "/admin/stories": "Success Stories",
   "/admin/conversations": "Conversations",
+  "/admin/applicants": "Applicants",
   "/admin/content": "Contenu",
   "/admin/media": "Medias",
   "/admin/privacy-requests": "Demandes RGPD",

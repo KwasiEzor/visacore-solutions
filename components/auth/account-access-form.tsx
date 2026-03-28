@@ -43,8 +43,8 @@ export function AccountAccessForm({
     mode === "reset" ? "Reinitialiser le mot de passe" : "Configurer votre acces"
   const description =
     mode === "reset"
-      ? "Definissez un nouveau mot de passe pour retrouver l'acces a l'administration."
-      : "Choisissez votre mot de passe pour activer votre espace administrateur."
+      ? "Definissez un nouveau mot de passe pour retrouver l'acces a votre espace securise."
+      : "Choisissez votre mot de passe pour activer votre espace securise."
 
   return (
     <Card className="w-full max-w-md">
@@ -71,9 +71,16 @@ export function AccountAccessForm({
                   <span>{state.message}</span>
                 </div>
               </div>
-              <Link href="/login" className="block">
-                <Button className="w-full">Aller a la connexion</Button>
-              </Link>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Link href="/espace-client/connexion" className="block">
+                  <Button variant="outline" className="w-full">
+                    Connexion client
+                  </Button>
+                </Link>
+                <Link href="/login" className="block">
+                  <Button className="w-full">Connexion admin</Button>
+                </Link>
+              </div>
             </div>
           ) : (
             <>

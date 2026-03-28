@@ -2,6 +2,7 @@ import assert from "node:assert/strict"
 import test from "node:test"
 
 import {
+  canAccessApplicantPortal,
   canAccessAdminPath,
   canRenderAdminNavItem,
   hasPermission,
@@ -21,8 +22,12 @@ test("rbac helper keeps users/settings restricted while leaving normal admin pat
     true
   )
   assert.equal(canAccessAdminPath("/admin/users", "SUPER_ADMIN"), true)
+  assert.equal(canAccessAdminPath("/admin/applicants", "ADMIN"), true)
+  assert.equal(canAccessAdminPath("/admin", "APPLICANT"), false)
   assert.equal(canRenderAdminNavItem("EDITOR", "manage_users"), false)
   assert.equal(canRenderAdminNavItem("SUPER_ADMIN", "manage_settings"), true)
+  assert.equal(canAccessApplicantPortal("APPLICANT"), true)
+  assert.equal(canAccessApplicantPortal("ADMIN"), false)
 })
 
 test("rbac permissions remain aligned with create/edit/delete and super-admin-only resources", () => {
@@ -30,8 +35,10 @@ test("rbac permissions remain aligned with create/edit/delete and super-admin-on
   assert.equal(hasPermission("EDITOR", "edit"), true)
   assert.equal(hasPermission("EDITOR", "delete"), false)
   assert.equal(hasPermission("ADMIN", "delete"), true)
+  assert.equal(hasPermission("ADMIN", "manage_applicants"), true)
   assert.equal(hasPermission("ADMIN", "manage_users"), false)
   assert.equal(hasPermission("SUPER_ADMIN", "manage_users"), true)
+  assert.equal(hasPermission("APPLICANT", "view_all"), false)
 })
 
 test("upload policy accepts valid files and rejects oversize or mismatched extensions", () => {

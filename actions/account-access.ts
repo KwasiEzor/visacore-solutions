@@ -7,7 +7,11 @@ import {
   clearAccountAccessTokens,
   consumeAccountAccessToken,
 } from "@/lib/account-access"
-import { sendPasswordResetEmail } from "@/lib/business-notifications"
+import {
+  sendApplicantPortalPasswordResetEmail,
+  sendPasswordResetEmail,
+} from "@/lib/business-notifications"
+import { isApplicantRole } from "@/lib/applicant-portal.shared"
 import { accountAccessCompletionSchema } from "@/lib/validations/auth"
 
 const emailRequestSchema = z.object({
@@ -33,11 +37,16 @@ export async function requestPasswordResetAction(formData: FormData) {
       select: {
         email: true,
         name: true,
+        role: true,
       },
     })
 
     if (user) {
-      await sendPasswordResetEmail(user)
+      if (isApplicantRole(user.role)) {
+        await sendApplicantPortalPasswordResetEmail(user)
+      } else {
+        await sendPasswordResetEmail(user)
+      }
     }
 
     return {

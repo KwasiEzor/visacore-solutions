@@ -606,6 +606,44 @@ export function buildAccountInvitationEmail({
   } satisfies EmailTemplate
 }
 
+export function buildApplicantPortalInvitationEmail({
+  userName,
+  accessUrl,
+  expiresLabel,
+  createdByName,
+  siteConfig,
+}: {
+  userName: string
+  accessUrl: string
+  expiresLabel: string
+  createdByName?: string | null
+  siteConfig: PublicSiteConfig
+}) {
+  return {
+    ...renderShell({
+      previewText: "Votre espace client VisaCore est pret.",
+      eyebrow: "Espace client",
+      title: "Activez votre espace demandeur",
+      intro: `Bonjour ${userName}, votre espace client securise est pret sur ${siteConfig.siteName}. Vous pourrez y suivre votre procedure, vos prochaines etapes et les documents attendus.`,
+      bulletPoints: [
+        "Ce lien est personnel, temporaire et a usage unique.",
+        "Une fois le mot de passe choisi, vous accederez a votre tableau de bord client.",
+        "Vos mises a jour de dossier, pieces a fournir et rendez-vous y seront centralises.",
+      ],
+      action: {
+        label: "Activer mon espace client",
+        href: accessUrl,
+      },
+      secondaryNote: createdByName
+        ? `Invitation envoyee par ${createdByName}.`
+        : "Invitation envoyee par votre conseiller VisaCore Solutions.",
+      trustNote: `Lien valable jusqu'au ${expiresLabel}. Si vous avez un doute, contactez notre equipe avant d'ouvrir toute piece ou de transmettre un document sensible.`,
+      siteConfig,
+    }),
+    subject: "Votre espace client VisaCore Solutions est disponible",
+  } satisfies EmailTemplate
+}
+
 export function buildPasswordResetEmail({
   userName,
   accessUrl,
@@ -636,6 +674,39 @@ export function buildPasswordResetEmail({
       siteConfig,
     }),
     subject: "Reinitialisation de votre acces VisaCore Solutions",
+  } satisfies EmailTemplate
+}
+
+export function buildApplicantPortalPasswordResetEmail({
+  userName,
+  accessUrl,
+  expiresLabel,
+  siteConfig,
+}: {
+  userName: string
+  accessUrl: string
+  expiresLabel: string
+  siteConfig: PublicSiteConfig
+}) {
+  return {
+    ...renderShell({
+      previewText: "Votre lien de reinitialisation client est pret.",
+      eyebrow: "Espace client",
+      title: "Retrouvez l'acces a votre espace client",
+      intro: `Bonjour ${userName}, nous avons recu une demande de reinitialisation pour votre espace client ${siteConfig.siteName}.`,
+      bulletPoints: [
+        "Utilisez ce lien pour definir un nouveau mot de passe.",
+        "Si vous n'etes pas a l'origine de cette demande, ignorez simplement cet email.",
+        "Aucun membre de notre equipe ne vous demandera de partager ce lien ou votre mot de passe.",
+      ],
+      action: {
+        label: "Reinitialiser mon acces client",
+        href: accessUrl,
+      },
+      trustNote: `Lien valable jusqu'au ${expiresLabel}. Passe ce delai, une nouvelle demande sera necessaire.`,
+      siteConfig,
+    }),
+    subject: "Reinitialisation de votre espace client VisaCore Solutions",
   } satisfies EmailTemplate
 }
 

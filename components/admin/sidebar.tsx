@@ -17,6 +17,7 @@ import {
   FileText,
   Image as ImageIcon,
   UserCog,
+  FolderKanban,
   Settings,
   ShieldCheck,
   type LucideIcon,
@@ -53,6 +54,12 @@ const navItems: AdminNavItem[] = [
   { label: "Temoignages", href: "/admin/testimonials", icon: MessageSquare },
   { label: "Success Stories", href: "/admin/stories", icon: Trophy },
   { label: "Conversations", href: "/admin/conversations", icon: MessagesSquare },
+  {
+    label: "Applicants",
+    href: "/admin/applicants",
+    icon: FolderKanban,
+    requiredAction: "manage_applicants",
+  },
   { label: "Contenu", href: "/admin/content", icon: FileText },
   { label: "Medias", href: "/admin/media", icon: ImageIcon },
   {

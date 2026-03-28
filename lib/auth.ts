@@ -3,7 +3,8 @@ import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
-import { canAccessAdminPath } from "@/lib/rbac"
+import { canAccessAdminPath, canAccessApplicantPortal } from "@/lib/rbac"
+import { isApplicantRole } from "@/lib/applicant-portal.shared"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -75,6 +76,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       const { pathname } = request.nextUrl
       
       const isOnAdmin = pathname.startsWith("/admin")
+      const isOnApplicantPortal =
+        pathname.startsWith("/espace-client") &&
+        pathname !== "/espace-client/connexion"
+      const isOnAdminLogin = pathname === "/login"
+      const isOnApplicantLogin = pathname === "/espace-client/connexion"
 
       if (isOnAdmin) {
         if (!isLoggedIn) return false
@@ -85,6 +91,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         
         return true
       }
+
+      if (isOnApplicantPortal) {
+        if (!isLoggedIn) {
+          return Response.redirect(
+            new URL("/espace-client/connexion", request.nextUrl)
+          )
+        }
+
+        if (!canAccessApplicantPortal(role)) {
+          return Response.redirect(new URL("/admin", request.nextUrl))
+        }
+
+        return true
+      }
+
+      if ((isOnAdminLogin || isOnApplicantLogin) && isLoggedIn) {
+        const target = isApplicantRole(role) ? "/espace-client" : "/admin"
+        return Response.redirect(new URL(target, request.nextUrl))
+      }
+
       return true
     },
   },

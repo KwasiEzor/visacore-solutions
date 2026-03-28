@@ -8,6 +8,8 @@ import {
 import { sendTransactionalEmail } from "@/lib/email"
 import {
   buildAccountInvitationEmail,
+  buildApplicantPortalInvitationEmail,
+  buildApplicantPortalPasswordResetEmail,
   buildAppointmentAcknowledgementEmail,
   buildAppointmentAdminAlertEmail,
   buildAppointmentStatusEmail,
@@ -570,6 +572,7 @@ export async function notifyUserCreated(user: {
       SUPER_ADMIN: "Super Admin",
       ADMIN: "Administrateur",
       EDITOR: "Editeur",
+      APPLICANT: "Client",
     }
 
     const invitationEmail = buildAccountInvitationEmail({
@@ -610,6 +613,7 @@ export async function sendAccountInvitationEmail(user: {
       SUPER_ADMIN: "Super Admin",
       ADMIN: "Administrateur",
       EDITOR: "Editeur",
+      APPLICANT: "Client",
     }
 
     const invitationEmail = buildAccountInvitationEmail({
@@ -659,5 +663,67 @@ export async function sendPasswordResetEmail(user: {
     })
   } catch (error) {
     console.error("[SEND_PASSWORD_RESET_EMAIL_ERROR]", error)
+  }
+}
+
+export async function sendApplicantPortalInvitationEmail(user: {
+  name?: string | null
+  email: string
+  createdByName?: string | null
+}) {
+  try {
+    const runtime = await getNotificationRuntime()
+    const { rawToken, expires } = await issueAccountAccessToken(
+      user.email,
+      "invite"
+    )
+    const setupUrl = `${runtime.baseUrl}/configurer-acces?token=${rawToken}`
+
+    const invitationEmail = buildApplicantPortalInvitationEmail({
+      userName: user.name || user.email,
+      accessUrl: setupUrl,
+      expiresLabel: formatDateTimeLabel(expires),
+      createdByName: user.createdByName,
+      siteConfig: runtime.siteConfig,
+    })
+
+    await deliverEmailWithRuntime(runtime, {
+      to: [user.email],
+      subject: invitationEmail.subject,
+      html: invitationEmail.html,
+      text: invitationEmail.text,
+    })
+  } catch (error) {
+    console.error("[SEND_APPLICANT_PORTAL_INVITATION_EMAIL_ERROR]", error)
+  }
+}
+
+export async function sendApplicantPortalPasswordResetEmail(user: {
+  name?: string | null
+  email: string
+}) {
+  try {
+    const runtime = await getNotificationRuntime()
+    const { rawToken, expires } = await issueAccountAccessToken(
+      user.email,
+      "reset"
+    )
+    const resetUrl = `${runtime.baseUrl}/configurer-acces?token=${rawToken}&mode=reset`
+
+    const resetEmail = buildApplicantPortalPasswordResetEmail({
+      userName: user.name || user.email,
+      accessUrl: resetUrl,
+      expiresLabel: formatDateTimeLabel(expires),
+      siteConfig: runtime.siteConfig,
+    })
+
+    await deliverEmailWithRuntime(runtime, {
+      to: [user.email],
+      subject: resetEmail.subject,
+      html: resetEmail.html,
+      text: resetEmail.text,
+    })
+  } catch (error) {
+    console.error("[SEND_APPLICANT_PORTAL_PASSWORD_RESET_EMAIL_ERROR]", error)
   }
 }

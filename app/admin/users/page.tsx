@@ -5,6 +5,11 @@ import { UsersClient } from "@/components/admin/users-client"
 export default async function UsersAdminPage() {
   const session = await auth()
   const users = await prisma.user.findMany({
+    where: {
+      role: {
+        in: ["SUPER_ADMIN", "ADMIN", "EDITOR"],
+      },
+    },
     orderBy: { createdAt: "desc" },
   })
 

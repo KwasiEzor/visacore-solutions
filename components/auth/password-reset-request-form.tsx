@@ -52,12 +52,12 @@ export function PasswordResetRequestForm() {
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="email">Email professionnel</Label>
+            <Label htmlFor="email">Email du compte</Label>
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="admin@visacore.com"
+              placeholder="vous@exemple.com"
               required
               disabled={isPending}
             />
@@ -72,11 +72,14 @@ export function PasswordResetRequestForm() {
               "Envoyer le lien securise"
             )}
           </Button>
-          <p className="text-center text-sm text-muted-foreground">
-            <Link href="/login" className="font-medium text-[#0A2540] underline">
-              Retour a la connexion
+          <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+            <Link href="/espace-client/connexion" className="font-medium text-[#0A2540] underline">
+              Espace client
             </Link>
-          </p>
+            <Link href="/login" className="font-medium text-[#0A2540] underline">
+              Administration
+            </Link>
+          </div>
         </form>
       </CardContent>
     </Card>

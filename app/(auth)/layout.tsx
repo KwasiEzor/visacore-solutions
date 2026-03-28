@@ -32,11 +32,11 @@ export default function AuthLayout({
                 VisaCore Solutions
               </p>
               <h1 className="text-4xl font-black leading-[0.95] text-white xl:text-5xl">
-                Un acces admin plus net, plus calme, plus fiable.
+                Un acces securise, plus net, plus calme, plus fiable.
               </h1>
               <p className="mx-auto max-w-md text-lg leading-8 text-white/68">
-                Connectez-vous a l&apos;espace d&apos;administration pour suivre les leads,
-                les rendez-vous et les contenus dans un environnement securise.
+                Administration interne ou espace client: les acces sont centralises
+                dans un environnement securise avec liens d&apos;activation traces.
               </p>
             </div>
           </div>
@@ -44,10 +44,10 @@ export default function AuthLayout({
 
         <div className="relative z-10 grid gap-4 text-sm text-white/65">
           <div className="rounded-[26px] border border-white/10 bg-white/6 p-5">
-            Acces reserve aux collaborateurs autorises et journalisation des actions sensibles.
+            Acces protege, liens temporaires et journalisation des actions sensibles.
           </div>
           <div className="rounded-[26px] border border-white/10 bg-white/6 p-5">
-            Liens d&apos;invitation et reinitialisation securises pour l&apos;onboarding interne.
+            Invitations client et reinitialisations securisees pour chaque espace.
           </div>
         </div>
       </div>
