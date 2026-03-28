@@ -18,6 +18,7 @@ import {
   LeadNotesForm,
   DeleteLeadButton,
 } from "@/components/admin/lead-actions"
+import { AILeadInsights } from "@/components/admin/ai-lead-insights"
 
 interface LeadDetailPageProps {
   params: Promise<{ id: string }>
@@ -283,6 +284,22 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
               )}
             </div>
           </div>
+
+          {/* AI Insights */}
+          <AILeadInsights
+            lead={{
+              fullName: lead.fullName,
+              email: lead.email,
+              phone: lead.phone,
+              country: lead.country,
+              destination: lead.destination,
+              situation: lead.situation,
+              serviceNeeded: lead.serviceNeeded,
+              message: lead.message,
+              status: lead.status,
+              createdAt: lead.createdAt.toISOString(),
+            }}
+          />
 
           {/* Meta info */}
           <div className="rounded-xl border border-border bg-card shadow-sm">

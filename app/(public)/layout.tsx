@@ -1,6 +1,7 @@
 import { Header } from "@/components/public/header";
 import { Footer } from "@/components/public/footer";
 import { WhatsAppButton } from "@/components/public/whatsapp-button";
+import { Chatbot } from "@/components/public/chatbot";
 import { Toaster } from "@/components/ui/sonner";
 import { prisma } from "@/lib/prisma";
 import { fallbackServices } from "@/lib/public-content";
@@ -41,6 +42,7 @@ export default async function PublicLayout({
       <main className="flex-1">{children}</main>
       <Footer siteConfig={siteConfig} services={footerServices} />
       <WhatsAppButton href={getWhatsAppHref(siteConfig.whatsappNumber)} />
+      <Chatbot />
       <Toaster position="top-right" richColors closeButton />
     </>
   );

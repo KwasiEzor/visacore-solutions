@@ -95,7 +95,7 @@ export function LeadNotesForm({ leadId, currentNotes }: LeadNotesFormProps) {
         defaultValue={currentNotes ?? ""}
         placeholder="Ajoutez vos notes ici..."
         rows={5}
-        className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring"
+        className="min-h-28 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring"
       />
       <button
         type="submit"

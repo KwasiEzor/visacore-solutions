@@ -8,6 +8,7 @@ import { LogOut, Menu, ExternalLink, Shield, User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { logoutAction } from "@/actions/auth"
 import { Button } from "@/components/ui/button"
+import { AICopilotTrigger } from "@/components/admin/ai-copilot"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Sheet,
@@ -140,6 +141,9 @@ export function AdminTopbar({ user }: AdminTopbarProps) {
             {pageTitle}
           </h1>
         </div>
+
+        {/* AI Copilot trigger */}
+        <AICopilotTrigger />
 
         {/* User profile button */}
         <div ref={profileRef} className="relative">
