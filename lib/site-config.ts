@@ -1,11 +1,14 @@
 import { prisma } from "@/lib/prisma"
 import {
   adminAiSettingKeys,
+  aiSiteSettingKeys,
   defaultAdminAiSiteConfig,
+  defaultAiSiteConfig,
   defaultPublicChatbotSiteConfig,
   defaultPublicSiteConfig,
   defaultNotificationSiteConfig,
   mapAdminAiSiteConfig,
+  mapAiSiteConfig,
   mapNotificationSiteConfig,
   mapPublicChatbotSiteConfig,
   mapPublicSiteConfig,
@@ -15,6 +18,7 @@ import {
 } from "@/lib/site-config.shared"
 import type {
   AdminAiSiteConfig,
+  AiSiteConfig,
   NotificationSiteConfig,
   PublicChatbotSiteConfig,
   PublicSiteConfig,
@@ -23,8 +27,11 @@ import type {
 export {
   adminAiSettingKeys,
   allSiteSettingCatalog,
+  aiSiteSettingCatalog,
+  aiSiteSettingKeys,
   chatbotSiteSettingCatalog,
   defaultAdminAiSiteConfig,
+  defaultAiSiteConfig,
   defaultNotificationSiteConfig,
   defaultPublicChatbotSiteConfig,
   defaultPublicSiteConfig,
@@ -34,6 +41,7 @@ export {
   getTelHref,
   getWhatsAppHref,
   mapAdminAiSiteConfig,
+  mapAiSiteConfig,
   mapNotificationSiteConfig,
   mapPublicChatbotSiteConfig,
   mapPublicSiteConfig,
@@ -48,6 +56,8 @@ export {
 } from "@/lib/site-config.shared"
 export type {
   AdminAiSiteConfig,
+  AiSiteConfig,
+  AiSiteSettingKey,
   ChatbotSiteSettingKey,
   NotificationSiteConfig,
   NotificationSiteSettingKey,
@@ -112,6 +122,24 @@ export async function getPublicChatbotSiteConfig(): Promise<PublicChatbotSiteCon
     return mapPublicChatbotSiteConfig(settings)
   } catch {
     return defaultPublicChatbotSiteConfig
+  }
+}
+
+export async function getAiSiteConfig(): Promise<AiSiteConfig> {
+  try {
+    const settings = await prisma.siteSetting.findMany({
+      where: {
+        key: { in: [...aiSiteSettingKeys] },
+      },
+      select: {
+        key: true,
+        value: true,
+      },
+    })
+
+    return mapAiSiteConfig(settings)
+  } catch {
+    return defaultAiSiteConfig
   }
 }
 

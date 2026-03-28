@@ -1,5 +1,5 @@
 import { streamText, stepCountIs } from "ai"
-import { chatModel } from "@/lib/ai"
+import { resolveChatModel } from "@/lib/ai"
 import { auth } from "@/lib/auth"
 import { checkRateLimit, ADMIN_CHAT_LIMIT } from "@/lib/rate-limit"
 import { getAdminAiSiteConfig, getPublicSiteConfig } from "@/lib/site-config"
@@ -46,6 +46,19 @@ export async function POST(request: Request) {
     return new Response(
       JSON.stringify({ error: "Le copilote IA est desactive." }),
       { status: 403, headers: { "Content-Type": "application/json" } }
+    )
+  }
+
+  let chatModel
+
+  try {
+    const resolved = await resolveChatModel()
+    chatModel = resolved.model
+  } catch (error) {
+    console.error("[ADMIN_CHAT_MODEL_ERROR]", error)
+    return new Response(
+      JSON.stringify({ error: "Le copilote IA n'est pas disponible." }),
+      { status: 503, headers: { "Content-Type": "application/json" } }
     )
   }
 

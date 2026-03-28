@@ -1,7 +1,19 @@
+import {
+  AI_PROVIDER_OPTIONS,
+  DEFAULT_AI_MODEL_BY_PROVIDER,
+  DEFAULT_AI_PROVIDER,
+  getAiModelOptions,
+  isAiProviderId,
+  resolveAiModel,
+  resolveAiProvider,
+  type AiProviderId,
+} from "@/lib/ai-settings.shared"
+
 export type SiteSettingType = "TEXT" | "IMAGE" | "JSON" | "BOOLEAN"
 export type SiteSettingSectionId =
   | "business"
   | "whatsapp"
+  | "ai_provider"
   | "public_chatbot"
   | "admin_ai"
   | "email"
@@ -11,7 +23,11 @@ export type SiteSettingValidation =
   | "phone"
   | "url"
   | "integer"
-export type SiteSettingControl = "input" | "textarea"
+export type SiteSettingControl = "input" | "textarea" | "select"
+export interface SiteSettingOption {
+  value: string
+  label: string
+}
 
 export interface SiteSettingCatalogEntry {
   key: string
@@ -21,10 +37,12 @@ export interface SiteSettingCatalogEntry {
   section: SiteSettingSectionId
   description: string
   placeholder?: string
-  inputType?: "text" | "email" | "tel" | "url" | "number"
+  inputType?: "text" | "email" | "tel" | "url" | "number" | "password"
   control?: SiteSettingControl
   rows?: number
   validation?: SiteSettingValidation
+  options?: readonly SiteSettingOption[]
+  secret?: boolean
 }
 
 export const siteSettingSections: ReadonlyArray<{
@@ -43,6 +61,12 @@ export const siteSettingSections: ReadonlyArray<{
     title: "Canal WhatsApp",
     description:
       "Controlez le bouton flottant WhatsApp et le message pre-rempli envoye aux visiteurs.",
+  },
+  {
+    id: "ai_provider",
+    title: "Fournisseur IA",
+    description:
+      "Choisissez le fournisseur actif, le modele utilise et stockez les cles API de maniere chiffree.",
   },
   {
     id: "public_chatbot",
@@ -206,6 +230,67 @@ export const publicSiteSettingCatalog = [
       "Bonjour VisaCore Solutions, je souhaite obtenir des informations sur votre accompagnement.",
     control: "textarea",
     rows: 3,
+  },
+] satisfies readonly SiteSettingCatalogEntry[]
+
+export const aiSiteSettingCatalog = [
+  {
+    key: "ai_provider",
+    label: "Fournisseur actif",
+    type: "TEXT",
+    defaultValue: DEFAULT_AI_PROVIDER,
+    section: "ai_provider",
+    description:
+      "Le fournisseur IA utilise par le chatbot public et le copilote admin.",
+    control: "select",
+    options: AI_PROVIDER_OPTIONS,
+  },
+  {
+    key: "ai_model",
+    label: "Modele actif",
+    type: "TEXT",
+    defaultValue: DEFAULT_AI_MODEL_BY_PROVIDER[DEFAULT_AI_PROVIDER],
+    section: "ai_provider",
+    description:
+      "Modele texte utilise par defaut pour les experiences IA du site et du dashboard.",
+    control: "select",
+    options: getAiModelOptions(DEFAULT_AI_PROVIDER),
+  },
+  {
+    key: "ai_anthropic_api_key",
+    label: "Cle API Anthropic",
+    type: "TEXT",
+    defaultValue: "",
+    section: "ai_provider",
+    description:
+      "Cle API chiffree en base. Utilisee si Anthropic est selectionne et qu'aucune variable d'environnement n'est fournie.",
+    placeholder: "sk-ant-...",
+    inputType: "password",
+    secret: true,
+  },
+  {
+    key: "ai_openai_api_key",
+    label: "Cle API OpenAI",
+    type: "TEXT",
+    defaultValue: "",
+    section: "ai_provider",
+    description:
+      "Cle API chiffree en base. Utilisee si OpenAI est selectionne et qu'aucune variable d'environnement n'est fournie.",
+    placeholder: "sk-proj-...",
+    inputType: "password",
+    secret: true,
+  },
+  {
+    key: "ai_google_api_key",
+    label: "Cle API Google Gemini",
+    type: "TEXT",
+    defaultValue: "",
+    section: "ai_provider",
+    description:
+      "Cle API chiffree en base. Utilisee si Google Gemini est selectionne et qu'aucune variable d'environnement n'est fournie.",
+    placeholder: "AIza...",
+    inputType: "password",
+    secret: true,
   },
 ] satisfies readonly SiteSettingCatalogEntry[]
 
@@ -411,12 +496,14 @@ export const notificationSiteSettingCatalog = [
 
 export const allSiteSettingCatalog = [
   ...publicSiteSettingCatalog,
+  ...aiSiteSettingCatalog,
   ...chatbotSiteSettingCatalog,
   ...notificationSiteSettingCatalog,
 ] as const satisfies readonly SiteSettingCatalogEntry[]
 
 export type PublicSiteSettingKey =
   (typeof publicSiteSettingCatalog)[number]["key"]
+export type AiSiteSettingKey = (typeof aiSiteSettingCatalog)[number]["key"]
 export type ChatbotSiteSettingKey =
   (typeof chatbotSiteSettingCatalog)[number]["key"]
 export type NotificationSiteSettingKey =
@@ -429,6 +516,10 @@ export const publicSiteSettingKeys = publicSiteSettingCatalog.map(
 export const publicChatbotSettingKeys = chatbotSiteSettingCatalog
   .filter((setting) => setting.section === "public_chatbot")
   .map((setting) => setting.key) as unknown as readonly string[]
+
+export const aiSiteSettingKeys = aiSiteSettingCatalog.map(
+  (setting) => setting.key
+) as unknown as readonly string[]
 
 export const adminAiSettingKeys = chatbotSiteSettingCatalog
   .filter((setting) => setting.section === "admin_ai")
@@ -467,6 +558,14 @@ export interface PublicChatbotSiteConfig {
   inputPlaceholder: string
   promptAddendum: string
   rateLimitPerHour: number
+}
+
+export interface AiSiteConfig {
+  provider: AiProviderId
+  model: string
+  anthropicApiKey: string
+  openaiApiKey: string
+  googleApiKey: string
 }
 
 export interface AdminAiSiteConfig {
@@ -516,6 +615,14 @@ export const defaultPublicChatbotSiteConfig: PublicChatbotSiteConfig = {
   inputPlaceholder: "Posez votre question...",
   promptAddendum: "",
   rateLimitPerHour: 20,
+}
+
+export const defaultAiSiteConfig: AiSiteConfig = {
+  provider: DEFAULT_AI_PROVIDER,
+  model: DEFAULT_AI_MODEL_BY_PROVIDER[DEFAULT_AI_PROVIDER],
+  anthropicApiKey: "",
+  openaiApiKey: "",
+  googleApiKey: "",
 }
 
 export const defaultAdminAiSiteConfig: AdminAiSiteConfig = {
@@ -613,6 +720,20 @@ export function mapPublicSiteConfig(settings: SiteSettingRow[]): PublicSiteConfi
   }
 }
 
+export function mapAiSiteConfig(settings: SiteSettingRow[]): AiSiteConfig {
+  const values = valuesByKey(settings)
+  const provider = resolveAiProvider(values.ai_provider)
+
+  return {
+    provider,
+    model: resolveAiModel(provider, values.ai_model),
+    anthropicApiKey:
+      values.ai_anthropic_api_key || defaultAiSiteConfig.anthropicApiKey,
+    openaiApiKey: values.ai_openai_api_key || defaultAiSiteConfig.openaiApiKey,
+    googleApiKey: values.ai_google_api_key || defaultAiSiteConfig.googleApiKey,
+  }
+}
+
 export function mapPublicChatbotSiteConfig(
   settings: SiteSettingRow[]
 ): PublicChatbotSiteConfig {
@@ -694,7 +815,9 @@ export function mapNotificationSiteConfig(
   }
 }
 
-export function getSiteSettingCatalogEntry(key: string) {
+export function getSiteSettingCatalogEntry(
+  key: string
+): SiteSettingCatalogEntry | undefined {
   return allSiteSettingCatalog.find((setting) => setting.key === key)
 }
 
@@ -737,6 +860,14 @@ export function validateSiteSettingValue(
         message: "Le JSON fourni est invalide.",
         type,
       }
+    }
+  }
+
+  if (key === "ai_provider" && trimmedValue && !isAiProviderId(trimmedValue)) {
+    return {
+      valid: false,
+      message: "Veuillez choisir un fournisseur IA pris en charge.",
+      type,
     }
   }
 

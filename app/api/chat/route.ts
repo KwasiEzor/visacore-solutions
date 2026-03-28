@@ -6,7 +6,7 @@ import {
   type UIMessage,
 } from "ai"
 import { z } from "zod"
-import { chatModel } from "@/lib/ai"
+import { resolveChatModel } from "@/lib/ai"
 import { prisma } from "@/lib/prisma"
 import { checkRateLimit, PUBLIC_CHAT_LIMIT } from "@/lib/rate-limit"
 import { getMessageText } from "@/lib/chat-helpers"
@@ -109,6 +109,21 @@ export async function POST(request: Request) {
         error: "Le chatbot public est actuellement indisponible.",
       }),
       { status: 403, headers: { "Content-Type": "application/json" } }
+    )
+  }
+
+  let chatModel
+
+  try {
+    const resolved = await resolveChatModel()
+    chatModel = resolved.model
+  } catch (error) {
+    console.error("[PUBLIC_CHAT_MODEL_ERROR]", error)
+    return new Response(
+      JSON.stringify({
+        error: "Le service IA est momentanement indisponible.",
+      }),
+      { status: 503, headers: { "Content-Type": "application/json" } }
     )
   }
 

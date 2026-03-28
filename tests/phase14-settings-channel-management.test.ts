@@ -3,11 +3,16 @@ import test from "node:test"
 
 import {
   getWhatsAppHref,
+  mapAiSiteConfig,
   mapAdminAiSiteConfig,
   mapPublicChatbotSiteConfig,
   mapPublicSiteConfig,
   validateSiteSettingValue,
 } from "../lib/site-config.shared"
+import {
+  decryptSecretSettingValue,
+  encryptSecretSettingValue,
+} from "../lib/settings-secrets"
 
 test("public site config maps WhatsApp controls and prefill message", () => {
   const config = mapPublicSiteConfig([
@@ -27,6 +32,10 @@ test("public site config maps WhatsApp controls and prefill message", () => {
 })
 
 test("chatbot config parsing keeps custom rate limits and admin quick actions", () => {
+  const aiConfig = mapAiSiteConfig([
+    { key: "ai_provider", value: "openai" },
+    { key: "ai_model", value: "gpt-5" },
+  ])
   const publicChatbot = mapPublicChatbotSiteConfig([
     { key: "public_chatbot_enabled", value: "true" },
     { key: "public_chatbot_rate_limit_per_hour", value: "32" },
@@ -39,6 +48,8 @@ test("chatbot config parsing keeps custom rate limits and admin quick actions", 
     { key: "admin_ai_rate_limit_per_hour", value: "70" },
   ])
 
+  assert.equal(aiConfig.provider, "openai")
+  assert.equal(aiConfig.model, "gpt-5")
   assert.equal(publicChatbot.rateLimitPerHour, 32)
   assert.equal(publicChatbot.promptAddendum, "Prioriser les rendez-vous.")
   assert.deepEqual(adminAi.quickActions, [
@@ -82,4 +93,24 @@ test("setting validation rejects malformed communication inputs", () => {
     ).valid,
     true
   )
+  assert.equal(
+    validateSiteSettingValue("ai_provider", "unsupported", "TEXT").valid,
+    false
+  )
+})
+
+test("secret helper encrypts and decrypts dashboard api keys", () => {
+  const previousAuthSecret = process.env.AUTH_SECRET
+  process.env.AUTH_SECRET = "visacore-test-secret"
+
+  const encrypted = encryptSecretSettingValue("sk-demo-123")
+
+  assert.notEqual(encrypted, "sk-demo-123")
+  assert.equal(decryptSecretSettingValue(encrypted), "sk-demo-123")
+
+  if (typeof previousAuthSecret === "string") {
+    process.env.AUTH_SECRET = previousAuthSecret
+  } else {
+    delete process.env.AUTH_SECRET
+  }
 })
