@@ -97,8 +97,9 @@ export function decryptSecretSettingValue(value: string | null | undefined) {
     ])
 
     return decrypted.toString("utf8")
-  } catch (error) {
-    console.error("[DECRYPT_SECRET_SETTING_ERROR]", error)
+  } catch {
+    // Old secrets encrypted with a previous key should quietly degrade to
+    // "missing" so build/runtime paths can fall back to environment values.
     return ""
   }
 }

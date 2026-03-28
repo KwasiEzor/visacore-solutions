@@ -114,3 +114,19 @@ test("secret helper encrypts and decrypts dashboard api keys", () => {
     delete process.env.AUTH_SECRET
   }
 })
+
+test("secret helper returns an empty string when the encryption key changed", () => {
+  const previousAuthSecret = process.env.AUTH_SECRET
+  process.env.AUTH_SECRET = "visacore-test-secret"
+
+  const encrypted = encryptSecretSettingValue("sk-demo-rotated")
+  process.env.AUTH_SECRET = "visacore-other-secret"
+
+  assert.equal(decryptSecretSettingValue(encrypted), "")
+
+  if (typeof previousAuthSecret === "string") {
+    process.env.AUTH_SECRET = previousAuthSecret
+  } else {
+    delete process.env.AUTH_SECRET
+  }
+})
