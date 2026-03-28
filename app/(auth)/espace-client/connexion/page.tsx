@@ -81,12 +81,20 @@ export default function ApplicantLoginPage() {
 
           <div className="space-y-2 rounded-[22px] border border-visacore-navy/8 bg-[#F7F8FB] px-4 py-4 text-center text-sm text-muted-foreground">
             <p>Premiere connexion ou acces perdu ?</p>
-            <Link
-              href="/recuperer-acces"
-              className="font-semibold text-[#0A2540] underline underline-offset-4"
-            >
-              Demander un lien securise
-            </Link>
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+              <Link
+                href="/recuperer-acces"
+                className="font-semibold text-[#0A2540] underline underline-offset-4"
+              >
+                Demander un lien securise
+              </Link>
+              <Link
+                href="/evaluation"
+                className="font-semibold text-visacore-gold underline underline-offset-4"
+              >
+                Ouvrir mon dossier
+              </Link>
+            </div>
           </div>
 
           <p className="text-center text-sm text-muted-foreground">

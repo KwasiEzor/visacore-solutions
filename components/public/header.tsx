@@ -52,7 +52,7 @@ type NavigationLink = {
   description: string;
 };
 
-type MenuId = "destinations" | "services" | "project" | "about";
+type MenuId = "destinations" | "services" | "project" | "portal" | "about";
 
 interface HeaderProps {
   siteConfig: PublicSiteConfig;
@@ -75,6 +75,11 @@ const desktopMenus: Array<{ id: MenuId; label: string; matchers: string[] }> = [
     id: "project",
     label: "Votre projet",
     matchers: ["/rendez-vous", "/evaluation"],
+  },
+  {
+    id: "portal",
+    label: "Espace client",
+    matchers: ["/espace-client", "/recuperer-acces"],
   },
   {
     id: "about",
@@ -155,6 +160,29 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
       href: "/faq",
       label: "FAQ pratique",
       description: "Préparez votre échange avec les réponses aux questions fréquentes.",
+    },
+  ];
+
+  const portalLinks: NavigationLink[] = [
+    {
+      href: "/espace-client/connexion",
+      label: "Connexion client",
+      description: "Accéder à votre portail pour suivre les étapes, documents et mises à jour.",
+    },
+    {
+      href: "/evaluation",
+      label: "Demander un accès",
+      description: "Ouvrir votre dossier pour recevoir ensuite vos accès sécurisés au portail.",
+    },
+    {
+      href: "/recuperer-acces",
+      label: "Première connexion / accès perdu",
+      description: "Recevoir un lien sécurisé pour activer ou récupérer votre compte client.",
+    },
+    {
+      href: "/rendez-vous",
+      label: "Parler à un conseiller",
+      description: "Réserver un échange si vous avez besoin d’aide avant l’ouverture du dossier.",
     },
   ];
 
@@ -389,6 +417,7 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
                 displayedPhone,
                 destinationLinks: visibleDestinations,
                 onNavigate: () => setActiveMenu(null),
+                portalLinks,
                 projectLinks,
                 serviceLinks: visibleServices,
                 siteConfig,
@@ -397,7 +426,20 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
           ) : null}
         </div>
 
-        <div className="hidden items-center gap-4 lg:flex">
+        <div className="hidden items-center gap-3 lg:flex">
+          <Link
+            href="/espace-client/connexion"
+            className={cn(
+              "inline-flex items-center rounded-full border px-4 py-3 text-sm font-black transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-visacore-gold/35",
+              isMatcherActive(["/espace-client", "/recuperer-acces"])
+                ? "border-visacore-gold/25 bg-visacore-gold/10 text-visacore-gold"
+                : useSolidHeader
+                  ? "border-visacore-navy/10 bg-white text-visacore-navy hover:border-visacore-gold/30 hover:text-visacore-gold"
+                  : "border-white/16 bg-white/8 text-white backdrop-blur-md hover:border-visacore-gold/35 hover:text-visacore-gold"
+            )}
+          >
+            Espace client
+          </Link>
           <Link
             href="/evaluation"
             className={cn(
@@ -467,12 +509,24 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
                         label="Prendre rendez-vous"
                         description="Réserver un échange avec un conseiller."
                       />
+                      <MobileActionLink
+                        href="/espace-client/connexion"
+                        label="Connexion client"
+                        description="Accéder à votre espace client sécurisé."
+                      />
+                      <MobileActionLink
+                        href="/evaluation"
+                        label="Demander un accès"
+                        description="Ouvrir un dossier pour recevoir vos identifiants."
+                      />
                     </div>
                   </div>
 
                   <div className="mt-6 grid gap-3 sm:grid-cols-2">
                     <MobileQuickLink href="/" label="Accueil" />
                     <MobileQuickLink href="/contact" label="Contact" />
+                    <MobileQuickLink href="/espace-client/connexion" label="Espace client" />
+                    <MobileQuickLink href="/evaluation" label="Ouvrir mon dossier" />
                   </div>
 
                   <Accordion className="mt-6 rounded-[28px] border border-white/10 bg-white/5 px-5 py-2">
@@ -509,6 +563,19 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
                       <AccordionContent className="pb-4">
                         <div className="space-y-3">
                           {projectLinks.map((link) => (
+                            <MobileDisclosureLink key={link.href} link={link} />
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="portal" className="border-white/10">
+                      <AccordionTrigger className="py-4 text-base font-black text-white hover:no-underline">
+                        Espace client
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-4">
+                        <div className="space-y-3">
+                          {portalLinks.map((link) => (
                             <MobileDisclosureLink key={link.href} link={link} />
                           ))}
                         </div>
@@ -578,6 +645,7 @@ function renderDesktopPanel({
   destinationLinks,
   displayedPhone,
   onNavigate,
+  portalLinks,
   projectLinks,
   serviceLinks,
   siteConfig,
@@ -587,6 +655,7 @@ function renderDesktopPanel({
   destinationLinks: NavigationLink[];
   displayedPhone: string;
   onNavigate: () => void;
+  portalLinks: NavigationLink[];
   projectLinks: NavigationLink[];
   serviceLinks: NavigationLink[];
   siteConfig: PublicSiteConfig;
@@ -690,6 +759,42 @@ function renderDesktopPanel({
             detailLabel="Horaires"
             detailValue={siteConfig.businessHours}
             footer={siteConfig.contactEmail}
+          />
+        </div>
+      </DesktopPanelFrame>
+    );
+  }
+
+  if (activeMenu === "portal") {
+    return (
+      <DesktopPanelFrame>
+        <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-[1.1fr_1.4fr_1fr]">
+          <DesktopFeatureCard
+            icon={ShieldCheck}
+            onNavigate={onNavigate}
+            eyebrow="Portail client"
+            title="Un point d’entrée clair pour suivre votre procédure sans encombrer la navigation principale."
+            description="Les clients déjà accompagnés se connectent directement. Les nouveaux profils démarrent par l’ouverture du dossier pour recevoir ensuite un accès sécurisé."
+            primaryHref="/espace-client/connexion"
+            primaryLabel="Connexion client"
+            secondaryHref="/evaluation"
+            secondaryLabel="Demander un accès"
+          />
+
+          <DesktopLinkGrid
+            title="Accès et suivi"
+            description="Les bons raccourcis selon votre stade d’avancement."
+            links={portalLinks}
+            onNavigate={onNavigate}
+          />
+
+          <DesktopInfoCard
+            eyebrow="Sécurité"
+            title="Vous n’avez pas encore d’identifiants ?"
+            description="Les accès sont activés après l’ouverture ou la prise en charge du dossier pour protéger les données de procédure."
+            detailLabel="Activation"
+            detailValue="Ouverture du dossier ou invitation VisaCore"
+            footer="Si votre dossier existe déjà, utilisez “Récupérer l’accès”. Sinon, démarrez par une évaluation ou un rendez-vous."
           />
         </div>
       </DesktopPanelFrame>
