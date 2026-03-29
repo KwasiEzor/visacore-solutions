@@ -12,6 +12,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { PageHeroBackground } from "@/components/public/page-hero-background";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
+import { buildPageMetadata } from "@/lib/metadata";
 import {
   normalizeStructuredCardItems,
 } from "@/lib/content-structures";
@@ -53,11 +54,16 @@ export async function generateMetadata({
     }
 
     return {
-      title: service.seoTitle || service.name,
-      description:
+      ...buildPageMetadata({
+        path: `/services/${slug}`,
+        title: service.seoTitle || service.name,
+        description:
         service.seoDescription ||
         service.description ||
-        `${service.name} - VisaCore Solutions`,
+          `${service.name} - VisaCore Solutions`,
+        imagePath: `/services/${slug}/opengraph-image`,
+        imageAlt: service.name,
+      }),
     };
   } catch {
     return { title: "Service" };

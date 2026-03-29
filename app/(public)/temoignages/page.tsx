@@ -5,14 +5,17 @@ import { ArrowRight, MessageCircle } from "lucide-react"
 import { PageHeroBackground } from "@/components/public/page-hero-background"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 import { SocialProofShowcase } from "@/components/public/social-proof-showcase"
+import { buildPageMetadata } from "@/lib/metadata"
 import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds"
 
 export const revalidate = 3600
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: "/temoignages",
   title: "Témoignages",
-  description: "Découvrez les témoignages de nos clients satisfaits qui ont réalisé leur projet d'immigration avec VisaCore Solutions.",
-}
+  description:
+    "Découvrez les témoignages de nos clients satisfaits qui ont réalisé leur projet d'immigration avec VisaCore Solutions.",
+})
 
 export default async function TestimonialsPage() {
   const heroBackground = getStaticHeroBackground("testimonials")

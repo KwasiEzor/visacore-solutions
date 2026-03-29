@@ -1,6 +1,8 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { getHomePageContent } from "@/lib/page-content";
 import { buildHomePageContent } from "@/lib/page-content.shared";
+import { buildPageMetadata } from "@/lib/metadata";
 import {
   fallbackDestinations,
   fallbackServices,
@@ -18,6 +20,13 @@ import { TestimonialsSection } from "@/components/public/home/testimonials-secti
 import { CtaSection } from "@/components/public/home/cta-section";
 
 export const revalidate = 3600;
+
+export const metadata: Metadata = buildPageMetadata({
+  path: "/",
+  title: "Immigration & Visa Consulting",
+  description:
+    "Experts en immigration vers le Canada, les États-Unis et l'Europe. Accompagnement complet pour vos projets d'immigration depuis Lomé, Togo.",
+})
 
 export default async function HomePage() {
   const pageContentPromise = getHomePageContent();

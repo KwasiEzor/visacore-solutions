@@ -5,13 +5,15 @@ import { AppointmentForm } from "@/components/public/appointment-form"
 import { PageHeroBackground } from "@/components/public/page-hero-background"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 import { getCaptchaServerConfig } from "@/lib/captcha.server"
+import { buildPageMetadata } from "@/lib/metadata"
 import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: "/rendez-vous",
   title: "Rendez-vous",
   description:
     "Demandez un rendez-vous avec VisaCore Solutions pour cadrer votre projet d'immigration avec un conseiller.",
-}
+})
 
 const commitments = [
   {

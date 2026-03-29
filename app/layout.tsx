@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Toaster } from "@/components/ui/sonner"
+import { getMetadataBase } from "@/lib/metadata"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -14,6 +15,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: getMetadataBase(),
+  applicationName: "VisaCore Solutions",
   title: {
     default: "VisaCore Solutions | Immigration & Visa Consulting",
     template: "%s | VisaCore Solutions",
@@ -32,10 +35,32 @@ export const metadata: Metadata = {
     "permis de travail",
     "études à l'étranger",
   ],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
     locale: "fr_FR",
     siteName: "VisaCore Solutions",
+    url: "/",
+    title: "VisaCore Solutions | Immigration & Visa Consulting",
+    description:
+      "Experts en immigration vers le Canada, les États-Unis et l'Europe. Accompagnement complet pour vos projets d'immigration depuis Lomé, Togo.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "VisaCore Solutions",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VisaCore Solutions | Immigration & Visa Consulting",
+    description:
+      "Experts en immigration vers le Canada, les États-Unis et l'Europe. Accompagnement complet pour vos projets d'immigration depuis Lomé, Togo.",
+    images: ["/opengraph-image"],
   },
 }
 

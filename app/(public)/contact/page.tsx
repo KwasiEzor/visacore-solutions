@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import { PageHeroBackground } from "@/components/public/page-hero-background"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
+import { buildPageMetadata } from "@/lib/metadata"
 import {
   formatDisplayPhoneNumber,
   getBusinessHoursRows,
@@ -24,11 +25,12 @@ import {
 import { getCaptchaServerConfig } from "@/lib/captcha.server"
 import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: "/contact",
   title: "Contact",
   description:
     "Contactez VisaCore Solutions à Lomé, Togo. Nous sommes disponibles pour répondre à vos questions sur l'immigration.",
-}
+})
 
 interface ContactChannel {
   icon: typeof Phone

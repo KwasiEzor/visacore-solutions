@@ -4,12 +4,15 @@ import { Shield, Clock, CheckCircle, Sparkles, Star, Users } from "lucide-react"
 import { PageHeroBackground } from "@/components/public/page-hero-background"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 import { getCaptchaServerConfig } from "@/lib/captcha.server"
+import { buildPageMetadata } from "@/lib/metadata"
 import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: "/evaluation",
   title: "Évaluation gratuite",
-  description: "Obtenez une évaluation gratuite de votre profil d'immigration en 24 heures. Découvrez vos options pour le Canada, les États-Unis et l'Europe.",
-}
+  description:
+    "Obtenez une évaluation gratuite de votre profil d'immigration en 24 heures. Découvrez vos options pour le Canada, les États-Unis et l'Europe.",
+})
 
 export default function EvaluationPage() {
   const captchaConfig = getCaptchaServerConfig()

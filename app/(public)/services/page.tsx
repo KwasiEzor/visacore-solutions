@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Globe, ArrowRight, Sparkles } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { buildPageMetadata } from "@/lib/metadata";
 import { PageHeroBackground } from "@/components/public/page-hero-background";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
 import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds";
@@ -9,11 +10,12 @@ import { fallbackServices, serviceIconMap } from "@/lib/public-content";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: "/services",
   title: "Nos Services",
   description:
     "Expertise en visa études, travail, tourisme, affaires et immigration permanente.",
-};
+});
 
 export default async function ServicesPage() {
   let services = fallbackServices;

@@ -5,14 +5,17 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { HelpCircle, ArrowRight, MessageCircle } from "lucide-react"
 import { PageHeroBackground } from "@/components/public/page-hero-background"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
+import { buildPageMetadata } from "@/lib/metadata"
 import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds"
 
 export const revalidate = 3600
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: "/faq",
   title: "FAQ",
-  description: "Retrouvez les réponses aux questions les plus fréquentes sur l'immigration et nos services.",
-}
+  description:
+    "Retrouvez les réponses aux questions les plus fréquentes sur l'immigration et nos services.",
+})
 
 const categoryLabels: Record<string, string> = {
   GENERAL: "Général",

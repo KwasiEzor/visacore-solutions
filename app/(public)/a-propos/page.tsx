@@ -4,13 +4,16 @@ import { Target, Eye, Heart, Globe, MapPin, Users, Award, Shield } from "lucide-
 import { PageHeroBackground } from "@/components/public/page-hero-background"
 import { ScrollReveal } from "@/components/public/scroll-reveal"
 import { getAboutPageContent } from "@/lib/page-content"
+import { buildPageMetadata } from "@/lib/metadata"
 import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds"
 import { getPublicSiteConfig } from "@/lib/site-config"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: "/a-propos",
   title: "À propos",
-  description: "Découvrez VisaCore Solutions, votre partenaire de confiance pour l'immigration internationale depuis Lomé, Togo.",
-}
+  description:
+    "Découvrez VisaCore Solutions, votre partenaire de confiance pour l'immigration internationale depuis Lomé, Togo.",
+})
 
 const values = [
   { icon: Shield, title: "Confiance", description: "Nous bâtissons des relations durables basées sur la transparence et l'intégrité." },

@@ -2,13 +2,15 @@ import type { Metadata } from "next"
 import { PrivacyRequestForm } from "@/components/public/privacy-request-form"
 import { LegalPageShell } from "@/components/public/legal-page-shell"
 import { getCaptchaServerConfig } from "@/lib/captcha.server"
+import { buildPageMetadata } from "@/lib/metadata"
 import { getPublicSiteConfig } from "@/lib/site-config"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: "/privacy",
   title: "Politique de confidentialite",
   description:
     "Politique de confidentialite de VisaCore Solutions et modalites d'exercice des droits relatifs aux donnees personnelles.",
-}
+})
 
 export default async function PrivacyPage() {
   const [siteConfig, captchaConfig] = await Promise.all([

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowRight, MapPin } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { buildPageMetadata } from "@/lib/metadata";
 import { PageHeroBackground } from "@/components/public/page-hero-background";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
 import { getStaticHeroBackground } from "@/lib/public-hero-backgrounds";
@@ -12,11 +13,12 @@ import {
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: "/destinations",
   title: "Nos Destinations",
   description:
     "Explorez les pays d'immigration accompagnés par VisaCore Solutions : Canada, États-Unis, Europe.",
-};
+});
 
 export default async function DestinationsPage() {
   let destinations = fallbackDestinations;

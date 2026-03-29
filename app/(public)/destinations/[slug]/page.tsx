@@ -11,6 +11,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { PageHeroBackground } from "@/components/public/page-hero-background";
 import { ScrollReveal } from "@/components/public/scroll-reveal";
+import { buildPageMetadata } from "@/lib/metadata";
 import {
   normalizeStructuredCardItems,
   normalizeVisaCategoryItems,
@@ -52,11 +53,16 @@ export async function generateMetadata({
     }
 
     return {
-      title: destination.seoTitle || destination.name,
-      description:
+      ...buildPageMetadata({
+        path: `/destinations/${slug}`,
+        title: destination.seoTitle || destination.name,
+        description:
         destination.seoDescription ||
         destination.heroDescription ||
-        `Immigration vers ${destination.name} - VisaCore Solutions`,
+          `Immigration vers ${destination.name} - VisaCore Solutions`,
+        imagePath: `/destinations/${slug}/opengraph-image`,
+        imageAlt: destination.name,
+      }),
     };
   } catch {
     return { title: "Destination" };

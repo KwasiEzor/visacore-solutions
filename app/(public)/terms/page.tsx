@@ -1,11 +1,14 @@
 import type { Metadata } from "next"
 import { LegalPageShell } from "@/components/public/legal-page-shell"
+import { buildPageMetadata } from "@/lib/metadata"
 import { getPublicSiteConfig, getTelHref } from "@/lib/site-config"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: "/terms",
   title: "Mentions légales",
-  description: "Mentions légales et conditions générales d'utilisation de VisaCore Solutions.",
-}
+  description:
+    "Mentions légales et conditions générales d'utilisation de VisaCore Solutions.",
+})
 
 export default async function TermsPage() {
   const siteConfig = await getPublicSiteConfig()
