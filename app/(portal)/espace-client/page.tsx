@@ -61,6 +61,9 @@ export default async function ApplicantPortalPage() {
           nextActionDueAt: caseItem.nextActionDueAt
             ? caseItem.nextActionDueAt.toISOString().slice(0, 10)
             : null,
+          lastSharedUpdateAt: caseItem.lastSharedUpdateAt
+            ? caseItem.lastSharedUpdateAt.toLocaleDateString("fr-FR")
+            : null,
           advisorName: caseItem.advisor?.name ?? null,
           advisorEmail: caseItem.advisor?.email ?? null,
           milestones: caseItem.milestones
