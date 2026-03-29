@@ -284,7 +284,7 @@ export function AdminTopbar({
         <SheetContent
           side="left"
           showCloseButton={false}
-          className="w-72 bg-[#0A2540] p-0 text-white sm:max-w-72"
+          className="flex h-full min-h-0 w-72 flex-col overflow-hidden bg-[#0A2540] p-0 text-white sm:max-w-72"
         >
           <SheetHeader className="border-b border-white/10 px-6 py-4">
             <div className="flex items-center gap-3">
@@ -301,7 +301,7 @@ export function AdminTopbar({
             </div>
           </SheetHeader>
 
-          <ScrollArea className="flex-1 py-4">
+          <ScrollArea className="min-h-0 flex-1 overscroll-contain py-4">
             <nav className="flex flex-col gap-1 px-3">
               {navItems
                 .filter((item) =>

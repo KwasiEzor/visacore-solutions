@@ -60,7 +60,12 @@ interface HeaderProps {
   destinations: HeaderDestinationLink[];
 }
 
-const desktopMenus: Array<{ id: MenuId; label: string; matchers: string[] }> = [
+const desktopMenus: Array<{
+  id: MenuId;
+  label: string;
+  compactLabel?: string;
+  matchers: string[];
+}> = [
   {
     id: "destinations",
     label: "Destinations",
@@ -74,11 +79,13 @@ const desktopMenus: Array<{ id: MenuId; label: string; matchers: string[] }> = [
   {
     id: "project",
     label: "Votre projet",
+    compactLabel: "Projet",
     matchers: ["/rendez-vous", "/evaluation"],
   },
   {
     id: "portal",
-    label: "Espace client",
+    label: "Portail client",
+    compactLabel: "Portail",
     matchers: ["/espace-client", "/recuperer-acces"],
   },
   {
@@ -353,7 +360,7 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
                   aria-expanded={activeMenu === menu.id}
                   aria-controls={`desktop-panel-${menu.id}`}
                   className={cn(
-                    "group relative inline-flex items-center gap-2 rounded-full px-3.5 py-2.5 text-[13px] font-black transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-visacore-gold/35 xl:px-4 xl:text-sm",
+                    "group relative inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-3 py-2.5 text-[13px] font-black transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-visacore-gold/35 xl:px-4 xl:text-sm",
                     isActive
                       ? "bg-visacore-gold/12 text-visacore-gold"
                       : useSolidHeader
@@ -364,10 +371,17 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
                   onFocus={() => openMenu(menu.id, true)}
                   onClick={() => setActiveMenu((current) => (current === menu.id ? null : menu.id))}
                 >
-                  <span>{menu.label}</span>
+                  {menu.compactLabel ? (
+                    <>
+                      <span className="xl:hidden">{menu.compactLabel}</span>
+                      <span className="hidden xl:inline">{menu.label}</span>
+                    </>
+                  ) : (
+                    <span>{menu.label}</span>
+                  )}
                   <ChevronDown
                     className={cn(
-                      "size-4 transition-transform duration-200",
+                      "size-4 shrink-0 transition-transform duration-200",
                       activeMenu === menu.id && "rotate-180"
                     )}
                   />
@@ -387,7 +401,7 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
                   href={link.href}
                   onClick={() => setActiveMenu(null)}
                   className={cn(
-                    "relative rounded-full px-3.5 py-2.5 text-[13px] font-black transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-visacore-gold/35 xl:px-4 xl:text-sm",
+                    "relative shrink-0 whitespace-nowrap rounded-full px-3 py-2.5 text-[13px] font-black transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-visacore-gold/35 xl:px-4 xl:text-sm",
                     isActive
                       ? "bg-visacore-gold/12 text-visacore-gold"
                       : useSolidHeader
@@ -430,7 +444,7 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
           <Link
             href="/espace-client/connexion"
             className={cn(
-              "inline-flex items-center rounded-full border px-4 py-3 text-sm font-black transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-visacore-gold/35",
+              "inline-flex shrink-0 items-center whitespace-nowrap rounded-full border px-4 py-3 text-sm font-black transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-visacore-gold/35",
               isMatcherActive(["/espace-client", "/recuperer-acces"])
                 ? "border-visacore-gold/25 bg-visacore-gold/10 text-visacore-gold"
                 : useSolidHeader
@@ -438,18 +452,19 @@ export function Header({ siteConfig, services, destinations }: HeaderProps) {
                   : "border-white/16 bg-white/8 text-white backdrop-blur-md hover:border-visacore-gold/35 hover:text-visacore-gold"
             )}
           >
-            Espace client
+            Connexion
           </Link>
           <Link
             href="/evaluation"
             className={cn(
-              "inline-flex items-center rounded-full px-4 py-3 text-sm font-black transition-all duration-300 shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-visacore-gold/35 xl:px-6 xl:py-4",
+              "inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-black transition-all duration-300 shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-visacore-gold/35 xl:px-6 xl:py-4",
               useSolidHeader
                 ? "bg-visacore-gold text-white hover:bg-visacore-gold-dark hover:shadow-visacore-gold/20"
                 : "bg-white text-visacore-navy hover:bg-visacore-gold hover:text-white"
             )}
           >
-            Évaluation gratuite
+            <span className="xl:hidden">Évaluation</span>
+            <span className="hidden xl:inline">Évaluation gratuite</span>
             <ArrowRight className="ml-2 size-4" />
           </Link>
         </div>
