@@ -253,8 +253,11 @@ export default async function AdminDashboardPage() {
               </Button>
             </Link>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="border-b border-border/70 px-6 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground md:hidden">
+            Faites glisser horizontalement pour voir les leads récents
+          </div>
+          <div className="overflow-x-auto overscroll-x-contain">
+            <table className="w-full min-w-[720px]">
               <thead>
                 <tr className="border-b border-border text-left">
                   <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -291,26 +294,26 @@ export default async function AdminDashboardPage() {
                       key={lead.id}
                       className="transition-colors hover:bg-muted/50"
                     >
-                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-foreground">
+                      <td className="px-6 py-4 text-sm font-medium text-foreground whitespace-nowrap">
                         {lead.fullName}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
+                      <td className="px-6 py-4 text-sm text-muted-foreground whitespace-nowrap">
                         {lead.email}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
+                      <td className="px-6 py-4 text-sm text-muted-foreground whitespace-nowrap">
                         {lead.destination}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <StatusBadge status={lead.status} />
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
+                      <td className="px-6 py-4 text-sm text-muted-foreground whitespace-nowrap">
                         {lead.createdAt.toLocaleDateString("fr-FR", {
                           day: "numeric",
                           month: "short",
                           year: "numeric",
                         })}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-right">
+                      <td className="px-6 py-4 text-right whitespace-nowrap">
                         <Link href={`/admin/leads/${lead.id}`}>
                           <Button variant="ghost" size="icon-sm">
                             <Eye className="size-4" />

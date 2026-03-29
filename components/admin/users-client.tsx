@@ -65,9 +65,9 @@ export function UsersClient({ data, currentUserId }: UsersClientProps) {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold">Utilisateurs</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => exportCSV(data)}>
             <Download className="mr-1.5 size-3.5" />
             Export CSV
@@ -84,16 +84,19 @@ export function UsersClient({ data, currentUserId }: UsersClientProps) {
           <CardTitle>Tous les utilisateurs ({data.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground md:hidden">
+            Faites glisser horizontalement pour voir les colonnes et actions
+          </div>
+          <div className="overflow-x-auto overscroll-x-contain">
+            <table className="w-full min-w-[52rem] text-sm">
               <thead>
                 <tr className="border-b text-left">
-                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Nom</th>
-                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Email</th>
-                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Role</th>
-                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Acces</th>
-                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Inscrit le</th>
-                  <th className="pb-3 font-medium text-muted-foreground">Actions</th>
+                  <th className="pb-3 pr-4 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Nom</th>
+                  <th className="pb-3 pr-4 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Email</th>
+                  <th className="pb-3 pr-4 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Role</th>
+                  <th className="pb-3 pr-4 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Acces</th>
+                  <th className="pb-3 pr-4 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Inscrit le</th>
+                  <th className="pb-3 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -117,7 +120,7 @@ export function UsersClient({ data, currentUserId }: UsersClientProps) {
                           )}
                         </div>
                       </td>
-                      <td className="py-3 pr-4 text-muted-foreground">{u.email}</td>
+                      <td className="py-3 pr-4 text-muted-foreground whitespace-nowrap">{u.email}</td>
                       <td className="py-3 pr-4">
                         <StatusBadge
                           status={roleLabels[u.role] ?? u.role}
@@ -130,7 +133,7 @@ export function UsersClient({ data, currentUserId }: UsersClientProps) {
                           variant={accessVariant[u.accessState]}
                         />
                       </td>
-                      <td className="py-3 pr-4 text-muted-foreground">{u.createdAt}</td>
+                      <td className="py-3 pr-4 text-muted-foreground whitespace-nowrap">{u.createdAt}</td>
                       <td className="py-3">
                         <UserActions
                           userId={u.id}

@@ -64,8 +64,11 @@ export function AppointmentsClient({
       </div>
 
       <div className="overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[1120px]">
+        <div className="border-b border-border/70 px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground md:hidden">
+          Faites glisser horizontalement pour voir la disponibilité, l’assignation et les actions
+        </div>
+        <div className="overflow-x-auto overscroll-x-contain">
+          <table className="w-full min-w-[920px] lg:min-w-[1120px]">
             <thead>
               <tr className="border-b border-border text-left">
                 <th className="px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
@@ -153,7 +156,7 @@ export function AppointmentsClient({
                       />
                     </td>
                     <td className="px-5 py-4">
-                      <div className="w-[210px]">
+                      <div className="w-[200px] lg:w-[210px]">
                         <AppointmentAssigneeSelect
                           appointmentId={appointment.id}
                           currentAssignedToId={appointment.assignedToId}
@@ -162,7 +165,7 @@ export function AppointmentsClient({
                       </div>
                     </td>
                     <td className="px-5 py-4">
-                      <div className="flex min-w-[280px] flex-wrap items-center gap-2">
+                      <div className="flex min-w-[240px] flex-wrap items-center gap-2 lg:min-w-[280px]">
                         <AppointmentDetailsDialog appointment={appointment} />
                         <AppointmentActionButtons
                           appointmentId={appointment.id}
