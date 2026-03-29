@@ -53,6 +53,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 
 interface PortalDocument {
@@ -144,6 +145,7 @@ export function ApplicantPortalDashboard({
 }: ApplicantPortalProps) {
   const initialCaseId = applicant.cases[0]?.id ?? null
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(initialCaseId)
+  const [activeTab, setActiveTab] = useState("dossier")
   const selectedCase =
     applicant.cases.find((caseItem) => caseItem.id === selectedCaseId) ??
     applicant.cases[0] ??
@@ -200,21 +202,19 @@ export function ApplicantPortalDashboard({
         />
       ) : null}
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(21rem,0.85fr)]">
-        <div className="space-y-6">
-          <NextActionPanel caseItem={selectedCase} />
-          <CaseWorkspace
-            caseItem={selectedCase}
-            validatedCount={validatedCount}
-          />
-        </div>
+      <NextActionPanel
+        caseItem={selectedCase}
+        onShowDocuments={() => setActiveTab("documents")}
+        onShowProfile={() => setActiveTab("profil")}
+      />
 
-        <div className="space-y-6">
-          <AssistancePanel caseItem={selectedCase} />
-          <ApplicantProfilePanel applicant={applicant} />
-          <PrivacyPanel />
-        </div>
-      </div>
+      <PortalTabsWorkspace
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        applicant={applicant}
+        caseItem={selectedCase}
+        validatedCount={validatedCount}
+      />
     </div>
   )
 }
@@ -412,7 +412,15 @@ function CaseSwitcher({
   )
 }
 
-function NextActionPanel({ caseItem }: { caseItem: PortalCase }) {
+function NextActionPanel({
+  caseItem,
+  onShowDocuments,
+  onShowProfile,
+}: {
+  caseItem: PortalCase
+  onShowDocuments: () => void
+  onShowProfile: () => void
+}) {
   const hasUrgentAction = Boolean(
     caseItem.nextActionTitle ||
       caseItem.nextActionDescription ||
@@ -458,19 +466,21 @@ function NextActionPanel({ caseItem }: { caseItem: PortalCase }) {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-            <a
-              href="#documents-a-fournir"
+            <button
+              type="button"
+              onClick={onShowDocuments}
               className="inline-flex items-center justify-center rounded-full bg-visacore-navy px-5 py-3 text-sm font-semibold text-white transition hover:bg-visacore-navy/92"
             >
               Voir mes documents
               <ArrowRight className="ml-2 size-4" />
-            </a>
-            <a
-              href="#mon-compte"
+            </button>
+            <button
+              type="button"
+              onClick={onShowProfile}
               className="inline-flex items-center justify-center rounded-full border border-visacore-navy/12 bg-white px-5 py-3 text-sm font-semibold text-foreground transition hover:bg-muted"
             >
               Verifier mes informations
-            </a>
+            </button>
           </div>
         </div>
       </CardContent>
@@ -478,7 +488,82 @@ function NextActionPanel({ caseItem }: { caseItem: PortalCase }) {
   )
 }
 
-function CaseWorkspace({
+function PortalTabsWorkspace({
+  activeTab,
+  onTabChange,
+  applicant,
+  caseItem,
+  validatedCount,
+}: {
+  activeTab: string
+  onTabChange: (value: string) => void
+  applicant: ApplicantPortalProps["applicant"]
+  caseItem: PortalCase
+  validatedCount: number
+}) {
+  const tabItems = [
+    { value: "dossier", label: "Dossier", count: null },
+    { value: "documents", label: "Documents", count: caseItem.checklistItems.length },
+    { value: "profil", label: "Profil", count: null },
+    { value: "confidentialite", label: "Confidentialite", count: null },
+  ]
+
+  return (
+    <Tabs value={activeTab} onValueChange={onTabChange} className="gap-5">
+      <Card className="rounded-[30px] border-visacore-navy/8 bg-white/90 shadow-[0_30px_90px_-66px_rgba(10,37,64,0.28)]">
+        <CardContent className="px-4 py-4 sm:px-5">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="space-y-1">
+              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-visacore-gold">
+                Navigation du portail
+              </p>
+              <p className="text-sm leading-6 text-muted-foreground">
+                Gardez la vue d&apos;ensemble en haut, puis ouvrez uniquement la section dont vous avez besoin.
+              </p>
+            </div>
+            <TabsList
+              variant="line"
+              className="flex h-auto w-full flex-wrap justify-start gap-2 rounded-[24px] bg-[#F6F8FC] p-2 lg:w-auto lg:justify-end"
+            >
+              {tabItems.map((tab) => (
+                <TabsTrigger
+                  key={tab.value}
+                  value={tab.value}
+                  className="min-h-11 flex-none rounded-full border border-transparent bg-white/0 px-4 py-2 text-sm font-semibold data-active:border-visacore-navy/10 data-active:bg-white data-active:text-visacore-navy data-active:shadow-[0_18px_45px_-30px_rgba(10,37,64,0.24)] after:hidden"
+                >
+                  {tab.label}
+                  {tab.count ? (
+                    <span className="rounded-full bg-visacore-gold/12 px-2 py-0.5 text-[11px] font-black text-visacore-gold">
+                      {tab.count}
+                    </span>
+                  ) : null}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+        </CardContent>
+      </Card>
+
+      <TabsContent value="dossier" className="mt-0">
+        <DossierTab caseItem={caseItem} validatedCount={validatedCount} />
+      </TabsContent>
+
+      <TabsContent value="documents" className="mt-0">
+        <DocumentsTab caseItem={caseItem} />
+      </TabsContent>
+
+      <TabsContent value="profil" className="mt-0">
+        <ApplicantProfilePanel applicant={applicant} />
+      </TabsContent>
+
+      <TabsContent value="confidentialite" className="mt-0">
+        <PrivacyPanel />
+      </TabsContent>
+    </Tabs>
+  )
+}
+
+function DossierTab({
   caseItem,
   validatedCount,
 }: {
@@ -486,61 +571,135 @@ function CaseWorkspace({
   validatedCount: number
 }) {
   return (
-    <Card className="rounded-[32px] border-visacore-navy/8 bg-white/94 shadow-[0_36px_100px_-74px_rgba(10,37,64,0.3)]">
-      <CardHeader className="border-b border-border/70 bg-[#FCFDFE]">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div className="space-y-2">
-            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-visacore-gold">
-              Mon dossier
-            </p>
-            <CardTitle className="text-2xl">{caseItem.title}</CardTitle>
-            <CardDescription className="max-w-3xl text-sm leading-6">
-              {caseItem.summary ??
-                "Retrouvez ici les pieces a transmettre, les etapes deja accomplies et les validations partagees par votre conseiller."}
-            </CardDescription>
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.38fr)_minmax(20rem,0.82fr)]">
+      <Card className="rounded-[32px] border-visacore-navy/8 bg-white/94 shadow-[0_36px_100px_-74px_rgba(10,37,64,0.3)]">
+        <CardHeader className="border-b border-border/70 bg-[#FCFDFE]">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="space-y-2">
+              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-visacore-gold">
+                Mon dossier
+              </p>
+              <CardTitle className="text-2xl">{caseItem.title}</CardTitle>
+              <CardDescription className="max-w-3xl text-sm leading-6">
+                {caseItem.summary ??
+                  "Retrouvez ici la vue generale de votre procedure, ses jalons deja franchis et la phase actuellement partagee par votre conseiller."}
+              </CardDescription>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <StatusPill
+                tone="navy"
+                label={
+                  procedureStatusLabels[
+                    caseItem.status as keyof typeof procedureStatusLabels
+                  ] ?? caseItem.status
+                }
+              />
+              <StatusPill
+                tone="green"
+                label={`${validatedCount} element${validatedCount > 1 ? "s" : ""} conforme${validatedCount > 1 ? "s" : ""}`}
+              />
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <StatusPill
-              tone="navy"
-              label={
-                procedureStatusLabels[
-                  caseItem.status as keyof typeof procedureStatusLabels
-                ] ?? caseItem.status
+        </CardHeader>
+        <CardContent className="space-y-7 px-5 py-6 sm:px-6">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <CaseDetailTile
+              icon={MapPinned}
+              label="Destination et service"
+              title={`${caseItem.destinationCountry} · ${caseItem.serviceName ?? caseItem.visaCategory}`}
+              body={caseItem.reference}
+            />
+            <CaseDetailTile
+              icon={CalendarClock}
+              label="Suivi de procedure"
+              title={caseItem.currentStep ?? "Preparation du dossier"}
+              body={
+                caseItem.lastSharedUpdateAt
+                  ? `Derniere mise a jour partagee le ${caseItem.lastSharedUpdateAt}`
+                  : "Mises a jour visibles dans la timeline ci-dessous"
               }
             />
-            <StatusPill
-              tone="green"
-              label={`${validatedCount} element${validatedCount > 1 ? "s" : ""} conforme${validatedCount > 1 ? "s" : ""}`}
-            />
           </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-7 px-5 py-6 sm:px-6">
-        <div className="grid gap-4 lg:grid-cols-2">
-          <CaseDetailTile
-            icon={MapPinned}
-            label="Destination et service"
-            title={`${caseItem.destinationCountry} · ${caseItem.serviceName ?? caseItem.visaCategory}`}
-            body={caseItem.reference}
-          />
-          <CaseDetailTile
-            icon={CalendarClock}
-            label="Suivi de procedure"
-            title={caseItem.currentStep ?? "Preparation du dossier"}
-            body={
-              caseItem.lastSharedUpdateAt
-                ? `Derniere mise a jour partagee le ${caseItem.lastSharedUpdateAt}`
-                : "Mises a jour visibles dans la timeline ci-dessous"
-            }
-          />
-        </div>
 
-        <div className="grid gap-7 xl:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)]">
-          <ChecklistWorkspace caseItem={caseItem} />
           <TimelineSection caseItem={caseItem} />
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-6">
+        <AssistancePanel caseItem={caseItem} />
+        <Card className="rounded-[30px] border-visacore-gold/14 bg-[linear-gradient(180deg,#fffaf0_0%,#ffffff_100%)] shadow-none">
+          <CardHeader>
+            <CardTitle>Lecture rapide du dossier</CardTitle>
+            <CardDescription>
+              Une synthese pour garder le contexte avant d&apos;ouvrir les documents.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <InfoPanel
+              icon={FileCheck2}
+              title={`${validatedCount} element${validatedCount > 1 ? "s" : ""} conforme${validatedCount > 1 ? "s" : ""}`}
+              body="Les pieces deja verifiees restent disponibles dans l'onglet Documents."
+              meta="Suivi consolide par votre conseiller"
+            />
+            <InfoPanel
+              icon={Clock3}
+              title={caseItem.currentStep ?? "Etape a preciser"}
+              body="Cette phase resume l'etape actuellement active dans votre procedure."
+              meta={caseItem.lastSharedUpdateAt ? `Maj partagee le ${caseItem.lastSharedUpdateAt}` : "Mise a jour a venir"}
+            />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+function DocumentsTab({ caseItem }: { caseItem: PortalCase }) {
+  return (
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.36fr)_minmax(20rem,0.84fr)]">
+      <Card className="rounded-[32px] border-visacore-navy/8 bg-white/94 shadow-[0_36px_100px_-74px_rgba(10,37,64,0.3)]">
+        <CardHeader className="border-b border-border/70 bg-[#FCFDFE]">
+          <div className="space-y-2">
+            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-visacore-gold">
+              Documents
+            </p>
+            <CardTitle className="text-2xl">Pieces a transmettre et validations</CardTitle>
+            <CardDescription className="max-w-3xl text-sm leading-6">
+              Commencez par les demandes urgentes, suivez les controles en cours et conservez vos pieces validees dans un espace distinct.
+            </CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent className="px-5 py-6 sm:px-6">
+          <ChecklistWorkspace caseItem={caseItem} />
+        </CardContent>
+      </Card>
+
+      <div className="space-y-6">
+        <AssistancePanel caseItem={caseItem} />
+        <Card className="rounded-[30px] border-visacore-navy/8 bg-[#FBFCFE] shadow-none">
+          <CardHeader>
+            <CardTitle>Conseils pour vos envois</CardTitle>
+            <CardDescription>
+              Quelques reperes pour accelerer la verification de vos pieces.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <InfoPanel
+              icon={FileText}
+              title="Nommez clairement vos fichiers"
+              body="Utilisez un libelle explicite et deposez un document complet par demande lorsque c'est possible."
+              meta="Ex: passeport, releves bancaires, lettre d'admission"
+            />
+            <InfoPanel
+              icon={FileClock}
+              title="Suivez les retours de revision"
+              body="Si une piece doit etre corrigee, l'etat et la note associee apparaissent directement sous le document."
+              meta="Les pieces deposees restent consultables dans cet onglet"
+            />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   )
 }
 
