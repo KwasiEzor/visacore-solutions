@@ -48,6 +48,9 @@ export default function AuthLayout({
                 width={640}
                 height={525}
                 className="h-auto w-52"
+                style={{
+                  filter: "brightness(1.18) invert(0.03) contrast(1.08) saturate(1.1)",
+                }}
               />
             </div>
 
