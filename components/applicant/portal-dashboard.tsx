@@ -227,19 +227,19 @@ function PortalHero({
   caseItem: PortalCase | null
 }) {
   return (
-    <section className="relative overflow-hidden rounded-[36px] border border-visacore-navy/10 bg-[radial-gradient(circle_at_top_left,rgba(213,173,24,0.16),transparent_26%),linear-gradient(135deg,#0A2540_0%,#12385B_58%,#1E507A_100%)] px-5 py-6 text-white shadow-[0_40px_110px_-70px_rgba(10,37,64,0.72)] sm:px-7 sm:py-8">
+    <section className="relative overflow-hidden rounded-[32px] border border-visacore-navy/10 bg-[radial-gradient(circle_at_top_left,rgba(213,173,24,0.16),transparent_26%),linear-gradient(135deg,#0A2540_0%,#12385B_58%,#1E507A_100%)] px-4 py-5 text-white shadow-[0_40px_110px_-70px_rgba(10,37,64,0.72)] sm:rounded-[36px] sm:px-7 sm:py-8">
       <div className="absolute -right-12 top-0 size-44 rounded-full bg-visacore-gold/16 blur-3xl" />
       <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/16 to-transparent" />
-      <div className="relative z-10 grid gap-6 xl:grid-cols-[minmax(0,1.18fr)_minmax(18rem,0.82fr)]">
-        <div className="space-y-5">
-          <div className="inline-flex rounded-full border border-white/10 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-visacore-gold">
+      <div className="relative z-10 grid gap-4 sm:gap-6 xl:grid-cols-[minmax(0,1.18fr)_minmax(18rem,0.82fr)]">
+        <div className="space-y-4 sm:space-y-5">
+          <div className="inline-flex rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-visacore-gold sm:px-4 sm:py-2 sm:text-[11px] sm:tracking-[0.22em]">
             Espace client securise
           </div>
-          <div className="space-y-3">
-            <h1 className="max-w-3xl text-3xl font-black tracking-tight sm:text-4xl">
+          <div className="space-y-2.5 sm:space-y-3">
+            <h1 className="max-w-3xl text-[2.15rem] font-black leading-[0.95] tracking-tight sm:text-4xl">
               Bonjour {applicant.name ?? "et bienvenue"}.
             </h1>
-            <p className="max-w-3xl text-base leading-7 text-white/78 sm:text-lg">
+            <p className="max-w-3xl text-[0.98rem] leading-7 text-white/78 sm:text-lg">
               Suivez votre procedure, priorisez vos prochaines actions et
               gardez une vision claire de votre dossier sans naviguer entre
               plusieurs formulaires.
@@ -247,7 +247,7 @@ function PortalHero({
           </div>
 
           {caseItem ? (
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-2.5 sm:grid-cols-3 sm:gap-3">
               <SummaryPill
                 icon={MapPinned}
                 label="Destination"
@@ -267,15 +267,15 @@ function PortalHero({
           ) : null}
         </div>
 
-        <div className="rounded-[28px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-          <p className="text-[11px] font-black uppercase tracking-[0.22em] text-visacore-gold">
+        <div className="rounded-[24px] border border-white/10 bg-white/8 p-4 backdrop-blur-sm sm:rounded-[28px] sm:p-5">
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-visacore-gold sm:text-[11px] sm:tracking-[0.22em]">
             Ce que vous retrouvez ici
           </p>
-          <div className="mt-4 space-y-3">
+          <div className="mt-3 space-y-2.5 sm:mt-4 sm:space-y-3">
             {portalQuickFacts.map((fact) => (
               <div
                 key={fact}
-                className="rounded-[20px] border border-white/10 bg-black/10 px-4 py-3 text-sm leading-6 text-white/76"
+                className="rounded-[18px] border border-white/10 bg-black/10 px-3.5 py-2.5 text-xs leading-5 text-white/76 sm:rounded-[20px] sm:px-4 sm:py-3 sm:text-sm sm:leading-6"
               >
                 {fact}
               </div>
@@ -509,12 +509,12 @@ function PortalTabsWorkspace({
   ]
 
   return (
-    <Tabs value={activeTab} onValueChange={onTabChange} className="gap-5">
-      <Card className="rounded-[30px] border-visacore-navy/8 bg-white/90 shadow-[0_30px_90px_-66px_rgba(10,37,64,0.28)]">
-        <CardContent className="px-4 py-4 sm:px-5">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="space-y-1">
-              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-visacore-gold">
+    <Tabs value={activeTab} onValueChange={onTabChange} className="gap-4 sm:gap-5">
+      <Card className="rounded-[26px] border-visacore-navy/8 bg-white/90 shadow-[0_24px_72px_-58px_rgba(10,37,64,0.22)] sm:rounded-[30px]">
+        <CardContent className="px-4 py-3 sm:px-5 sm:py-4">
+          <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between xl:gap-6">
+            <div className="max-w-xl space-y-1">
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-visacore-gold sm:text-[11px] sm:tracking-[0.22em]">
                 Navigation du portail
               </p>
               <p className="text-sm leading-6 text-muted-foreground">
@@ -523,17 +523,17 @@ function PortalTabsWorkspace({
             </div>
             <TabsList
               variant="line"
-              className="flex h-auto w-full flex-wrap justify-start gap-2 rounded-[24px] bg-[#F6F8FC] p-2 lg:w-auto lg:justify-end"
+              className="flex h-auto max-w-full items-center justify-start gap-1 overflow-x-auto rounded-full bg-[#F3F6FB] p-1.5 xl:w-auto xl:justify-end [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {tabItems.map((tab) => (
                 <TabsTrigger
                   key={tab.value}
                   value={tab.value}
-                  className="min-h-11 flex-none rounded-full border border-transparent bg-white/0 px-4 py-2 text-sm font-semibold data-active:border-visacore-navy/10 data-active:bg-white data-active:text-visacore-navy data-active:shadow-[0_18px_45px_-30px_rgba(10,37,64,0.24)] after:hidden"
+                  className="min-h-10 flex-none rounded-full border border-transparent bg-white/0 px-3.5 py-2 text-sm font-semibold text-foreground/70 data-active:border-visacore-navy/10 data-active:bg-white data-active:text-visacore-navy data-active:shadow-[0_14px_35px_-26px_rgba(10,37,64,0.22)] after:hidden sm:px-4"
                 >
                   {tab.label}
                   {tab.count ? (
-                    <span className="rounded-full bg-visacore-gold/12 px-2 py-0.5 text-[11px] font-black text-visacore-gold">
+                    <span className="inline-flex min-w-6 items-center justify-center rounded-full bg-visacore-gold/12 px-2 py-0.5 text-[11px] font-black text-visacore-gold">
                       {tab.count}
                     </span>
                   ) : null}
